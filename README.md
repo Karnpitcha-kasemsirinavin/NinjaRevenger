@@ -1,5 +1,5 @@
 # NinjaRevenger 
-# Collaborator 
+## Collaborator 
 - Chakrit Ritthakananon       64011360
 - Kanyawat Raksawin           64011421
 - Kanpitcha Kasemsirinavin    64011423
