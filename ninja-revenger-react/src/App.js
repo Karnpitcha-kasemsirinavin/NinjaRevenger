@@ -7,13 +7,16 @@ function App() {
   return (
     <div className='Ninja-Revengers'>
         <div className='menu container'>
-            <div className='bg-1'><bg-1 style={{ minHeight: '100%' }} />
-            <div className='lightning-small'>
-              <img src={require('./pic/light_small.png')} alt="lightning" />
-            </div>
+            <div className='bg-1'>
+              <img className='lightning-big' src={require("./pic/light_big.png")} alt="lighning-b" />
+              <img className='lightning-small center'src={require('./pic/light_small.png')} alt="lightning" />
+              <img className='ninja-menu' src={require("./pic/ninja-1.png")} alt="ninja1" />
+              <img className='smoke-grd' src={require("./pic/smoke_ground.png")} alt="smoke-grd" />
+              <img className='game-title' src={require("./pic/smoke_ground.png")} alt="smoke-grd" />
+              <button class="start-bt1">start</button>
+              <button class="exit-bt1">exit</button>
             </div>
         </div>
-        <button class="start-bt1">start</button>
     </div>
   );
 }
