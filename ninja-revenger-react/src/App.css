@@ -98,9 +98,9 @@
 .game-title{
   position: absolute;
   z-index: 5;
-  top: 50%;
-  left: 50%;
-  z-index: 4;
+  top: 10%;
+  left: 15%;
+  z-index: 3;
 }
 
 .start-bt1{
