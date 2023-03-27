@@ -12,10 +12,9 @@ function App() {
               <img className='lightning-small center'src={require('./pic/light_small.png')} alt="lightning" />
               <img className='ninja-menu' src={require("./pic/ninja-1.png")} alt="ninja1" />
               <img className='smoke-grd' src={require("./pic/smoke_ground.png")} alt="smoke-grd" />
-              <img className='game-title' src={require("./pic/smoke_ground.png")} alt="smoke-grd" />
+              <img className='game-title' src={require("./pic/ninja-title.png")} alt="title" />
               <button class="start-bt1">start</button>
-              <button class="exit-bt1">exit</button>
-            </div>
+              <button className="exit-bt1" onClick={() => window.close()}>Exit</button>            </div>
         </div>
     </div>
   );
