@@ -14,7 +14,8 @@ function App() {
               <img className='smoke-grd' src={require("./pic/smoke_ground.png")} alt="smoke-grd" />
               <img className='game-title' src={require("./pic/ninja-title.png")} alt="title" />
               <button class="start-bt1">start</button>
-              <button className="exit-bt1" onClick={() => window.close()}>Exit</button>            </div>
+              <button class="exit-bt1">start</button>
+            </div>
         </div>
     </div>
   );
