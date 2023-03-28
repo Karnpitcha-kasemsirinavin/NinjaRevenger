@@ -1,10 +1,28 @@
 import './App.css';
-import * as React from 'react';
-
+import React from 'react';
+import { useMediaQuery } from 'react-responsive';
 
 function App() {
 
+  const isLaptop = useMediaQuery({
+    query: "(min-device-width: 1024px)",
+  });
+
+  const isDesktop = useMediaQuery({
+    query: "(min-device-width: 1200px)",
+  });
+
+  const isBigScreen = useMediaQuery({
+    query: "(min-device-width: 1201px )",
+  });
+
   return (
+  <div>
+    <h1>React Responsive - a guide</h1>      
+    {isDesktop && <Desktop />}
+    {isLaptop && <Laptop />}
+    {isBigScreen && <BigScreen />}
+
     <div className='Ninja-Revengers'>
         <div className='menu container'>
             <div className='bg-1'>
@@ -18,6 +36,7 @@ function App() {
             </div>
         </div>
     </div>
+  </div>
   );
 }
 
