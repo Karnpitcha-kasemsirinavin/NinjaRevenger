@@ -9,11 +9,11 @@ function App() {
   const windowSize = useRef([window.innerWidth, window.innerHeight])
 
   const isLaptop = useMediaQuery({
-    query: "(min-device-width: 1024px)",
+    query: "(min-device-width: 769px)",
   });
 
   const isDesktop = useMediaQuery({
-    query: "(min-device-width: 1200px)",
+    query: "(min-device-width: 1025px)",
   });
 
   const isBigScreen = useMediaQuery({
@@ -22,9 +22,7 @@ function App() {
 
   return (
   <div>
-    {/* <h2>Width: {windowSize.current[0]}</h2> */}
-    
-    <h1>React Responsive - a guide</h1>      
+    {/* <h2>Width: {windowSize.current[0]}</h2> */}   
 
     {isBigScreen && <BigScreen />}
 
