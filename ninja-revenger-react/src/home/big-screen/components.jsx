@@ -3,6 +3,7 @@ import './style.css'
 
 export const BigScreen = () => {
     return (
+        
         <div className="big-screen">
             <div className='Ninja-Revengers'>
                 <div className='container'>
