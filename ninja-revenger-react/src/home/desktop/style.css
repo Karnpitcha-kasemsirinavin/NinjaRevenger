@@ -1,0 +1,105 @@
+@media only screen and (min-width: 1025px) and (max-width: 1200px){
+
+.Ninja-Revengers {
+    position: relative;
+  }
+  
+.container {
+    height: 100vh;
+    display: flex;
+    flex-direction: row;
+    margin: 0 auto;
+  }
+  
+.bg-1{
+    background-image: url(../../images/background-nolight.png);
+    width: 100vw;
+    height: 100vh;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    z-index: 1;
+  }
+  
+.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+  }
+  
+.lightning-small{
+    position: relative;
+    top: -80%;
+    left: 5%;
+    z-index: 2;
+  }
+  
+.lightning-big{
+    position: relative;
+    transform: translate(10%, 0%);
+    width: 80vw;
+    height: 80vh;
+    left: 10%;
+    z-index: 2;
+  }
+  
+.ninja-menu{
+    position: relative; /* position the ninja-menu element */
+    top: -100%;
+    left: 40%;
+    z-index: 3;
+  }
+  
+.smoke-grd{
+    position: relative;
+    z-index: 4;
+    top: -90%;
+    left: 13%;
+  }
+  
+.game-title{
+    position: relative;
+    z-index: 5;
+    top: -170%;
+    left: 15%;
+    z-index: 3;
+  }
+  
+.start-bt1{
+    position: absolute;
+    background-color: rgb(73, 73, 73);
+    color: rgb(62, 55, 55);
+    font-size: 20px;
+    padding: 10px 60px;
+    border-radius: 5px;
+    margin: 10px 0px;
+    cursor: pointer;
+    height: 82px;
+    width: 250px;
+    z-index: 5;
+    top: 60%;
+    left: 80%;
+  }
+  
+.exit-bt1{
+    position: absolute;
+    background-color: rgb(73, 73, 73);
+    color: white;
+    font-size: 20px;
+    padding: 10px 60px;
+    border-radius: 5px;
+    margin: 10px 0px;
+    cursor: pointer;
+    height: 82px;
+    width: 250px;
+    z-index: 5;
+    top: 77%;
+    left: 80%;
+    margin: 0 auto;
+  }
+  
+.big-screen p {
+    padding-top: 2%;
+  }
+}
