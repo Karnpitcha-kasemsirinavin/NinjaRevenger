@@ -1,5 +1,5 @@
 .Ninja-Revengers {
-   position: absolute;
+  position: absolute;
   }
   
 .container {
@@ -10,7 +10,7 @@
 }
 
 .bg-1{
-  background-image: url(./pic/background-nolight.png);
+  background-image: url(../../images/background-nolight.png);
   width: 100vw;
   height: 100vh;
   background-size: cover;
