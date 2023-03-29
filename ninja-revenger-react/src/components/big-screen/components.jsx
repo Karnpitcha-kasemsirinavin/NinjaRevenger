@@ -1,5 +1,5 @@
 import React from 'react'
-import './big-screen.styles.css'
+import './big-screen.style.css'
 export const BigScreen = () => {
     return (
         <div className="big-screen">

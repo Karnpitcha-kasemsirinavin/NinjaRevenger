@@ -1,8 +1,10 @@
 import './App.css';
 import React from 'react';
 import { useMediaQuery } from 'react-responsive';
+import { useRef } from 'react';  
 
 function App() {
+  const windowSize = useRef([window.innerWidth, window.innerHeight])
 
   const isLaptop = useMediaQuery({
     query: "(min-device-width: 1024px)",
@@ -18,9 +20,10 @@ function App() {
 
   return (
   <div>
+    {/* <h2>Width: {windowSize.current[0]}</h2> */}
+    
     <h1>React Responsive - a guide</h1>      
-    {isDesktop && <Desktop />}
-    {isLaptop && <Laptop />}
+
     {isBigScreen && <BigScreen />}
 
     <div className='Ninja-Revengers'>
