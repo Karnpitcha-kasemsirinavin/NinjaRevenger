@@ -1,0 +1,38 @@
+  .container {
+    background-color: bisque;
+    height: 100vh;
+    display: flex;
+    flex-direction: row;
+    margin: 0 auto;
+  }
+
+  .cam {
+    background-color:darksalmon;
+    height: 100vh -1px;
+    width: 45vw;
+    border: 1px solid black;
+  }
+  .cam .right {
+    margin-left: 5%;
+  }
+  .cam .left {
+    margin-right: 5%;
+  }
+
+  .profile {
+    display: block;
+    height: auto;
+    width: 20%;
+    border: 2px solid white;
+  }
+  .profile .left{
+    margin-top: 10%;
+  }
+  
+  .center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50vh;
+  }
+  
