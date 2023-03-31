@@ -5,7 +5,14 @@
   .p-left40{
     padding-left: 40%;
   }
-  
+
+  .flex-1{
+    flex: 1;
+  }
+  .flex-2{
+    flex: 2;
+  }
+
   /* //components  */
 
   .container {
@@ -30,15 +37,12 @@
     border: 1px solid black;
   }
 
-  .sec-player{
-    height: 25%;
-    width : 100%;
-    background-color: aliceblue;
+  .profile-con {
+    display: inline-block;
+    vertical-align: top;
   }
 
   .profile-left {
-    position: relative;
-    display: block;
     height: auto;
     width: 20%;
     border: 2px solid white;
@@ -56,9 +60,9 @@
   }
   
   .player-detail{
-    position: relative;
     font-size: 15px;
     font-family: "Roboto", sans-serif;
     font-weight: bold;
-    left: 50%;
+    display: inline-block;
   }
+
