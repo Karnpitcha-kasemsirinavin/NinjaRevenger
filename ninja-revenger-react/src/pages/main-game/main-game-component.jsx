@@ -5,13 +5,15 @@ export const MainGame = () => {
 	return (
     <div className='container'>
         <div className='cam-left'>
-            <img
-                className='profile-left'
-                src={require("../../images/user-profile-example.png")}
-                alt="profile-left"
-            />
+            <div className='profile-con'>
+                <img
+                    className='profile-left'
+                    src={require("../../images/user-profile-example.png")}
+                    alt="profile-left"
+                />
+            </div>
             <div className='player-detail'>
-                <p className='username-left'>Natasha Romanoff</p>
+                <p>Natasha Romanoff</p>
             </div>
         </div>
         <div className='cam-right'>
