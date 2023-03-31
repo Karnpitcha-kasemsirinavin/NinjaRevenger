@@ -13,8 +13,8 @@ function App() {
   return (
   <div>
     {/* {<h2>Width: {windowSize.current[0]}</h2>}    */}
-    {/* <BigScreen/> */}
-    <MainGame/>
+    <BigScreen/>
+    {/* <MainGame/> */}
   </div>
   );
 }
