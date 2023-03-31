@@ -1,38 +1,64 @@
+@import url('https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700');
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+  
+  /* //padding   */
+  .p-left40{
+    padding-left: 40%;
+  }
+  
+  /* //components  */
+
   .container {
     background-color: bisque;
     height: 100vh;
+    width: 100vw;
     display: flex;
     flex-direction: row;
     margin: 0 auto;
   }
 
-  .cam {
+  .cam-left{
     background-color:darksalmon;
     height: 100vh -1px;
-    width: 45vw;
+    width: 50vw;
     border: 1px solid black;
   }
-  .cam .right {
-    margin-left: 5%;
-  }
-  .cam .left {
-    margin-right: 5%;
+  .cam-right{
+    background-color:darksalmon;
+    height: 100vh -1px;
+    width: 50vw;
+    border: 1px solid black;
   }
 
-  .profile {
+  .sec-player{
+    height: 25%;
+    width : 100%;
+    background-color: aliceblue;
+  }
+
+  .profile-left {
+    position: relative;
     display: block;
     height: auto;
     width: 20%;
     border: 2px solid white;
+    margin-left: 5%;
+    margin-top: 5%;
   }
-  .profile .left{
-    margin-top: 10%;
-  }
-  
-  .center {
+
+  .profile-right {
     display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 50vh;
+    height: auto;
+    width: 20%;
+    border: 2px solid white;
+    margin-left: 75%;
+    margin-top: 5%;
   }
   
+  .player-detail{
+    position: relative;
+    font-size: 15px;
+    font-family: "Roboto", sans-serif;
+    font-weight: bold;
+    left: 50%;
+  }
