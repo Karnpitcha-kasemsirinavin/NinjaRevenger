@@ -99,3 +99,25 @@
     height: 3vh;
     width: 10vw;
     }
+  
+  .round{
+    position: absolute;
+    height: 10vh;
+    width: 12vw;
+    display: block;
+    left: 44%;
+    top: 10%;
+  }
+
+  .round-num{
+    position: absolute;
+    height: 5vh;
+    width: 1.5vw;
+    display: block;
+    left: 53.5%;
+    top: 12%;
+  }
+
+  .x-button{
+    
+  }
