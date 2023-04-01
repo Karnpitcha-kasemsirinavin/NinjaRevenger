@@ -2,7 +2,7 @@ import React from 'react'
 import './style.css'
 import bg1 from "../../images/background-nolight.png"
 
-export const BigScreen = () => {
+export const Home = () => {
 	return (
 		<div className='container'>
 			<img 
