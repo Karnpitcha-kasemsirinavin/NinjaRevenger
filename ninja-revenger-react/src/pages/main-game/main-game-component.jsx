@@ -21,7 +21,7 @@ export const MainGame = () => {
         <div className='cam-right'>
             <div className='wrapper'>
                 <p className='player-detail-right'>Natasha Romanoff</p>
-                <img className='stars'
+                <img className='stars-r'
                     src={require("../../images/star0.png")}
                     alt='star0'
                 />
