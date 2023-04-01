@@ -1,9 +1,8 @@
 import './App.css';
 import React from 'react';
-import { useMediaQuery } from 'react-responsive';
 import { useRef } from 'react';  
-import { BigScreen } from "./pages/Home/components.jsx";
 import { MainGame } from'./pages/main-game/main-game-component.jsx'
+import { BigScreen } from './pages/Home/components.jsx';
 
 
 
