@@ -4,6 +4,18 @@ import './style.css'
 export const MainGame = () => {
     return (
     <div className='container'>
+        <div className='wrapper'>
+            <img
+                className='round'
+                src={require("../../images/round-img.png")}
+                alt='roundbg'
+            />
+            <img
+                className='round-num'
+                src={require("../../images/round7.png")}
+                alt='round7'
+            />
+        </div>
         <div className='cam-left'>
             <div className='wrapper'>
                 <img
