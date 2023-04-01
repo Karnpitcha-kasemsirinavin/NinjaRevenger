@@ -41,7 +41,7 @@
 }
 
 .ninja-menu{
-  position: absolute;
+  position: absolute; /* position the ninja-menu element */
   width: 12vw;
   height: 26vh;
   top: 57%;

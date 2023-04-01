@@ -3,10 +3,6 @@ import './style.css'
 import bg1 from "../../images/background-nolight.png"
 
 export const BigScreen = () => {
-	function toMain() {
-		alert("hello");
-	}
-	
 	return (
 		<div className='container'>
 			<img 
