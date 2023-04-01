@@ -2,7 +2,7 @@ import React from 'react'
 import './style.css'
 import bg1 from "../../images/background-nolight.png"
 
-export const BigScreen = () => {
+export const Home = () => {
 	return (
 		<div className='container'>
 			<img 
@@ -37,7 +37,7 @@ export const BigScreen = () => {
 			/>
 			<div className='button-container'>
 				<button class="start-bt1">Play with Friend</button>
-				<button class="start-bt2" onClick={toMain}>Play with Stranger</button>
+				<button class="start-bt2">Play with Stranger</button>
 				<button class="exit-bt1">Exit</button>
 			</div>
 		</div>
