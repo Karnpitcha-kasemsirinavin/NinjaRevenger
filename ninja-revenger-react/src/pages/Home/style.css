@@ -1,8 +1,17 @@
 .container {
   display: flex;
-  /* height: 100vh; */
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: flex-end;
   margin: 0 auto;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 20px;
+  padding-right: 80px;
+  padding-bottom: 30px;
 }
 
 .bg-1{
@@ -60,34 +69,41 @@
 }
 
 .start-bt1{
-  position: absolute;
+  position: relative;
+  background-color: rgb(73, 73, 73);
+  color: rgb(62, 55, 55);
+  font-size: 1rem;
+  padding: 10px 60px;
+  border-radius: 5px;
+  cursor: pointer;
+  height: 8rem;
+  width: 23rem;
+  z-index: 5;
+}
+
+.start-bt2{
+  position: relative;
   background-color: rgb(73, 73, 73);
   color: rgb(62, 55, 55);
   font-size: 20px;
   padding: 10px 60px;
   border-radius: 5px;
-  margin: 10px 0px;
   cursor: pointer;
-  height: 82px;
-  width: 250px;
+  height: 8rem;
+  width: 23rem;
   z-index: 5;
-  top: 60%;
-  left: 80%;
 }
 
 .exit-bt1{
-  position: absolute;
+  position: relative;
   background-color: rgb(73, 73, 73);
   color: white;
   font-size: 20px;
   padding: 10px 60px;
   border-radius: 5px;
-  margin: 10px 0px;
   cursor: pointer;
-  height: 82px;
-  width: 250px;
+  height: 8rem;
+  width: 23rem;
   z-index: 5;
-  top: 75%;
-  left: 80%;
   margin: 0 auto;
 }

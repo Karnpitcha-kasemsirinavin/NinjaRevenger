@@ -35,9 +35,11 @@ export const BigScreen = () => {
 				src={require("../../images/ninja-title.png")}
 				alt="title"
 			/>
-			<button class="start-bt1">Play with Friend</button>
-			<button class="start-bt2">Play with Stranger</button>
-			<button class="exit-bt1">Exit</button>
+			<div className='button-container'>
+				<button class="start-bt1">Play with Friend</button>
+				<button class="start-bt2">Play with Stranger</button>
+				<button class="exit-bt1">Exit</button>
+			</div>
 		</div>
 	)
 }
