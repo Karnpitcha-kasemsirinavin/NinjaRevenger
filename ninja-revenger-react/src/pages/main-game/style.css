@@ -1,7 +1,7 @@
-@import url('https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700');
-@import url('https://fonts.googleapis.com/css?family=Roboto');
-  
-  /* //padding   */
+@import url('https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700%27';);
+@import url('https://fonts.googleapis.com/css?family=Roboto%27');
+
+  /* padding */
   .p-left40{
     padding-left: 40%;
   }
@@ -12,14 +12,13 @@
   .flex-2{
     flex: 2;
   }
-
+  
   .wrapper {
     display: flex;
     align-items: center;
   }
 
-  /* //components  */
-
+  /* components */
   .container {
     background-color: bisque;
     height: 100vh;
@@ -31,13 +30,13 @@
 
   .cam-left{
     background-color:darksalmon;
-    height: 100vh -1px;
+    height: 50vh -1px;
     width: 50vw;
     border: 1px solid black;
   }
   .cam-right{
     background-color:darksalmon;
-    height: 100vh -1px;
+    height: 50vh -1px;
     width: 50vw;
     border: 1px solid black;
   }
@@ -51,20 +50,47 @@
   }
 
   .profile-right {
-    display: block;
     height: auto;
     width: 10vw;
     border: 2px solid white;
     margin-left: 37vw;
     margin-top: 5vh;
   }
-  
-  .player-detail{
+
+  .player-detail-left{
+    position: absolute;
+    font-size: 20px;
+    font-family: "Roboto", sans-serif;
+    font-weight: bold;
+    display: inline-block;
+    left: 15%;
+    top: 5%;
+  }
+
+  .player-detail-right{
+    position: absolute;
     font-size: 2vh;
     font-family: "Roboto", sans-serif;
     font-weight: bold;
     display: inline-block;
-    padding-left: 2vw;
-    margin-top: -12vh;
+    left: 76%;
+    top: 5%;
   }
 
+  .stars-l{
+    position: absolute;
+    display: inline-block;
+    left: 15%;
+    top: 10%;
+    height: 3vh;
+    width: 10vw;
+    }
+
+  .stars-r{
+    position: absolute;
+    display: inline-block;
+    left: 15%;
+    top: 10%;
+    height: 3vh;
+    width: 10vw;
+    }

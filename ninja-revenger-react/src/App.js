@@ -2,6 +2,7 @@ import './App.css';
 import React from 'react';
 import { useRef } from 'react';  
 import { MainGame } from'./pages/main-game/main-game-component.jsx'
+import { BigScreen } from './pages/Home/components.jsx';
 
 
 
