@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700%27';);
+@import url('https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700%27');
 @import url('https://fonts.googleapis.com/css?family=Roboto%27');
 
   /* padding */
@@ -30,13 +30,13 @@
 
   .cam-left{
     background-color:darksalmon;
-    height: 50vh -1px;
+    height: 100vh -1px;
     width: 50vw;
     border: 1px solid black;
   }
   .cam-right{
     background-color:darksalmon;
-    height: 50vh -1px;
+    height: 100vh -1px;
     width: 50vw;
     border: 1px solid black;
   }
