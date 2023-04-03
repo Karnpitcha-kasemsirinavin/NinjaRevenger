@@ -1,0 +1,62 @@
+.background-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-color: black;
+  }
+  .background-animation {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background: none;
+    background-image: url("../..//images/shuriken 9.png");
+    -webkit-animation: snowy 9s linear infinite;
+    -moz-animation: snowy 9s linear infinite;
+    -o-animation: snowy 9s linear infinite;
+    -ms-animation: snowy 9s linear infinite;
+    animation: snowy 9s linear infinite;
+  }
+  @-moz-keyframes snowy {
+    0% {
+      background-position: 0px 0px, 0px 0px, 0px 0px;
+    }
+    75% {
+      background-position: 325px 750px, 275px 600px, -5px 150px;
+    }
+    100% {
+      background-position: 500px 1000px, 400px 800px, 0px 300px;
+    }
+  }
+  @-webkit-keyframes snowy {
+    0% {
+      background-position: 0px 0px, 0px 0px, 0px 0px;
+    }
+    75% {
+      background-position: 325px 750px, 275px 600px, -5px 150px;
+    }
+    100% {
+      background-position: 500px 1000px, 400px 800px, 0px 300px;
+    }
+  }
+  @-o-keyframes snowy {
+    0% {
+      background-position: 0px 0px, 0px 0px, 0px 0px;
+    }
+    75% {
+      background-position: 325px 750px, 275px 600px, -5px 150px;
+    }
+    100% {
+      background-position: 500px 1000px, 400px 800px, 0px 300px;
+    }
+  }
+  @keyframes snowy {
+    0% {
+      background-position: 0px 0px, 0px 0px, 0px 0px;
+    }
+    75% {
+      background-position: 325px 750px, 275px 600px, -5px 150px;
+    }
+    100% {
+      background-position: 500px 1000px, 400px 800px, 0px 300px;
+    }
+  }

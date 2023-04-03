@@ -1,8 +1,9 @@
 import './App.css';
 import React from 'react';
 // import { useRef } from 'react';  
-import { MainGame } from'./pages/main-game/main-game-component.jsx'
+import { MainGame } from'./pages/main-game/main-game-component.jsx';
 import { Home } from './pages/Home/components.jsx';
+import { JoinFriend } from './pages/JoinFriend/join-friend-components.jsx';
 
 
 
@@ -13,7 +14,8 @@ function App() {
   <div>
     {/* {<h2>Width: {windowSize.current[0]}</h2>}    */}
     {/* <Home/> */}
-    <MainGame/>
+    {/* <MainGame/> */}
+    <JoinFriend/>
   </div>
   );
 }
