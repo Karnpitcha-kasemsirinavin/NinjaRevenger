@@ -1,5 +1,6 @@
 import React from 'react'
 import './style.css'
+import '../../Components/Button/index.jsx'
 
 export const MainGame = () => {
     return (
@@ -27,7 +28,12 @@ export const MainGame = () => {
                 <img className='stars-l'
                     src={require("../../images/star0.png")}
                     alt='star0'
-                    />
+                />
+                <img
+                    className='combo-left'
+                    src={require("../..//images/combo3.png")}
+                    alt='combo3'
+                />
             </div>
         </div>
         <div className='cam-right'>
@@ -41,6 +47,11 @@ export const MainGame = () => {
                     className='profile-right'
                     src={require("../..//images/user-profile2-example.jpg")}
                     alt="profile-right"
+                />
+                <img
+                    className='combo-right'
+                    src={require("../..//images/combo2.png")}
+                    alt='combo2'
                 />
             </div>
         </div>
