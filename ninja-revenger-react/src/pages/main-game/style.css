@@ -26,6 +26,7 @@
     display: flex;
     flex-direction: row;
     margin: 0 auto;
+    justify-content: flex-end;
   }
 
   .cam-left{
@@ -42,34 +43,38 @@
   }
 
   .profile-left {
-    height: auto;
-    width: 10vw;
+    position: absolute;
+    height: 18vh;
+    width: 8.5vw;
     border: 2px solid white;
-    margin-left: 3vw;
-    margin-top: 5vh;
+    margin-left: 2.5vw;
+    margin-top: 30vh;
   }
 
   .profile-right {
-    height: auto;
-    width: 10vw;
+    position: absolute;
+    height: 18vh;
+    width: 8.5vw;
     border: 2px solid white;
-    margin-left: 37vw;
-    margin-top: 5vh;
+    margin-left: 38.5vw;
+    margin-top: 30vh;
   }
 
   .player-detail-left{
     position: absolute;
-    font-size: 20px;
+    width: 20vmin;
+    font-size: 2vmin;
     font-family: "Roboto", sans-serif;
     font-weight: bold;
     display: inline-block;
-    left: 15%;
+    left: 14%;
     top: 5%;
   }
 
   .player-detail-right{
     position: absolute;
-    font-size: 2vh;
+    width: 20vmin;
+    font-size: 2vmin;
     font-family: "Roboto", sans-serif;
     font-weight: bold;
     display: inline-block;
@@ -80,7 +85,7 @@
   .stars-l{
     position: absolute;
     display: inline-block;
-    left: 15%;
+    left: 13.75%;
     top: 10%;
     height: 3vh;
     width: 10vw;
@@ -89,8 +94,44 @@
   .stars-r{
     position: absolute;
     display: inline-block;
-    left: 15%;
+    left: 76%;
     top: 10%;
     height: 3vh;
     width: 10vw;
     }
+  
+  .round{
+    position: absolute;
+    height: 10vh;
+    width: 12vw;
+    display: block;
+    left: 44%;
+    top: 10%;
+  }
+
+  .round-num{
+    position: absolute;
+    height: 5vh;
+    width: 1.5vw;
+    display: block;
+    left: 53.5%;
+    top: 12%;
+  }
+
+  .combo-left{
+    position: absolute;
+    height: 8vh;
+    width: 10vw;
+    display: inline-block;
+    left: 2.5%;
+    top: 27%
+  }
+  
+  .combo-right{
+    position: absolute;
+    height: 5vh;
+    width: 10vw;
+    display: inline-block;
+    left: 87.25%;
+    top: 27%
+  }
