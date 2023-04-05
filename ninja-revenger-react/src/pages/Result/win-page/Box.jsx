@@ -2,8 +2,13 @@ import React from "react";
 import Button from "../../components/Button/Button";
 import "./style.css";
 
-import lightImage from "../../image/cloud.png";
-import smallImage from "../../image/loser.png";
+import backgroundImage from "../../images/lose.jpg";
+import lightImage from "../../images/light.png";
+import smallImage from "../../images/winner.png";
+
+const bg = {
+  backgroundImage: `url(${backgroundImage})`,
+};
 
 function Score(props) {
   return <p className="sc">{props.score}</p>;
@@ -11,7 +16,7 @@ function Score(props) {
 
 function Box() {
   return (
-    <div className="bg">
+    <div style={bg} className="bg">
       <div className="img-box">
         <img src={lightImage} className="img" />
       </div>

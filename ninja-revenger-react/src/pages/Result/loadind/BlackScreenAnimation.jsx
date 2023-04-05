@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./BlackScreenAnimation.css";
-import star from "../../image/shuriken.png";
-import ninja from "../../image/ninja.png";
+import star from "../../images/shuriken.png";
+import ninja from "../../images/ninja1.png";
 
 function BlackScreenAnimation() {
   return (
