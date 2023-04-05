@@ -13,9 +13,9 @@ function App() {
   return (
   <div>
     {/* {<h2>Width: {windowSize.current[0]}</h2>}    */}
-    {/* <Home/> */}
+    <Home/>
     {/* <MainGame/> */}
-    <JoinFriend/>
+    {/* <JoinFriend/> */}
   </div>
   );
 }
