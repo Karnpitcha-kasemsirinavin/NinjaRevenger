@@ -1,6 +1,7 @@
-import React from 'react'
-import './style.css'
-import bg1 from "../../images/background-nolight.png"
+import React from 'react';
+import Button from '../../Components/Button';
+import './style.css';
+import bg1 from "../../images/background-nolight.png";
 
 export const Home = () => {
 	return (
@@ -36,9 +37,9 @@ export const Home = () => {
 				alt="title"
 			/>
 			<div className='button-container'>
-				<button class="start-bt1">Play with Friend</button>
-				<button class="start-bt2">Play with Stranger</button>
-				<button class="exit-bt1">Exit</button>
+				<Button name='Play with Friend'/>
+				<Button name='Play with Stranger'/>
+				<Button name='Exit'/>
 			</div>
 		</div>
 	)

@@ -80,30 +80,3 @@
   width: 23rem;
   z-index: 5;
 }
-
-.start-bt2{
-  position: relative;
-  background-color: rgb(73, 73, 73);
-  color: rgb(62, 55, 55);
-  font-size: 20px;
-  padding: 10px 60px;
-  border-radius: 5px;
-  cursor: pointer;
-  height: 8rem;
-  width: 23rem;
-  z-index: 5;
-}
-
-.exit-bt1{
-  position: relative;
-  background-color: rgb(73, 73, 73);
-  color: white;
-  font-size: 20px;
-  padding: 10px 60px;
-  border-radius: 5px;
-  cursor: pointer;
-  height: 8rem;
-  width: 23rem;
-  z-index: 5;
-  margin: 0 auto;
-}
