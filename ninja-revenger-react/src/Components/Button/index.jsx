@@ -1,19 +1,20 @@
 import styles from "./style.module.css";
+import { useContext } from "react";
+import { SocketContext } from "../../Context/SocketThing";
 
 // , type 
 const Button = ({ name}) => {
-  // const { socket, navigate } = useContext(SocketContext);
+  const { socket, navigate } = useContext(SocketContext);
 
-  // const handleChange = (type) => {
-  //   socket.emit("room:create", { type }, (err, roomId) => {
-  //     navigate(`/room/${roomId}`);
-  //   });
-  // };
-
-  // onClick={() => handleChange(type)}
+  // handle change depend on the type of the room
+  const handleChange = (type) => {
+    socket.emit("room:create", { type }, (err, roomId) => {
+      navigate(`/room/${roomId}`);
+    });
+  };
 
   return (
-    <button className={styles.btn}>
+    <button className={styles.btn} onClick={() => handleChange(type)}>
       {name}
     </button>
   );

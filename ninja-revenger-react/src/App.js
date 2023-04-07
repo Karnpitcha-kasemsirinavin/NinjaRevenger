@@ -13,7 +13,8 @@ function App() {
   return (
   <div>
     {/* {<h2>Width: {windowSize.current[0]}</h2>}    */}
-    <Home/>
+    <Route path="/" element={<Home />} />
+    <Route path="/room/:id" element={<JoinFriend />} />
     {/* <MainGame/> */}
     {/* <JoinFriend/> */}
   </div>
