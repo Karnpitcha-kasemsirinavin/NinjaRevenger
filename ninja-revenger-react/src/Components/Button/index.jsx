@@ -6,7 +6,7 @@ import { SocketContext } from "../../Context/SocketThing";
 const Button = ({ name}) => {
   const { socket, navigate } = useContext(SocketContext);
 
-  // handle change depend on the type of the room
+  // handle change depend on the type of the room (link with server)
   const handleChange = (type) => {
     socket.emit("room:create", { type }, (err, roomId) => {
       navigate(`/room/${roomId}`);
