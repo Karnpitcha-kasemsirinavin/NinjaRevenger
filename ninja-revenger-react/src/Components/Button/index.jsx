@@ -3,18 +3,18 @@ import { useContext } from "react";
 import { SocketContext } from "../../Context/SocketThing";
 
 // , type 
-const Button = ({ name}) => {
+const Button = ({name, type}) => {
   const { socket, navigate } = useContext(SocketContext);
 
   // handle change depend on the type of the room (link with server)
-  // const handleChange = (type) => {
-  //   socket.emit("room:create", { type }, (err, roomId) => {
-  //     navigate(`/room/${roomId}`);
-  //   });
-  // };
+  const handleChange = (type) => {
+    socket.emit("room:create", { type }, (err, roomId) => {
+      navigate(`/room/${roomId}`);
+    });
+  };
 
   return (
-    <button className={styles.btn}>
+    <button className={styles.btn} onClick={() => handleChange(type)}>
       {name}
     </button>
   );
