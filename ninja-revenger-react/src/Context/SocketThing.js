@@ -3,7 +3,7 @@ import { useEffect, useState, createContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 // "undefined" means the URL will be computed from the `window.location` object
-const URL = process.env.NODE_ENV === 'production' ? undefined : 'http://localhost:4000';
+// const URL = process.env.NODE_ENV === 'production' ? undefined : 'https://nostalgic-dream-93159.pktriot.net';
 
 const SocketContext = createContext();
 
@@ -16,8 +16,10 @@ const SocketContextProvider = ({ children }) => {
   const location = useLocation();
 
   useEffect(() => {
-    const socket = io(URL);
+    const socket = io('https://nostalgic-dream-93159.pktriot.net');
     setSocket(socket);
+
+    console.log()
 
     // for create room
     socket.on("room:get", (payload) => {
