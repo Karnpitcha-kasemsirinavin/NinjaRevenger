@@ -2,8 +2,14 @@ import React from 'react'
 import ExitButton from '../../Components/Exit_Button'
 import './style.css'
 import '../../Components/Button/index.jsx'
+import { SocketContext } from "../../Context/SocketThing";
+import { useContext } from "react";
 
 export const MainGame = () => {
+  const { socket, navigate , room} = useContext(SocketContext);
+
+  console.log(room)
+
   return (
   <div className='container'>
     <div className='wrapper'>
