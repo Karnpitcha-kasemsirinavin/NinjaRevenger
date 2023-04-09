@@ -16,7 +16,8 @@ const App = () => {
     {/* {<h2>Width: {windowSize.current[0]}</h2>}    */}
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/room/:id" element={<JoinFriend />} />
+      <Route path="/joinlink" element={<JoinFriend />} />
+      <Route path="/room/:id" element={<MainGame />} />
     </Routes>
     {/* <MainGame/> */}
     {/* <JoinFriend/> */}
