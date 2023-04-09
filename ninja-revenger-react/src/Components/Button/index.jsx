@@ -2,7 +2,8 @@ import styles from "./style.module.css";
 import { useContext } from "react";
 import { SocketContext } from "../../Context/SocketThing";
 
-const Button = ({ name, type}) => {
+// , type 
+const Button = ({ name}) => {
   const { socket, navigate } = useContext(SocketContext);
 
   // handle change depend on the type of the room (link with server)

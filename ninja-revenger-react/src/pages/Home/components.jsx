@@ -37,8 +37,8 @@ export const Home = () => {
 				alt="title"
 			/>
 			<div className='button-container'>
-				<Button name='Play with Friend'/>
-				<Button name='Play with Stranger'/>
+				<Button name='Play with Friend' type="friend"/>
+				<Button name='Play with Stranger' type="stranger"/>
 				<Button name='Exit'/>
 			</div>
 		</div>
