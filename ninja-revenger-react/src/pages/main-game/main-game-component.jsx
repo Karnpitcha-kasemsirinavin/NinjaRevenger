@@ -1,14 +1,27 @@
-import React from 'react'
+import { useEffect, useContext, useState } from 'react'
 import ExitButton from '../../Components/Exit_Button'
 import './style.css'
 import '../../Components/Button/index.jsx'
 import { SocketContext } from "../../Context/SocketThing";
-import { useContext } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export const MainGame = () => {
-  const { socket, navigate , room} = useContext(SocketContext);
+  const { socket, room, player_1, player_2 } = useContext(SocketContext);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   console.log(room)
+
+  useEffect(() => {
+    let roomId = location.pathname.split("/")[2];
+    let size = Object.keys(socket).length;
+
+    if (size > 0) {
+      socket.emit("room:join", { roomId }, (err, room) => {
+        if (err) navigate("/");
+      });
+    }
+  }, [socket]);
 
   return (
   <div className='container'>

@@ -16,6 +16,7 @@ export const JoinFriend = () => {
         // Get input value from "linkID"
         
         setroomId(roomId.target.value);
+        console.log('change')
 
       };
 
@@ -29,8 +30,14 @@ export const JoinFriend = () => {
 
     };
 
-    socket.on("error", (err) => {
-        setWarning(err);
+    socket.on("errorMsg", (index) => {
+
+        if (index < 0){
+            setWarning("THERE IS NO ROOM WITH THAT CODE!\n PLEASE ENTER NEW CODE.");
+        } else if (index >= 0){
+            setWarning("");
+            navigate(`/room/${roomId}`);
+        }
         console.log("warn ", warning)
     })
 
