@@ -10,7 +10,7 @@ const Button = ({name, type}) => {
   const handleChange = (type) => {
     socket.emit("room:create", { type }, (err, roomId) => {
     if (type === 'stranger'){
-      navigate(`/room/่${roomId}`);
+      navigate(`/room/${roomId}`);
     } else if (type === 'friend'){
       navigate(`/joinlink`);
     }   

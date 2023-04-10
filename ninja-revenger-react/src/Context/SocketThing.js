@@ -35,6 +35,8 @@ const SocketContextProvider = ({ children }) => {
         setPlayer_2(play_1);
       }
 
+      console.log(payload.players);
+
     });
   }, []);
 
