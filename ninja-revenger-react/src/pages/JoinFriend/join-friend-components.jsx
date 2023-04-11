@@ -24,8 +24,6 @@ export const JoinFriend = () => {
 
             
         socket.emit("room:check" ,{roomId}, (err) => {
-            if (err) {
-            }
         });
 
     };
@@ -35,10 +33,10 @@ export const JoinFriend = () => {
         if (index < 0){
             setWarning("THERE IS NO ROOM WITH THAT CODE!\n PLEASE ENTER NEW CODE.");
         } else if (index >= 0){
+            
             setWarning("");
             navigate(`/room/${roomId}`);
         }
-        console.log("warn ", warning)
     })
 
 
