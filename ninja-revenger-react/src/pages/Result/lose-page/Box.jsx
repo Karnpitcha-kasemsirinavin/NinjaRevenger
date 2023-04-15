@@ -1,15 +1,15 @@
 import React from "react";
-import Button from "../../../Components/Button";
-import "./style.module.css";
+import Button from "../../components/Button/Button";
+import "./style.css";
 
-import lightImage from "../../../images/background-nolight.png";
-import smallImage from "../../../images/loser.png";
+import lightImage from "../../images/background-nolight.png";
+import smallImage from "../../images/loser.png";
 
-export default function Score(props) {
+function Score(props) {
   return <p className="sc">{props.score}</p>;
 }
 
-export const Box = () => {
+function Box() {
   return (
     <div className="bg">
       <div className="img-box">
@@ -24,3 +24,5 @@ export const Box = () => {
     </div>
   );
 }
+
+export default Box;
