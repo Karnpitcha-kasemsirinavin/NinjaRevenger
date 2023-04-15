@@ -4,6 +4,8 @@ import React from 'react';
 import { Home } from './pages/Home/components.jsx';
 import { MainGame } from'./pages/main-game/main-game-component.jsx';
 import { JoinFriend } from './pages/JoinFriend/join-friend-components.jsx';
+import {LoadingPage} from './pages/Result/loading/index.jsx'
+import {Box} from './pages/Result/lose-page'
 import Room from "./pages/JoinFriend/join-friend-components";
 import { Routes, Route } from "react-router-dom";
 

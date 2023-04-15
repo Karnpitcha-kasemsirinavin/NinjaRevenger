@@ -18,7 +18,7 @@ const Button = ({name, type}) => {
   };
 
   // const handleChange = (type) => {
-   
+  
 
   //   if (type === 'stranger'){
   //     socket.emit("room:create", { type }, (err, roomId) => {

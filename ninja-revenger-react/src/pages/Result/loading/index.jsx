@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import "./BlackScreenAnimation.css";
-import star from "../../images/shuriken.png";
-import ninja from "../../images/ninja1.png";
+import "./style.css";
+import star from "../../../images/shuriken.png";
+import ninja from "../../../images/ninja-1.png";
 
-function BlackScreenAnimation() {
+export const LoadingPage = () => {
   return (
     <div className="black-screen">
       <div className="square">
@@ -14,6 +14,5 @@ function BlackScreenAnimation() {
       </div>
     </div>
   );
-}
+};
 
-export default BlackScreenAnimation;
