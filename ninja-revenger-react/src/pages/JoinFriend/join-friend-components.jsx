@@ -5,10 +5,12 @@ import { SocketContext } from "../../Context/SocketThing";
 import { Link, useNavigate } from 'react-router-dom';
 
 export const JoinFriend = () => {
-    const { socket, navigate , room, rooms} = useContext(SocketContext);
+    const { socket, navigate , room, rooms, player_1} = useContext(SocketContext);
     const [roomId, setroomId] = useState(room.roomId);
     const [warning, setWarning] = useState('');
+    const oriRoomId = room.roomId;
 
+    // const player_1 = Object.keys(room.players)[0]
 
     // console.log(roomId)
 
@@ -22,22 +24,28 @@ export const JoinFriend = () => {
 
     const joinRoom = (socket) => {
 
-            
-        socket.emit("room:check" ,{roomId}, (err) => {
-        });
+        socket.emit("room:check" , { roomId } , () => {});
+        socket.on("errorMsg", (index) => {
+
+            if (index < 0){
+                setWarning("THERE IS NO ROOM WITH THAT CODE!\n PLEASE ENTER NEW CODE.");
+            } else if (index >= 0){
+                
+                let size = Object.keys(socket).length;
+
+                setWarning("");
+                if (size > 0) {
+                    socket.emit("room:join", { roomId }, (err, room) => {
+                    if (err) navigate("/");
+                  });
+                }
+                  
+                socket.emit("room:destroy" , { roomId, oriRoomId, player_1 } , () => {});
+                navigate(`/room/${roomId}`);
+            }
+        })
 
     };
-
-    socket.on("errorMsg", (index) => {
-
-        if (index < 0){
-            setWarning("THERE IS NO ROOM WITH THAT CODE!\n PLEASE ENTER NEW CODE.");
-        } else if (index >= 0){
-            
-            setWarning("");
-            navigate(`/room/${roomId}`);
-        }
-    })
 
 
         

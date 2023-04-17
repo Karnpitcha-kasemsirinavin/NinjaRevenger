@@ -10,13 +10,12 @@ export const MainGame = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  console.log(room)
-
   useEffect(() => {
     let roomId = location.pathname.split("/")[2];
     let size = Object.keys(socket).length;
 
-    if (size > 0) {
+
+    if (size > 0 && room.type == 'stranger') {
       socket.emit("room:join", { roomId }, (err, room) => {
         if (err) navigate("/");
       });

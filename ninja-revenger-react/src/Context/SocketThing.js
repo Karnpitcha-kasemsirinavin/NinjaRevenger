@@ -21,7 +21,6 @@ const SocketContextProvider = ({ children }) => {
 
     console.log()
 
-    // for create room
     socket.on("room:get", (payload) => {
       setRoom(payload);
       let play_1 = Object.keys(payload.players)[0];

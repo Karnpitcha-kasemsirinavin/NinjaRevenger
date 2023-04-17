@@ -1,9 +1,9 @@
 import React from "react";
-import Button from "../../components/Button/Button";
+import Button from "../../../Components/Button/index.jsx";
 import "./style.css";
 
-import lightImage from "../../images/background-nolight.png";
-import smallImage from "../../images/loser.png";
+import lightImage from "../../../images/background-nolight.png";
+import smallImage from "../../../images/loser.png";
 
 function Score(props) {
   return <p className="sc">{props.score}</p>;
