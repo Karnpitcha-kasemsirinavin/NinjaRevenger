@@ -4,26 +4,14 @@
   box-sizing: border-box;
 }
 
-html {
-  font-size: 62.5%;
-  overflow-x: hidden;
-  font-size: 2.4rem;
-}
-
 .bg {
   background-color: #000000;
   background-size: cover;
-  display: flex;
+  display: grid;
   align-items: start;
   justify-content: center;
-  height: 100vh;
-}
-
-.container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
+  height: 100%;
+  width: 100%;
 }
 
 .sc {
@@ -32,19 +20,21 @@ html {
 }
 
 .img {
-  height: 50vh;
-}
-
-.img-box {
   position: absolute;
+  height: 100%;
+  width: 100%;
 }
 
-.small-img {
+.small_img {
   height: 16vh;
 }
 
 .box {
   margin-top: 25%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
   text-align: center;
   align-items: center;
   position: relative;

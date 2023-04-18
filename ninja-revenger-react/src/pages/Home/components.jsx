@@ -1,5 +1,5 @@
 import React from 'react';
-import Button from '../../Components/Button';
+import Button from '../../Components/Button/index.jsx';
 import './style.css';
 import bg1 from "../../images/background-nolight.png";
 
