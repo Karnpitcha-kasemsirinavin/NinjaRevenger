@@ -12,9 +12,7 @@ export const MainGame = () => {
   
   const [partnerId, setPartnerId] = useState('')
   const [stream, setStream] = useState()
-  // const [remoteStream, setRemoteStream] = useState()
   const [connected, setConnected] = useState(false)
-  // const [answered, setAnswered] = useState(false)
 
   const userVideo = useRef()
   const partnerVideo = useRef()
@@ -23,7 +21,7 @@ export const MainGame = () => {
     let roomId = location.pathname.split("/")[2];
     let size = Object.keys(socket).length;
 
-
+    // if stranger then join room
     if (size > 0 && room.type == 'stranger') {
       socket.emit("room:join", { roomId }, (err, room) => {
         if (err) navigate("/");
@@ -55,6 +53,8 @@ export const MainGame = () => {
   }
 
   useEffect(() => {
+
+    // user video
     var getUserMedia = navigator.getUserMedia
     getUserMedia({ video: true }, stream => {
       userVideo.current.srcObject = stream;
@@ -62,6 +62,7 @@ export const MainGame = () => {
       setStream(stream)
     })
 
+    // connect to player 2 by id
     socket.on('id', data => {
 
       console.log('pass1')      
@@ -69,11 +70,13 @@ export const MainGame = () => {
       setPartnerId(data.id)
     })
 
+    // connected
     peer.on('connection', () => {
       console.log('connected');
       setConnected(true)
     });
 
+    // get plyer 2 video
     peer.on('call', call => {
 
       getUserMedia({ video: true }, stream => {
@@ -90,7 +93,7 @@ export const MainGame = () => {
     
   }, []);
 
-
+  // make streams into video element
   let UserVideo;
   UserVideo = (
     <video ref={userVideo} autoPlay/>
