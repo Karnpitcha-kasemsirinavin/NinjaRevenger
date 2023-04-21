@@ -4,12 +4,14 @@
   box-sizing: border-box;
 }
 
-.bg {
-  background-color: #000000;
-  background-size: cover;
+.mainCanvas{
   display: grid;
-  align-items: start;
-  justify-content: center;
+  grid-template-columns: 2fr 1fr 2fr;
+}
+
+.bg {
+  position: absolute;
+  background-size: cover;
   height: 100%;
   width: 100%;
 }
@@ -21,8 +23,10 @@
 
 .img {
   position: absolute;
-  /* height: 100%; */
-  /* width: 100%; */
+  background-size: cover;
+  height: 100%;
+  width: 100%;
+  z-index: 1;
 }
 
 .small_img {
@@ -30,6 +34,8 @@
 }
 
 .box {
+  grid-column-start: 2;
+  grid-column-end: 3;
   margin-top: 25%;
   position: relative;
   display: flex;
@@ -41,4 +47,5 @@
   background-color: rgba(244, 192, 95, 0.6);
   border-radius: 1rem;
   padding: 1.2rem;
+  z-index: 5;
 }

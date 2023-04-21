@@ -6,17 +6,15 @@ import backgroundImage from "../../images/lose.jpg";
 import lightImage from "../../images/light.png";
 import smallImage from "../../images/winner.png";
 
-const bg = {
-  backgroundImage: `url(${backgroundImage})`,
-};
-
 function Score(props) {
   return <p className={styles.sc}>{props.score}</p>;
 }
 
 function Box() {
   return (
-    <div style={bg} className={styles.bg}>
+    <>
+    <div className={styles.mainCanvas}>
+      <img src={backgroundImage} className={styles.bg} alt={backgroundImage} />
       <img src={lightImage} className={styles.img} />
       <div className={styles.box}>
         <img src={smallImage} className={styles.small_img} />
@@ -25,6 +23,7 @@ function Box() {
         <Button name='return' type='return'/>
       </div>
     </div>
+    </>
   );
 }
 
