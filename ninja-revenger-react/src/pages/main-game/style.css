@@ -49,6 +49,7 @@
     border: 2px solid white;
     margin-left: 2.5vw;
     margin-top: 30vh;
+    z-index: 1;
   }
 
   .profile-right {
@@ -58,6 +59,7 @@
     border: 2px solid white;
     margin-left: 38.5vw;
     margin-top: 30vh;
+    z-index: 1;
   }
 
   .player-detail-left{
@@ -69,6 +71,7 @@
     display: inline-block;
     left: 14%;
     top: 5%;
+    z-index: 1;
   }
 
   .player-detail-right{
@@ -80,6 +83,7 @@
     display: inline-block;
     left: 76%;
     top: 5%;
+    z-index: 1;
   }
 
   .stars-l{
@@ -89,6 +93,7 @@
     top: 10%;
     height: 3vh;
     width: 10vw;
+    z-index: 1;
     }
 
   .stars-r{
@@ -98,6 +103,7 @@
     top: 10%;
     height: 3vh;
     width: 10vw;
+    z-index: 1;
     }
   
   .round{
@@ -107,6 +113,7 @@
     display: block;
     left: 44%;
     top: 10%;
+    z-index: 1;
   }
 
   .round-num{
@@ -116,6 +123,7 @@
     display: block;
     left: 53.5%;
     top: 12%;
+    z-index: 1;
   }
 
   .combo-left{
@@ -124,7 +132,8 @@
     width: 10vw;
     display: inline-block;
     left: 2.5%;
-    top: 27%
+    top: 27%;
+    z-index: 1;
   }
   
   .combo-right{
@@ -133,5 +142,13 @@
     width: 10vw;
     display: inline-block;
     left: 87.25%;
-    top: 27%
+    top: 27%;
+    z-index: 1;
+  }
+
+  video {
+    border: 1px solid white;
+    width: 50%;
+    transform: rotateY(180deg);
+    z-index: 0;
   }

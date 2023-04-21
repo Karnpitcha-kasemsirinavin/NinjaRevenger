@@ -1,4 +1,4 @@
-import { useEffect, useContext, useState } from 'react'
+import { useEffect, useContext, useState, useRef } from 'react'
 import ExitButton from '../../Components/Exit_Button'
 import './style.css'
 import '../../Components/Button/index.jsx'
@@ -6,24 +6,106 @@ import { SocketContext } from "../../Context/SocketThing";
 import { useNavigate, useLocation } from "react-router-dom";
 
 export const MainGame = () => {
-  const { socket, room, player_1, player_2 } = useContext(SocketContext);
+  const { socket, room, player_1, player_2, peer } = useContext(SocketContext);
   const navigate = useNavigate();
   const location = useLocation();
+  
+  const [partnerId, setPartnerId] = useState('')
+  const [stream, setStream] = useState()
+  const [connected, setConnected] = useState(false)
 
-  console.log(room)
+  const userVideo = useRef()
+  const partnerVideo = useRef()
 
   useEffect(() => {
     let roomId = location.pathname.split("/")[2];
     let size = Object.keys(socket).length;
 
-    if (size > 0) {
+    // if stranger then join room
+    if (size > 0 && room.type == 'stranger') {
       socket.emit("room:join", { roomId }, (err, room) => {
         if (err) navigate("/");
       });
     }
   }, [socket]);
 
+
+  // when player 2 appear
+  if (connected) {
+    if (room.players[player_1].caller) {
+
+      // user video is streaming
+      if (stream) {
+        const call = peer.call(partnerId, stream)
+        console.log('calling');
+
+        // when player 2 stream
+        call.on('stream', remote => {
+          partnerVideo.current.srcObject = remote
+          // partnerVideo.current.play()
+          console.log('user', stream, '\npartner', remote);
+          // setRemoteStream(remote)
+        })
+      } else {
+        console.log('stream if off');
+      }
+    }
+  }
+
+  useEffect(() => {
+
+    // user video
+    var getUserMedia = navigator.getUserMedia
+    getUserMedia({ video: true }, stream => {
+      userVideo.current.srcObject = stream;
+      // userVideo.current.play();
+      setStream(stream)
+    })
+
+    // connect to player 2 by id
+    socket.on('id', data => {
+
+      console.log('pass1')      
+      var conn = peer.connect(data.id);
+      setPartnerId(data.id)
+    })
+
+    // connected
+    peer.on('connection', () => {
+      console.log('connected');
+      setConnected(true)
+    });
+
+    // get plyer 2 video
+    peer.on('call', call => {
+
+      getUserMedia({ video: true }, stream => {
+        call.answer(stream)
+        console.log('answering');
+      })
+      call.on('stream', remote => {
+
+        partnerVideo.current.srcObject = remote
+        // partnerVideo.current.play()
+        // setRemoteStream(remote)
+      })
+    })
+    
+  }, []);
+
+  // make streams into video element
+  let UserVideo;
+  UserVideo = (
+    <video ref={userVideo} autoPlay/>
+  );
+
+  let PartnerVideo;
+  PartnerVideo = (
+    <video ref={partnerVideo} autoPlay/>
+  );
+
   return (
+    
   <div className='container'>
     <div className='wrapper'>
       <img
@@ -58,6 +140,7 @@ export const MainGame = () => {
         />
       </div>
     </div>
+    {UserVideo}
     <div className='cam-right'>
       <div className='wrapper'>
         <p className='player-detail-right'>Natasha Romanoff</p>
@@ -78,6 +161,7 @@ export const MainGame = () => {
         />
       </div>
     </div>
+    {PartnerVideo}
   </div>
 
     )

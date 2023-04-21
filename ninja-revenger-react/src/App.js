@@ -28,6 +28,7 @@ const App = () => {
     {/* <MainGame/> */}
     {/* <JoinFriend/> */}
   </div>
+  
   );
 }
 
