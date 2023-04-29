@@ -17,14 +17,14 @@ const App = () => {
   return (
   <div>
     {/* {<h2>Width: {windowSize.current[0]}</h2>}    */}
-    {/* <Routes>
-      <Route path="/" element={<LosePage />} />
+    <Routes>
+      <Route path="/" element={<Home />} />
       <Route path="/joinlink" element={<JoinFriend />} />
       <Route path="/room/:id" element={<MainGame />} />
-    </Routes> */}
+    </Routes>
     {/* <Loading/> */}
     {/* <LosePage/> */}
-    <WinPage/>
+    {/* <WinPage/> */}
     {/* <MainGame/> */}
     {/* <JoinFriend/> */}
   </div>
