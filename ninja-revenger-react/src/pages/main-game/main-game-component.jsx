@@ -18,15 +18,19 @@ export const MainGame = () => {
   const partnerVideo = useRef()
 
   useEffect(() => {
+
+    
+
     let roomId = location.pathname.split("/")[2];
     let size = Object.keys(socket).length;
 
     // if stranger then join room
-    if (size > 0 && room.type == 'stranger') {
+    if (size > 0 && room.type === 'stranger') {
       socket.emit("room:join", { roomId }, (err, room) => {
         if (err) navigate("/");
       });
     }
+
   }, [socket]);
 
 
@@ -54,6 +58,12 @@ export const MainGame = () => {
 
   useEffect(() => {
 
+    
+    if (socket.id === undefined){
+      navigate(`/`);
+    } else {
+
+
     // user video
     var getUserMedia = navigator.getUserMedia
     getUserMedia({ video: true }, stream => {
@@ -71,10 +81,14 @@ export const MainGame = () => {
     })
 
     // connected
-    peer.on('connection', () => {
+    peer.on('connection', (err) => {
       console.log('connected');
       setConnected(true)
     });
+
+    peer.on('disconnect', () => {
+      console.log('disconnect bye see u')
+    })
 
     // get plyer 2 video
     peer.on('call', call => {
@@ -87,15 +101,24 @@ export const MainGame = () => {
 
         partnerVideo.current.srcObject = remote
         // partnerVideo.current.play()
-        // setRemoteStream(remote)
       })
-    })
+    });
+
+        
+    socket.on("friend_disconn", () => {
+
+      console.log('pass na ja')
+  
+      navigate(`/`);
+  
+    });
+  };
     
   }, []);
 
   // make streams into video element
   let UserVideo;
-  UserVideo = (
+    UserVideo = (
     <video ref={userVideo} autoPlay/>
   );
 

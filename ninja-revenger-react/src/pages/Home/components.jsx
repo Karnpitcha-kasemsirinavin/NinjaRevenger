@@ -2,8 +2,13 @@ import React from 'react';
 import Button from '../../Components/Button/index.jsx';
 import './style.css';
 import bg1 from "../../images/background-nolight.png";
+import { useNavigate, useLocation } from "react-router-dom";
+
+
 
 export const Home = () => {
+
+
 	return (
 		<div className='container'>
 			<img 
