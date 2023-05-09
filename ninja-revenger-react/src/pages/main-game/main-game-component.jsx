@@ -58,7 +58,7 @@ export const MainGame = () => {
 
   useEffect(() => {
 
-    
+    // for user reconnect
     if (socket.id === undefined){
       navigate(`/`);
     } else {
