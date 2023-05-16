@@ -5,14 +5,25 @@ import { SocketContext } from "../../Context/SocketThing";
 import { Link, useNavigate } from 'react-router-dom';
 
 export const JoinFriend = () => {
-    const { socket, navigate , room, rooms, player_1} = useContext(SocketContext);
+
+    const { socket , room, player_1} = useContext(SocketContext);
     const [roomId, setroomId] = useState(room.roomId);
     const [warning, setWarning] = useState('');
     const oriRoomId = room.roomId;
-
+    const navigate = useNavigate();
+    
     // const player_1 = Object.keys(room.players)[0]
-
     // console.log(roomId)
+
+            
+    useEffect(() => {
+
+        // for user reconnect
+        if (socket.id === undefined){
+          navigate(`/`);
+        }
+    }, [socket]);
+
 
     const handleChange = (roomId) => {
         // Get input value from "linkID"

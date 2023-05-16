@@ -31,8 +31,8 @@ function onResults(results) {
           console.log(`Landmark ${j}: (${landmark.x}, ${landmark.y}, ${landmark.z})`);
         }
         //draw the connectors of landmarks and draw landmarks
-        drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS,{color: '#00FF00', lineWidth: 5});
-        drawLandmarks(canvasCtx, landmarks, {color: '#FF0000', lineWidth: 2});
+        drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {lineWidth: 2});
+        drawLandmarks(canvasCtx, landmarks, {color: '#FF0000', radius: 1});
       }
     }
 
