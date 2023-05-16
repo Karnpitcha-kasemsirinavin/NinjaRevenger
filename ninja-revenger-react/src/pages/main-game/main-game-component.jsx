@@ -17,9 +17,10 @@ export const MainGame = () => {
   const userVideo = useRef()
   const partnerVideo = useRef()
 
-  useEffect(() => {
+  const delay = ms => new Promise(res => setTimeout(res, ms));
 
-    
+
+  useEffect(() => {
 
     let roomId = location.pathname.split("/")[2];
     let size = Object.keys(socket).length;
@@ -58,6 +59,7 @@ export const MainGame = () => {
 
   useEffect(() => {
 
+
     // for user reconnect
     if (socket.id === undefined){
       navigate(`/`);
@@ -84,6 +86,9 @@ export const MainGame = () => {
     peer.on('connection', (err) => {
       console.log('connected');
       setConnected(true)
+      // friend appear and start game
+      show_round_img();
+      
     });
 
     peer.on('disconnect', () => {
@@ -104,6 +109,7 @@ export const MainGame = () => {
       })
     });
 
+
         
     socket.on("friend_disconn", () => {
 
@@ -112,9 +118,31 @@ export const MainGame = () => {
       navigate(`/`);
   
     });
+
+
   };
     
   }, []);
+
+  const show_round_img= async () => {
+    const round_img = document.getElementById("round");
+    const round_num = document.getElementById("round-num");
+
+    // wait for 2 sec to make sure that other player video is shown
+    await delay(2000);
+    
+    //show start for 5 sec
+    console.log('showing start');
+    await delay(5000);
+    // unshow start and wait for 2 sec
+
+    await delay(2000);
+    // show round 1
+    round_img.style.visibility = 'visible';
+    round_num.style.visibility = 'visible';
+    
+
+  }
 
   // make streams into video element
   let UserVideo;
@@ -133,13 +161,15 @@ export const MainGame = () => {
     <div className='wrapper'>
       <img
           className='round'
-          src={require("../../images/round-img.png")}
+          src={require("../../images/round7.png")}
           alt='roundbg'
+          id='round-num'
       />
       <img
           className='round-num'
-          src={require("../../images/round7.png")}
+          src={require("../../images/round-img.png")}
           alt='round7'
+          id='round'
       />
     </div>
     <div className='cam-left'>
