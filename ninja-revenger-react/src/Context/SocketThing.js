@@ -34,7 +34,7 @@ const SocketContextProvider = ({ children }) => {
 	//   }
 
   useEffect(() => {
-    const socket = io('https://nostalgic-dream-93159.pktriot.net',
+    const socket = io('https://black-breeze-48357.pktriot.net',
     {
       reconnectionDelayMax: 10000,
       auth: {
@@ -61,6 +61,7 @@ const SocketContextProvider = ({ children }) => {
         setPlayer_2(play_1);
       }
 
+      console.log('doing connection');
       if (play_1 === socket.id) {
         setPlayer_1(play_1);
         setPlayer_2(play_2);
@@ -97,6 +98,7 @@ const SocketContextProvider = ({ children }) => {
         player_2,
         navigate,
         peer,
+        userId,
       }}
     >
       {children}

@@ -6,7 +6,7 @@ import { SocketContext } from "../../Context/SocketThing";
 import { useNavigate, useLocation } from "react-router-dom";
 
 export const MainGame = () => {
-  const { socket, room, player_1, player_2, peer } = useContext(SocketContext);
+  const { socket, room, player_1, player_2, peer, userId } = useContext(SocketContext);
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -34,13 +34,14 @@ export const MainGame = () => {
 
   }, [socket]);
 
-
+  console.log('caller', room.players[player_1].caller);
   // when player 2 appear
   if (connected) {
     if (room.players[player_1].caller) {
 
       // user video is streaming
       if (stream) {
+        console.log(userId, partnerId);
         const call = peer.call(partnerId, stream)
         console.log('calling');
 
@@ -76,18 +77,21 @@ export const MainGame = () => {
 
     // connect to player 2 by id
     socket.on('id', data => {
-
-      console.log('pass1')      
+      if (room.private) {
+        console.log('private id sent');
+        socket.emit('id', { from: player_1, to: player_2, id: userId })
+      }
+      console.log('pass1', data.id)    
       var conn = peer.connect(data.id);
       setPartnerId(data.id)
     })
 
     // connected
     peer.on('connection', (err) => {
-      console.log('connected');
+      console.log('connected', userId, 'partner', partnerId);
       setConnected(true)
       // friend appear and start game
-      show_round_img();
+      // show_round_img();
       
     });
 
