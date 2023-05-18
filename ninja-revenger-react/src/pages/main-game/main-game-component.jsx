@@ -37,7 +37,7 @@ export const MainGame = () => {
       });
     }
   }, [socket, room, location.pathname, navigate]);
-
+  
   useEffect(() => {
     if (connected && room.players[player_1].caller && stream) {
       const call = peer.call(partnerId, stream);
@@ -49,7 +49,7 @@ export const MainGame = () => {
       });
     }
   }, [connected, room.players, player_1, stream, partnerId, peer]);
-
+  
   useEffect(() => {
     if (socket.id === undefined) {
       navigate(`/`);
@@ -133,7 +133,6 @@ const handleRoundEnd = () => {
   );
 
   return (
-    
   <div className='container'>
     <div className='wrapper'>
     <img
@@ -150,50 +149,56 @@ const handleRoundEnd = () => {
       />
     </div>
     <div className='cam-left'>
-      <ExitButton name="X"/>
-      <div className='wrapper'>
+      <div className='left-player-con'>
         <img
           className='profile-left'
           src={require("../../images/user-profile-example.png")}
           alt="profile-left"
         />
+        <div>
         <p className='player-detail-left'>Natasha Romanoff</p>
         <img 
           className='stars-l'
           src={require("../../images/star0.png")}
           alt='star0'
         />
+        </div>
         <img
           className='combo-left'
           src={require("../..//images/combo3.png")}
           alt='combo3'
         />
       </div>
+      {UserVideo}
+      <div className='wrapper'>
+      <ExitButton name="X"/>
+      </div>
     </div>
     {UserVideo}
     {displayTIme && <CountdownTimer id='Timer' initialSec={10} TimerEnd={handleRoundEnd} />}
     <div className='cam-right'>
-      <div className='wrapper'>
+      <div className='right-player-con'>
+        <div>
         <p className='player-detail-right'>Natasha Romanoff</p>
         <img
           className='stars-r'
           src={require("../../images/star0.png")}
           alt='star0'
         />
+        </div>
         <img
           className='profile-right'
           src={require("../..//images/user-profile2-example.jpg")}
           alt="profile-right"
-      />
+        />
         <img
           className='combo-right'
           src={require("../..//images/combo2.png")}
           alt='combo2'
         />
       </div>
-    </div>
     {PartnerVideo}
+    </div>
   </div>
-
     )
-    }
+}
