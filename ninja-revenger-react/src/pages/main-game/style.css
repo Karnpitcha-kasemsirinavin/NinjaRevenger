@@ -17,7 +17,7 @@
     display: flex;
     align-items: center;
   }
-
+  
   /* components */
   .container {
     background-color: bisque;
@@ -29,78 +29,89 @@
     justify-content: flex-end;
   }
 
+  .left-player-con{
+    display: grid;
+    margin-top: 30px;
+    margin-left: 20px;
+    grid-template-columns: 1fr 3fr;
+    grid-template-rows: 2fr 1fr;
+    row-gap: 20px;
+  }
+
+  .right-player-con{
+    display: grid;
+    justify-items: end;
+    margin-top: 30px;
+    margin-right: 20px;
+    grid-template-columns: 3fr 1fr;
+    grid-template-rows: 2fr 1fr;
+    row-gap: 20px;
+  }
+
   .cam-left{
     background-color:darksalmon;
+    display: grid;
+    grid-template-rows: 1fr 4fr 1fr;
     height: 100%;
     width: 50%;
     border: 1px solid black;
   }
   .cam-right{
     background-color:darksalmon;
-    height: 100vh -1px;
-    width: 50vw;
+    display: grid;
+    grid-template-rows: 1fr 4fr 1fr;
+    height: 100%;
+    width: 50%;
     border: 1px solid black;
   }
 
   .profile-left {
-    position: absolute;
+    position: relative;
     height: 18vh;
     width: 8.5vw;
     border: 2px solid white;
-    margin-left: 2.5vw;
-    margin-top: 30vh;
     z-index: 1;
   }
 
   .profile-right {
-    position: absolute;
+    position: relative;
     height: 18vh;
     width: 8.5vw;
     border: 2px solid white;
-    margin-left: 38.5vw;
-    margin-top: 30vh;
     z-index: 1;
   }
 
   .player-detail-left{
-    position: absolute;
+    position: relative;
     width: 20vmin;
     font-size: 2vmin;
     font-family: "Roboto", sans-serif;
     font-weight: bold;
     display: inline-block;
-    left: 14%;
-    top: 5%;
     z-index: 1;
   }
 
   .player-detail-right{
-    position: absolute;
+    position: relative;
     width: 20vmin;
     font-size: 2vmin;
     font-family: "Roboto", sans-serif;
     font-weight: bold;
     display: inline-block;
-    left: 76%;
-    top: 5%;
     z-index: 1;
   }
 
   .stars-l{
-    position: absolute;
-    display: inline-block;
-    left: 13.75%;
-    top: 10%;
+    position: relative;
+    display: block;
     height: 3vh;
     width: 10vw;
     z-index: 1;
     }
 
   .stars-r{
-    position: absolute;
-    display: inline-block;
-    left: 76%;
-    top: 10%;
+    position: relative;
+    display: block;
     height: 3vh;
     width: 10vw;
     z-index: 1;
@@ -127,28 +138,26 @@
   }
 
   .combo-left{
-    position: absolute;
+    position: relative;
     height: 8vh;
     width: 10vw;
     display: inline-block;
-    left: 2.5%;
-    top: 27%;
     z-index: 1;
   }
   
   .combo-right{
-    position: absolute;
-    height: 5vh;
+    position: relative;
+    grid-column-start: 2;
+    height: 8vh;
     width: 10vw;
     display: inline-block;
-    left: 87.25%;
-    top: 27%;
     z-index: 1;
   }
 
   video {
     border: 1px solid white;
-    width: 50%;
+    width: fill;
+    height: fill;
     transform: rotateY(180deg);
     z-index: 0;
   }
