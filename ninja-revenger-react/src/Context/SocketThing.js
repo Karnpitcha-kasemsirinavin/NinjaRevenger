@@ -21,11 +21,32 @@ const SocketContextProvider = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
+
+  
+	// if (window.performance.navigation) {
+	// 	console.info("window.performance works fine on this browser");
+	//   }
+	//   console.info(window.performance.getEntriesByType("navigation")[0].type);
+	//   if (performance.TYPE_NAVIGATE == 1) {
+	// 	console.info( "This page is reloaded" );
+	//   } else {
+	// 	console.info( "This page is not reloaded");
+	//   }
+
   useEffect(() => {
-    const socket = io('https://nostalgic-dream-93159.pktriot.net');
+    const socket = io('https://nostalgic-dream-93159.pktriot.net',
+    {
+      reconnectionDelayMax: 10000,
+      auth: {
+        token: "123"
+      },
+      query: {
+        "my-key": "my-value"
+      }
+    });
     setSocket(socket);
 
-    console.log()
+    console.log(socket)
 
     socket.on("room:get", (payload) => {
       setRoom(payload);
@@ -57,7 +78,14 @@ const SocketContextProvider = ({ children }) => {
       console.log(payload.players);
 
     });
+
+    socket.on("room:bye", (payload) => {
+      
+    });
+
+
   }, []);
+
 
   return (
     <SocketContext.Provider

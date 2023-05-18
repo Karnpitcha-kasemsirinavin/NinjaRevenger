@@ -17,16 +17,21 @@ export const MainGame = () => {
   const userVideo = useRef()
   const partnerVideo = useRef()
 
-  // useEffect(() => {
-  //   let roomId = location.pathname.split("/")[2];
-  //   let size = Object.keys(socket).length;
+  const delay = ms => new Promise(res => setTimeout(res, ms));
+
+
+  useEffect(() => {
+
+    let roomId = location.pathname.split("/")[2];
+    let size = Object.keys(socket).length;
 
   //   // if stranger then join room
-  //   if (size > 0 && room.type == 'stranger') {
+  //   if (size > 0 && room.type === 'stranger') {
   //     socket.emit("room:join", { roomId }, (err, room) => {
   //       if (err) navigate("/");
   //     });
   //   }
+
   // }, [socket]);
 
 
@@ -34,48 +39,61 @@ export const MainGame = () => {
   // if (connected) {
   //   if (room.players[player_1].caller) {
 
-  //     // user video is streaming
-  //     if (stream) {
-  //       const call = peer.call(partnerId, stream)
-  //       console.log('calling');
-        
-  //       // when player 2 stream
-  //       call.on('stream', remote => {
-  //         partnerVideo.current.srcObject = remote
-  //         // partnerVideo.current.play()
-  //         console.log('user', stream, '\npartner', remote);
-  //         // setRemoteStream(remote)
-  //       })
-  //     } else {
-  //       console.log('stream if off');
-  //     }
-  //   }
-  // }
+      // user video is streaming
+      if (stream) {
+        const call = peer.call(partnerId, stream)
+        console.log('calling');
 
-  // useEffect(() => {
+        // when player 2 stream
+        call.on('stream', remote => {
+          partnerVideo.current.srcObject = remote
+          // partnerVideo.current.play()
+          console.log('user', stream, '\npartner', remote);
+          // setRemoteStream(remote)
+        })
+      } else {
+        console.log('stream if off');
+      }
+    }
+  }
 
-  //   // user video
-  //   var getUserMedia = navigator.getUserMedia
-  //   getUserMedia({ video: true }, stream => {
-  //     userVideo.current.srcObject = stream;
-  //     // userVideo.current.play();
-  //     setStream(stream)
-  //   })
+  useEffect(() => {
 
-  //   // connect to player 2 by id
-  //   socket.on('id', data => {
 
-  //     console.log('pass1')      
-  //     var conn = peer.connect(data.id);
-  //     setPartnerId(data.id)
-  //   })
+    // for user reconnect
+    if (socket.id === undefined){
+      navigate(`/`);
+    } else {
 
-  //   // connected
-  //   peer.on('connection', () => {
-  //     console.log('connected');
-  //     setConnected(true)
-  //   });
 
+    // user video
+    var getUserMedia = navigator.getUserMedia
+    getUserMedia({ video: true }, stream => {
+      userVideo.current.srcObject = stream;
+      // userVideo.current.play();
+      setStream(stream)
+    })
+
+    // connect to player 2 by id
+    socket.on('id', data => {
+
+      console.log('pass1')      
+      var conn = peer.connect(data.id);
+      setPartnerId(data.id)
+    })
+
+    // connected
+    peer.on('connection', () => {
+      console.log('connected');
+      setConnected(true)
+    });
+
+    peer.on('disconnect', () => {
+      console.log('disconnect bye see u')
+    })
+
+    // get plyer 2 video
+    peer.on('call', call => {
   //   // get plyer 2 video
   //   peer.on('call', call => {
 
@@ -85,17 +103,17 @@ export const MainGame = () => {
   //     })
   //     call.on('stream', remote => {
 
-  //       partnerVideo.current.srcObject = remote
-  //       // partnerVideo.current.play()
-  //       // setRemoteStream(remote)
-  //     })
-  //   })
+        partnerVideo.current.srcObject = remote
+        // partnerVideo.current.play()
+        // setRemoteStream(remote)
+      })
+    });
     
-  // }, []);
+  }, []);
 
   // make streams into video element
   let UserVideo;
-  UserVideo = (
+    UserVideo = (
     <video ref={userVideo} autoPlay/>
   );
 
@@ -109,13 +127,15 @@ export const MainGame = () => {
     <div className='wrapper'>
       <img
           className='round'
-          src={require("../../images/round-img.png")}
+          src={require("../../images/round7.png")}
           alt='roundbg'
+          id='round-num'
       />
       <img
           className='round-num'
-          src={require("../../images/round7.png")}
+          src={require("../../images/round-img.png")}
           alt='round7'
+          id='round'
       />
     </div>
     <div className='cam-left'>
