@@ -179,7 +179,6 @@ const handleRoundEnd = () => {
       <ExitButton name="X"/>
       </div>
     </div>
-    {UserVideo}
     {displayTIme && <CountdownTimer id='Timer' initialSec={10} TimerEnd={handleRoundEnd} />}
     <div className='cam-right'>
       <div className='right-player-con'>
