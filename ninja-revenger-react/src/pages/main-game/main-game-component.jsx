@@ -93,21 +93,25 @@ export const MainGame = () => {
     }
   }, [socket, navigate, peer]);
 
+  // for start
   useEffect(() => {
-    if (start) {
     const round_img = document.getElementById("round");
     const round_num = document.getElementById("round-num");
 
-
+    if (connected) {
       setTimeout(() => {
         console.log('show start img');
       }, 2000); // make it visible after 2 seconds
 
+    }
+
+    if (start) {
+       // show each round
     setTimeout(() => {
-        round_img.style.visibility = 'visible';
-        round_num.style.visibility = 'visible';
-        handleRoundEnd();
-      }, 2000 + 3000); // make it visible after 5 secs
+      round_img.style.visibility = 'visible';
+      round_num.style.visibility = 'visible';
+      setDisplayTime(true);
+    }, 2000 + 3000); // make it visible after 5 secs
     }
 
   }, [start]);
@@ -116,7 +120,8 @@ export const MainGame = () => {
 
 const handleRoundEnd = () => {
   setCurrentRound(currentRound + 1);
-  setDisplayTime(true);
+  setDisplayTime(false);
+  setStart(false);
 
 }
 
