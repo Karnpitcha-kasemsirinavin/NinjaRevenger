@@ -25,6 +25,7 @@ export const MainGame = () => {
   const [start, setStart] = useState(false); // Add start state
   const [displayTIme, setDisplayTime] = useState(false);
   const [displayRound, setDisplayRound] = useState(false);
+  const [caller, setCaller] = useState(room.players[player_1].caller)
 
   useEffect(() => {
     let roomId = location.pathname.split("/")[2];
@@ -39,9 +40,10 @@ export const MainGame = () => {
   }, [socket, room, location.pathname, navigate]);
   
   useEffect(() => {
-    if (connected && room.players[player_1].caller && stream) {
+    console.log(connected, caller, stream);
+    if (connected && caller && stream) {
       const call = peer.call(partnerId, stream);
-      console.log('calling');
+      console.log('calling', partnerId);
   
       call.on('stream', remote => {
         partnerVideo.current.srcObject = remote;
@@ -61,12 +63,20 @@ export const MainGame = () => {
       });
   
       socket.on('id', data => {
+        console.log('try to connect');
+        console.log(data);
+        socket.emit('answer', { from: player_1, to: data.from, id: userId })
         var conn = peer.connect(data.id);
         setPartnerId(data.id);
       });
+
+      socket.on('answer', data => {
+        setPartnerId(data.id)
+      })
   
       peer.on('connection', (err) => {
         console.log('connected');
+
         setConnected(true);
         setStart(true);
       });
@@ -90,6 +100,22 @@ export const MainGame = () => {
         console.log('pass na ja');
         navigate(`/`);
       });
+
+      socket.on('caller', data => {
+        console.log('turn caller on');
+        setCaller(true)
+        socket.emit('id', { from: player_1, to: player_2, id: userId })
+        // console.log(partnerId);
+        // if (connected && room.players[player_1].caller && stream) {
+        //   const call = peer.call(partnerId, stream);
+        //   console.log('calling', partnerId);
+      
+        //   call.on('stream', remote => {
+        //     partnerVideo.current.srcObject = remote;
+        //     console.log('user', stream, '\npartner', remote);
+        //   });
+        // }
+      })
     }
   }, [socket, navigate, peer]);
 
