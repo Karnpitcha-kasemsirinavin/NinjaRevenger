@@ -5,7 +5,7 @@ import '../../Components/Button/index.jsx'
 import { SocketContext } from "../../Context/SocketThing";
 import { useNavigate, useLocation } from "react-router-dom";
 import CountdownTimer from '../../Components/Timer'
-
+import HandDetection from '../../Context/HandDetection';
 
 export const MainGame = () => {
   const { socket, room, player_1, player_2, peer } = useContext(SocketContext);
@@ -25,6 +25,7 @@ export const MainGame = () => {
   const [start, setStart] = useState(false); // Add start state
   const [displayTIme, setDisplayTime] = useState(false);
   const [displayRound, setDisplayRound] = useState(false);
+
 
   useEffect(() => {
     let roomId = location.pathname.split("/")[2];
@@ -200,6 +201,7 @@ const handleRoundEnd = () => {
           src={require("../..//images/combo2.png")}
           alt='combo2'
         />
+        <HandDetection output_video={stream}></HandDetection>
       </div>
     {PartnerVideo}
     </div>
