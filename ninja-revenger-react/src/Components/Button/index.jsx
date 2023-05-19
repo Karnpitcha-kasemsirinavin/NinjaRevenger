@@ -9,11 +9,11 @@ const Button = ({classname, name, type}) => {
   // handle change depend on the type of the room (link with server)
   const handleChange = (type) => {
     socket.emit("room:create", { type }, (err, roomId) => {
-    if (type === 'stranger'){
-      navigate(`/room/${roomId}`);
-    } else if (type === 'friend'){
-      navigate(`/joinlink`);
-    }   
+      if (type === 'stranger'){
+        navigate(`/room/${roomId}`);
+      } else if (type === 'friend'){
+        navigate(`/joinlink`);
+      }   
     });
   };
 

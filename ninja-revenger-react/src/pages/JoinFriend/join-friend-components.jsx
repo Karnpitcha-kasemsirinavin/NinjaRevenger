@@ -6,7 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 export const JoinFriend = () => {
 
-    const { socket , room, player_1} = useContext(SocketContext);
+    const { socket , room, player_1, player_2} = useContext(SocketContext);
     const [roomId, setroomId] = useState(room.roomId);
     const [warning, setWarning] = useState('');
     const oriRoomId = room.roomId;
@@ -35,6 +35,11 @@ export const JoinFriend = () => {
 
     const joinRoom = (socket) => {
 
+        // console.log(room);
+        // if (Object.keys(room.players).length == 2) {
+        //     room.players[player_1].caller = true
+            
+        // }
         socket.emit("room:check" , { roomId } , () => {});
         socket.on("errorMsg", (index) => {
 
@@ -47,11 +52,12 @@ export const JoinFriend = () => {
                 setWarning("");
                 if (size > 0) {
                     socket.emit("room:join", { roomId }, (err, room) => {
+                        console.log('joined', room);
                     if (err) navigate("/");
                   });
                 }
-                  
                 socket.emit("room:destroy" , { roomId, oriRoomId, player_1 } , () => {});
+                console.log('warped');
                 navigate(`/room/${roomId}`);
             }
         })

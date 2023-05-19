@@ -6,9 +6,12 @@ import { SocketContext } from "../../Context/SocketThing";
 import { useNavigate, useLocation } from "react-router-dom";
 import CountdownTimer from '../../Components/Timer'
 import HandDetection from '../../Context/HandDetection';
+import PlayerOne from '../../Components/PlayerOne'
+import { connect } from 'socket.io-client';
+
 
 export const MainGame = () => {
-  const { socket, room, player_1, player_2, peer } = useContext(SocketContext);
+  const { socket, room, player_1, player_2, peer, userId } = useContext(SocketContext);
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -23,8 +26,32 @@ export const MainGame = () => {
   const delay = ms => new Promise(res => setTimeout(res, ms));
   const [currentRound, setCurrentRound] = useState(1);
   const [start, setStart] = useState(false); // Add start state
-  const [displayTIme, setDisplayTime] = useState(false);
+  const [displayTime, setDisplayTime] = useState(false);
   const [displayRound, setDisplayRound] = useState(false);
+  const [renderVideo, setRenderVideo] = useState(true);
+  
+
+  // result
+  const [result, setResult] = useState({
+    show: false,
+    reset: false,
+  });
+
+  // Option for each player
+  const [play1Option, setPLay1Option] = useState(10);
+  // const [play2Option, setPLay2Option] = useState([]);
+  const [resultArr, setResultarr] = useState({
+    3: [0],
+    4: [],
+    5: [],
+  }); // for stacking
+  const Combo = {
+    3: [],
+    4: [],
+    5: [],
+  }
+
+  const [caller, setCaller] = useState(room.players[player_1].caller)
 
 
   useEffect(() => {
@@ -40,16 +67,21 @@ export const MainGame = () => {
   }, [socket, room, location.pathname, navigate]);
   
   useEffect(() => {
-    if (connected && room.players[player_1].caller && stream) {
+    console.log(connected, caller, stream);
+    if (connected && caller && stream) {
       const call = peer.call(partnerId, stream);
-      console.log('calling');
+      console.log('calling', partnerId);
   
       call.on('stream', remote => {
+        if (partnerVideo.current.srcObject !== remote && renderVideo) {
         partnerVideo.current.srcObject = remote;
         console.log('user', stream, '\npartner', remote);
+        setRenderVideo(false);
+        }
       });
     }
-  }, [connected, room.players, player_1, stream, partnerId, peer]);
+
+  }, [connected, room.players, player_1, stream, partnerId, peer, renderVideo]);
   
   useEffect(() => {
     if (socket.id === undefined) {
@@ -62,12 +94,19 @@ export const MainGame = () => {
       });
   
       socket.on('id', data => {
+        console.log('try to connect');
+        console.log(data);
+        socket.emit('answer', { from: player_1, to: data.from, id: userId })
         var conn = peer.connect(data.id);
         setPartnerId(data.id);
       });
+
+      socket.on('answer', data => {
+        setPartnerId(data.id)
+      })
   
       peer.on('connection', (err) => {
-        console.log('connected');
+        // console.log('connected');
         setConnected(true);
         setStart(true);
       });
@@ -75,15 +114,20 @@ export const MainGame = () => {
       peer.on('disconnect', () => {
         console.log('disconnect bye see u');
       });
-  
+      
+      // problem make video jerky
       peer.on('call', call => {
         getUserMedia({ video: true }, stream => {
           call.answer(stream);
-          console.log('answering');
+          // console.log('answering');
         });
   
         call.on('stream', remote => {
+          // console.log('render', renderVideo);
+          if (partnerVideo.current.srcObject !== remote && renderVideo) {
           partnerVideo.current.srcObject = remote;
+          setRenderVideo(false);
+          }
         });
       });
   
@@ -91,31 +135,75 @@ export const MainGame = () => {
         console.log('pass na ja');
         navigate(`/`);
       });
+
+      socket.on('caller', data => {
+        console.log('turn caller on');
+        setCaller(true)
+        socket.emit('id', { from: player_1, to: player_2, id: userId })
+        // console.log(partnerId);
+        // if (connected && room.players[player_1].caller && stream) {
+        //   const call = peer.call(partnerId, stream);
+        //   console.log('calling', partnerId);
+      
+        //   call.on('stream', remote => {
+        //     partnerVideo.current.srcObject = remote;
+        //     console.log('user', stream, '\npartner', remote);
+        //   });
+        // }
+      })
     }
-  }, [socket, navigate, peer]);
+
+  }, [socket, navigate, peer, renderVideo]);
 
   // for start
   useEffect(() => {
     const round_img = document.getElementById("round");
     const round_num = document.getElementById("round-num");
 
-    if (connected) {
+    // for each round
+    const newRound = () => {
+
+      setTimeout(() => {
+        round_img.style.visibility = 'visible';
+        round_num.style.visibility = 'visible';
+        setDisplayTime(true);
+      }, 2000 + 3000); // make it visible after 5 secs
+
+      setTimeout(() => {
+       setPLay1Option(14) 
+      }, 2000 + 1000); // 0.5 sec after start round
+    }
+
+    if (start) {
       setTimeout(() => {
         console.log('show start img');
       }, 2000); // make it visible after 2 seconds
-
     }
 
     if (start) {
        // show each round
-    setTimeout(() => {
-      round_img.style.visibility = 'visible';
-      round_num.style.visibility = 'visible';
-      setDisplayTime(true);
-    }, 2000 + 3000); // make it visible after 5 secs
+      newRound()
+    } else {
+      // when each roud end
+      round_img.style.visibility = 'hidden';
+      round_num.style.visibility = 'hidden';
     }
 
+
   }, [start]);
+
+  useEffect(() => {
+    const players = room?.players;
+
+    if (play1Option !== null && displayTime) {
+      room.players[player_1].option = play1Option;
+
+      console.log(Object.values(room.players[player_1].option));
+
+      calculateResults();
+    }
+
+  }, [play1Option, displayTime])
   
 
 
@@ -124,7 +212,91 @@ const handleRoundEnd = () => {
   setDisplayTime(false);
   setStart(false);
 
-}
+  // send info to the server
+
+};
+
+
+//================ game logic =======================
+const calculateResults = async () => {
+  const players = room?.players;
+  let foundArr = false;
+  
+  // if (
+  //   players &&
+  //   players[player_1]?.optionLock === true &&
+  //   players[player_2]?.optionLock === true
+  // ) {
+  // }
+
+  // check if arr empty 
+  // if empty check first patternn index 
+  // if not empty add to arr
+
+
+
+  // if (resultArr[5].length !== 0) {
+  //   resultArr[5] = [...resultArr[5], play1Option]
+  //   console.log('have 5')
+  // } else if (!foundArr && (play1Option === 16 || play1Option === 14)) {
+  //   console.log('get 5')
+  //             foundArr = true;
+  //             resultArr[5] = [...resultArr[5], play1Option]
+  //           }
+
+  // if (resultArr[4].length !== 0) {
+  //   resultArr[4] = [...resultArr[4], play1Option]
+  //   console.log('have 4')
+  // } else if (!foundArr && (play1Option === 45 || 
+  //   play1Option === 5 || play1Option === 2 || play1Option === 19)) {
+  //     foundArr = true;
+  //     resultArr[4] = [...resultArr[4], play1Option]
+  //   }
+
+  // if(resultArr[3].length !== 0){
+  //   resultArr[3] = [...resultArr[3], play1Option]
+  //   console.log('have 3');
+  // } else {
+  //   if (!foundArr && (play1Option === 18 || 
+  //     play1Option === 15 || play1Option === 9 || play1Option === 11)) {
+  //       foundArr = true;
+  //       resultArr[3] = [...resultArr[3], play1Option]
+  //     }
+  // }
+
+  for (let i = 3; i <= 5; i++) {
+    console.log('test ', resultArr[i]);
+
+    if (resultArr[i].length !== 0){
+      resultArr[i] = [...resultArr[i], play1Option]
+    } else if (!foundArr) {
+      for (let i = 0; i <= 5; i++) {
+        
+      }
+
+    }
+
+  }
+
+  const first_arr = [[1,2], []]
+
+
+  console.log('arr3', resultArr[3])
+  console.log('arr5', resultArr[5])
+  console.log('start check')
+  console.log('Option', play1Option)
+
+  // check if any arr is full
+  if (resultArr[3].length === 3) {
+
+  }
+
+  socket.emit("room:update", room);
+
+
+};
+
+//================ game logic =======================
 
 
   // make streams into video element
@@ -169,6 +341,7 @@ const handleRoundEnd = () => {
           alt='star0'
         />
         </div>
+        {/* combo */}
         <img
           className='combo-left'
           src={require("../..//images/combo3.png")}
@@ -180,7 +353,7 @@ const handleRoundEnd = () => {
       <ExitButton name="X"/>
       </div>
     </div>
-    {displayTIme && <CountdownTimer id='Timer' initialSec={10} TimerEnd={handleRoundEnd} />}
+    {displayTime && <CountdownTimer id='Timer' initialSec={10} TimerEnd={handleRoundEnd} />}
     <div className='cam-right'>
       <div className='right-player-con'>
         <div>
