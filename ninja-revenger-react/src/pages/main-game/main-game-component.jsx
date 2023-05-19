@@ -4,6 +4,8 @@ import './style.css'
 import '../../Components/Button/index.jsx'
 import { SocketContext } from "../../Context/SocketThing";
 import { useNavigate, useLocation } from "react-router-dom";
+import CountdownTimer from '../../Components/Timer'
+
 
 export const MainGame = () => {
   const { socket, room, player_1, player_2, peer, userId } = useContext(SocketContext);
@@ -16,137 +18,113 @@ export const MainGame = () => {
 
   const userVideo = useRef()
   const partnerVideo = useRef()
-
+  
+  // time
   const delay = ms => new Promise(res => setTimeout(res, ms));
-
+  const [currentRound, setCurrentRound] = useState(1);
+  const [start, setStart] = useState(false); // Add start state
+  const [displayTIme, setDisplayTime] = useState(false);
+  const [displayRound, setDisplayRound] = useState(false);
 
   useEffect(() => {
-
     let roomId = location.pathname.split("/")[2];
     let size = Object.keys(socket).length;
-
+  
     // if stranger then join room
     if (size > 0 && room.type === 'stranger') {
       socket.emit("room:join", { roomId }, (err, room) => {
         if (err) navigate("/");
       });
     }
-
-  }, [socket]);
-
-  console.log('caller', room.players[player_1].caller);
-  // when player 2 appear
-  if (connected) {
-    if (room.players[player_1].caller) {
-
-      // user video is streaming
-      if (stream) {
-        console.log(userId, partnerId);
-        const call = peer.call(partnerId, stream)
-        console.log('calling');
-
-        // when player 2 stream
-        call.on('stream', remote => {
-          partnerVideo.current.srcObject = remote
-          // partnerVideo.current.play()
-          console.log('user', stream, '\npartner', remote);
-          // setRemoteStream(remote)
-        })
-      } else {
-        console.log('stream if off');
-      }
-    }
-  }
-
+  }, [socket, room, location.pathname, navigate]);
+  
   useEffect(() => {
-
-
-    // for user reconnect
-    if (socket.id === undefined){
+    if (connected && room.players[player_1].caller && stream) {
+      const call = peer.call(partnerId, stream);
+      console.log('calling');
+  
+      call.on('stream', remote => {
+        partnerVideo.current.srcObject = remote;
+        console.log('user', stream, '\npartner', remote);
+      });
+    }
+  }, [connected, room.players, player_1, stream, partnerId, peer]);
+  
+  useEffect(() => {
+    if (socket.id === undefined) {
       navigate(`/`);
     } else {
-
-
-    // user video
-    var getUserMedia = navigator.getUserMedia
-    getUserMedia({ video: true }, stream => {
-      userVideo.current.srcObject = stream;
-      // userVideo.current.play();
-      setStream(stream)
-    })
-
-    // connect to player 2 by id
-    socket.on('id', data => {
-      if (room.private) {
-        console.log('private id sent');
-        socket.emit('id', { from: player_1, to: player_2, id: userId })
-      }
-      console.log('pass1', data.id)    
-      var conn = peer.connect(data.id);
-      setPartnerId(data.id)
-    })
-
-    // connected
-    peer.on('connection', (err) => {
-      console.log('connected', userId, 'partner', partnerId);
-      setConnected(true)
-      // friend appear and start game
-      // show_round_img();
-      
-    });
-
-    peer.on('disconnect', () => {
-      console.log('disconnect bye see u')
-    })
-
-    // get plyer 2 video
-    peer.on('call', call => {
-
+      var getUserMedia = navigator.getUserMedia;
       getUserMedia({ video: true }, stream => {
-        call.answer(stream)
-        console.log('answering');
-      })
-      call.on('stream', remote => {
-
-        partnerVideo.current.srcObject = remote
-        // partnerVideo.current.play()
-      })
-    });
-
-
-        
-    socket.on("friend_disconn", () => {
-
-      console.log('pass na ja')
+        userVideo.current.srcObject = stream;
+        setStream(stream);
+      });
   
-      navigate(`/`);
+      socket.on('id', data => {
+        var conn = peer.connect(data.id);
+        setPartnerId(data.id);
+      });
   
-    });
+      peer.on('connection', (err) => {
+        console.log('connected');
+        setConnected(true);
+        setStart(true);
+      });
+  
+      peer.on('disconnect', () => {
+        console.log('disconnect bye see u');
+      });
+  
+      peer.on('call', call => {
+        getUserMedia({ video: true }, stream => {
+          call.answer(stream);
+          console.log('answering');
+        });
+  
+        call.on('stream', remote => {
+          partnerVideo.current.srcObject = remote;
+        });
+      });
+  
+      socket.on("friend_disconn", () => {
+        console.log('pass na ja');
+        navigate(`/`);
+      });
+    }
+  }, [socket, navigate, peer]);
 
-
-  };
-    
-  }, []);
-
-  const show_round_img= async () => {
+  // for start
+  useEffect(() => {
     const round_img = document.getElementById("round");
     const round_num = document.getElementById("round-num");
 
-    // wait for 2 sec to make sure that other player video is shown
-    await delay(2000);
-    
-    //show start for 5 sec
-    console.log('showing start');
-    await delay(5000);
-    // unshow start and wait for 2 sec
+    if (connected) {
+      setTimeout(() => {
+        console.log('show start img');
+      }, 2000); // make it visible after 2 seconds
 
-    await delay(2000);
-    // show round 1
-    round_img.style.visibility = 'visible';
-    round_num.style.visibility = 'visible';
-    
+    }
 
-  }
+    if (start) {
+       // show each round
+    setTimeout(() => {
+      round_img.style.visibility = 'visible';
+      round_num.style.visibility = 'visible';
+      setDisplayTime(true);
+    }, 2000 + 3000); // make it visible after 5 secs
+    }
+
+  }, [start]);
+  
+
+
+const handleRoundEnd = () => {
+  setCurrentRound(currentRound + 1);
+  setDisplayTime(false);
+  setStart(false);
+
+}
+
 
   // make streams into video element
   let UserVideo;
@@ -160,66 +138,71 @@ export const MainGame = () => {
   );
 
   return (
-    
   <div className='container'>
     <div className='wrapper'>
-      <img
+    <img
           className='round'
-          src={require("../../images/round7.png")}
-          alt='roundbg'
-          id='round-num'
+          src={require("../../images/round-img.png")}
+          alt='round-img'
+          id='round'
       />
       <img
           className='round-num'
-          src={require("../../images/round-img.png")}
-          alt='round7'
-          id='round'
+          src={require("../../images/round7.png")}
+          alt='round-num'
+          id='round-num'
       />
     </div>
     <div className='cam-left'>
-      <ExitButton name="X"/>
-      <div className='wrapper'>
+      <div className='left-player-con'>
         <img
           className='profile-left'
           src={require("../../images/user-profile-example.png")}
           alt="profile-left"
         />
+        <div>
         <p className='player-detail-left'>Natasha Romanoff</p>
         <img 
           className='stars-l'
           src={require("../../images/star0.png")}
           alt='star0'
         />
+        </div>
         <img
           className='combo-left'
           src={require("../..//images/combo3.png")}
           alt='combo3'
         />
       </div>
-    </div>
-    {UserVideo}
-    <div className='cam-right'>
+      {UserVideo}
       <div className='wrapper'>
+      <ExitButton name="X"/>
+      </div>
+    </div>
+    {displayTIme && <CountdownTimer id='Timer' initialSec={10} TimerEnd={handleRoundEnd} />}
+    <div className='cam-right'>
+      <div className='right-player-con'>
+        <div>
         <p className='player-detail-right'>Natasha Romanoff</p>
         <img
           className='stars-r'
           src={require("../../images/star0.png")}
           alt='star0'
         />
+        </div>
         <img
           className='profile-right'
           src={require("../..//images/user-profile2-example.jpg")}
           alt="profile-right"
-      />
+        />
         <img
           className='combo-right'
           src={require("../..//images/combo2.png")}
           alt='combo2'
         />
       </div>
-    </div>
     {PartnerVideo}
+    </div>
   </div>
-
     )
-    }
+}

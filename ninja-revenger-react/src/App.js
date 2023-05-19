@@ -25,7 +25,6 @@ const App = () => {
     {/* <Loading/> */}
     {/* <LosePage/> */}
     {/* <WinPage/> */}
-    {/* <MainGame/> */}
     {/* <JoinFriend/> */}
   </div>
   
