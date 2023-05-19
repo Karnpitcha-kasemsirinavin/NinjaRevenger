@@ -5,6 +5,8 @@ import '../../Components/Button/index.jsx'
 import { SocketContext } from "../../Context/SocketThing";
 import { useNavigate, useLocation } from "react-router-dom";
 import CountdownTimer from '../../Components/Timer'
+import PlayerOne from '../../Components/PlayerOne'
+import { connect } from 'socket.io-client';
 
 
 export const MainGame = () => {
@@ -23,8 +25,26 @@ export const MainGame = () => {
   const delay = ms => new Promise(res => setTimeout(res, ms));
   const [currentRound, setCurrentRound] = useState(1);
   const [start, setStart] = useState(false); // Add start state
-  const [displayTIme, setDisplayTime] = useState(false);
+  const [displayTime, setDisplayTime] = useState(false);
   const [displayRound, setDisplayRound] = useState(false);
+  const [renderVideo, setRenderVideo] = useState(true);
+  
+
+  // result
+  const [result, setResult] = useState({
+    show: false,
+    reset: false,
+  });
+
+  // Option for each player
+  const [play1Option, setPLay1Option] = useState([10]);
+  // const [play2Option, setPLay2Option] = useState([]);
+  const [resultArr, setResultarr] = useState({
+    3: [],
+    4: [],
+    5: [],
+  });
+
 
   useEffect(() => {
     let roomId = location.pathname.split("/")[2];
@@ -44,11 +64,15 @@ export const MainGame = () => {
       console.log('calling');
   
       call.on('stream', remote => {
+        if (partnerVideo.current.srcObject !== remote && renderVideo) {
         partnerVideo.current.srcObject = remote;
         console.log('user', stream, '\npartner', remote);
+        setRenderVideo(false);
+        }
       });
     }
-  }, [connected, room.players, player_1, stream, partnerId, peer]);
+
+  }, [connected, room.players, player_1, stream, partnerId, peer, renderVideo]);
   
   useEffect(() => {
     if (socket.id === undefined) {
@@ -74,7 +98,8 @@ export const MainGame = () => {
       peer.on('disconnect', () => {
         console.log('disconnect bye see u');
       });
-  
+      
+      // problem make video jerky
       peer.on('call', call => {
         getUserMedia({ video: true }, stream => {
           call.answer(stream);
@@ -82,7 +107,11 @@ export const MainGame = () => {
         });
   
         call.on('stream', remote => {
+          console.log('render', renderVideo);
+          if (partnerVideo.current.srcObject !== remote && renderVideo) {
           partnerVideo.current.srcObject = remote;
+          setRenderVideo(false);
+          }
         });
       });
   
@@ -91,14 +120,31 @@ export const MainGame = () => {
         navigate(`/`);
       });
     }
-  }, [socket, navigate, peer]);
+
+  }, [socket, navigate, peer, renderVideo]);
 
   // for start
   useEffect(() => {
     const round_img = document.getElementById("round");
     const round_num = document.getElementById("round-num");
 
-    if (connected) {
+    // for each round
+    const newRound = () => {
+
+      setTimeout(() => {
+        round_img.style.visibility = 'visible';
+        round_num.style.visibility = 'visible';
+        setDisplayTime(true);
+      }, 2000 + 3000); // make it visible after 5 secs
+
+      setTimeout(() => {
+       setPLay1Option([...play1Option, 1]) 
+      }, 2000 + 7000); // 2 sec after start round
+
+      
+    }
+
+    if (start) {
       setTimeout(() => {
         console.log('show start img');
       }, 2000); // make it visible after 2 seconds
@@ -107,14 +153,28 @@ export const MainGame = () => {
 
     if (start) {
        // show each round
-    setTimeout(() => {
-      round_img.style.visibility = 'visible';
-      round_num.style.visibility = 'visible';
-      setDisplayTime(true);
-    }, 2000 + 3000); // make it visible after 5 secs
+      newRound()
+    } else {
+      // when each roud end
+      round_img.style.visibility = 'hidden';
+      round_num.style.visibility = 'hidden';
     }
 
+
   }, [start]);
+
+  useEffect(() => {
+    const players = room?.players;
+
+    if (play1Option.length !== 0 && displayTime) {
+      room.players[player_1].option = play1Option;
+
+      console.log(Object.values(room.players[player_1].option));
+
+      calculateResults();
+    }
+
+  }, [play1Option, displayTime])
   
 
 
@@ -123,7 +183,38 @@ const handleRoundEnd = () => {
   setDisplayTime(false);
   setStart(false);
 
-}
+  // send info to the server
+
+};
+
+const calculateResults = async () => {
+  const players = room?.players;
+  
+  // if (
+  //   players &&
+  //   players[player_1]?.optionLock === true &&
+  //   players[player_2]?.optionLock === true
+  // ) {
+
+  // }
+
+  if(resultArr[3].length !== 0){
+    console.log('have 3');
+  }
+  if (resultArr[4].length !== 0) {
+    console.log('have 4')
+  }
+  if (resultArr[5].length !== 0) {
+    console.log('have 5')
+  }
+
+  console.log('arr3', resultArr[3].length)
+  console.log('start check')
+  console.log('Option', play1Option)
+
+  socket.emit("room:update", room);
+
+};
 
 
   // make streams into video element
@@ -168,6 +259,7 @@ const handleRoundEnd = () => {
           alt='star0'
         />
         </div>
+        {/* combo */}
         <img
           className='combo-left'
           src={require("../..//images/combo3.png")}
@@ -179,7 +271,7 @@ const handleRoundEnd = () => {
       <ExitButton name="X"/>
       </div>
     </div>
-    {displayTIme && <CountdownTimer id='Timer' initialSec={10} TimerEnd={handleRoundEnd} />}
+    {displayTime && <CountdownTimer id='Timer' initialSec={10} TimerEnd={handleRoundEnd} />}
     <div className='cam-right'>
       <div className='right-player-con'>
         <div>
