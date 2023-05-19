@@ -35,7 +35,7 @@ const SocketContextProvider = ({ children }) => {
 	//   }
 
   useEffect(() => {
-    const socket = io('https://black-breeze-48357.pktriot.net',
+    const socket = io('https://nostalgic-dream-93159.pktriot.net',
     {
       reconnectionDelayMax: 10000,
       auth: {
