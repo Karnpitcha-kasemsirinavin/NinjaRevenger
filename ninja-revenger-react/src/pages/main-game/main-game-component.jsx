@@ -349,6 +349,7 @@ const calculateResults = async () => {
         />
       </div>
       {UserVideo}
+      <HandDetection Input_Video={UserVideo} />
       <div className='wrapper'>
       <ExitButton name="X"/>
       </div>
@@ -374,7 +375,6 @@ const calculateResults = async () => {
           src={require("../..//images/combo2.png")}
           alt='combo2'
         />
-        <HandDetection output_video={stream}></HandDetection>
       </div>
     {PartnerVideo}
     </div>

@@ -3,9 +3,9 @@
 import React, { useEffect } from 'react';
 import { Hands, Camera } from '@mediapipe/hands';
 
-const HandDetection = ({ stream }) => {
+const HandDetection = ({ Input_Video }) => {
   useEffect(() => {
-    const videoElement = document.querySelector('.output_video');
+    const videoElement = Input_Video.current;
     const canvasElement = document.querySelector('.output_canvas');
     
     if (!videoElement || !canvasElement) {
@@ -36,8 +36,6 @@ const HandDetection = ({ stream }) => {
         const img = new Image();
         img.src = imageData;
 
-        // return img
-        return img;
       }
       canvasCtx.restore();
     }
@@ -67,9 +65,8 @@ const HandDetection = ({ stream }) => {
       height: 720,
     });
     camera.start();
-  }, [stream]);
+  }, [Input_Video]);
 
-  return null; // or return any JSX you want to display
+  return console.log("fuck")
 };
-
 export default HandDetection;
