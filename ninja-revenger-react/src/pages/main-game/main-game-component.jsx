@@ -37,13 +37,18 @@ export const MainGame = () => {
   });
 
   // Option for each player
-  const [play1Option, setPLay1Option] = useState([10]);
+  const [play1Option, setPLay1Option] = useState(10);
   // const [play2Option, setPLay2Option] = useState([]);
   const [resultArr, setResultarr] = useState({
+    3: [0],
+    4: [],
+    5: [],
+  }); // for stacking
+  const Combo = {
     3: [],
     4: [],
     5: [],
-  });
+  }
 
 
   useEffect(() => {
@@ -90,7 +95,7 @@ export const MainGame = () => {
       });
   
       peer.on('connection', (err) => {
-        console.log('connected');
+        // console.log('connected');
         setConnected(true);
         setStart(true);
       });
@@ -103,11 +108,11 @@ export const MainGame = () => {
       peer.on('call', call => {
         getUserMedia({ video: true }, stream => {
           call.answer(stream);
-          console.log('answering');
+          // console.log('answering');
         });
   
         call.on('stream', remote => {
-          console.log('render', renderVideo);
+          // console.log('render', renderVideo);
           if (partnerVideo.current.srcObject !== remote && renderVideo) {
           partnerVideo.current.srcObject = remote;
           setRenderVideo(false);
@@ -138,17 +143,14 @@ export const MainGame = () => {
       }, 2000 + 3000); // make it visible after 5 secs
 
       setTimeout(() => {
-       setPLay1Option([...play1Option, 1]) 
-      }, 2000 + 7000); // 2 sec after start round
-
-      
+       setPLay1Option(14) 
+      }, 2000 + 1000); // 0.5 sec after start round
     }
 
     if (start) {
       setTimeout(() => {
         console.log('show start img');
       }, 2000); // make it visible after 2 seconds
-
     }
 
     if (start) {
@@ -166,7 +168,7 @@ export const MainGame = () => {
   useEffect(() => {
     const players = room?.players;
 
-    if (play1Option.length !== 0 && displayTime) {
+    if (play1Option !== null && displayTime) {
       room.players[player_1].option = play1Option;
 
       console.log(Object.values(room.players[player_1].option));
@@ -187,34 +189,87 @@ const handleRoundEnd = () => {
 
 };
 
+
+//================ game logic =======================
 const calculateResults = async () => {
   const players = room?.players;
+  let foundArr = false;
   
   // if (
   //   players &&
   //   players[player_1]?.optionLock === true &&
   //   players[player_2]?.optionLock === true
   // ) {
-
   // }
 
-  if(resultArr[3].length !== 0){
-    console.log('have 3');
-  }
-  if (resultArr[4].length !== 0) {
-    console.log('have 4')
-  }
-  if (resultArr[5].length !== 0) {
-    console.log('have 5')
+  // check if arr empty 
+  // if empty check first patternn index 
+  // if not empty add to arr
+
+
+
+  // if (resultArr[5].length !== 0) {
+  //   resultArr[5] = [...resultArr[5], play1Option]
+  //   console.log('have 5')
+  // } else if (!foundArr && (play1Option === 16 || play1Option === 14)) {
+  //   console.log('get 5')
+  //             foundArr = true;
+  //             resultArr[5] = [...resultArr[5], play1Option]
+  //           }
+
+  // if (resultArr[4].length !== 0) {
+  //   resultArr[4] = [...resultArr[4], play1Option]
+  //   console.log('have 4')
+  // } else if (!foundArr && (play1Option === 45 || 
+  //   play1Option === 5 || play1Option === 2 || play1Option === 19)) {
+  //     foundArr = true;
+  //     resultArr[4] = [...resultArr[4], play1Option]
+  //   }
+
+  // if(resultArr[3].length !== 0){
+  //   resultArr[3] = [...resultArr[3], play1Option]
+  //   console.log('have 3');
+  // } else {
+  //   if (!foundArr && (play1Option === 18 || 
+  //     play1Option === 15 || play1Option === 9 || play1Option === 11)) {
+  //       foundArr = true;
+  //       resultArr[3] = [...resultArr[3], play1Option]
+  //     }
+  // }
+
+  for (let i = 3; i <= 5; i++) {
+    console.log('test ', resultArr[i]);
+
+    if (resultArr[i].length !== 0){
+      resultArr[i] = [...resultArr[i], play1Option]
+    } else if (!foundArr) {
+      for (let i = 0; i <= 5; i++) {
+        
+      }
+
+    }
+
   }
 
-  console.log('arr3', resultArr[3].length)
+  const first_arr = [[1,2], []]
+
+
+  console.log('arr3', resultArr[3])
+  console.log('arr5', resultArr[5])
   console.log('start check')
   console.log('Option', play1Option)
 
+  // check if any arr is full
+  if (resultArr[3].length === 3) {
+
+  }
+
   socket.emit("room:update", room);
 
+
 };
+
+//================ game logic =======================
 
 
   // make streams into video element
