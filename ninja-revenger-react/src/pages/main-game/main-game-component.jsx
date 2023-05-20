@@ -76,7 +76,7 @@ export const MainGame = () => {
     // console.log(connected, caller, stream);
     if (connected && caller && stream && countConnect === 0) {
       const call = peer.call(partnerId, stream);
-      // console.log('calling', partnerId);
+      console.log('calling', partnerId);
       setCountConnect(1);
   
       call.on('stream', remote => {
@@ -101,7 +101,7 @@ export const MainGame = () => {
       });
   
       socket.on('id', data => {
-        // console.log('try to connect');
+        console.log('try to connect');
         // console.log(data);
         socket.emit('answer', { from: player_1, to: data.from, id: userId })
         var conn = peer.connect(data.id);
@@ -113,9 +113,9 @@ export const MainGame = () => {
       })
   
       peer.on('connection', (err) => {
-        // console.log('connected');
+        console.log('connected');
         setConnected(true);
-        setStart(true);
+        
       });
   
       peer.on('disconnect', () => {
@@ -133,6 +133,7 @@ export const MainGame = () => {
           // console.log('render', renderVideo);
           if (partnerVideo.current.srcObject !== remote && renderVideo) {
           partnerVideo.current.srcObject = remote;
+          setStart(true);
           setRenderVideo(false);
           }
         });
@@ -144,7 +145,7 @@ export const MainGame = () => {
       });
 
       socket.on('caller', data => {
-        // console.log('turn caller on');
+        console.log('turn caller on');
         setCaller(true)
         socket.emit('id', { from: player_1, to: player_2, id: userId })
         // console.log(partnerId);
@@ -215,7 +216,7 @@ export const MainGame = () => {
   useEffect(() => {
     
     if (result.options.length === 1) {
-      console.log('updated', result.options)
+      // console.log('updated', result.options)
     }
 
     if (play1Option !== null && play1Option !== undefined && selectOption && displayTime) {
@@ -231,7 +232,7 @@ export const MainGame = () => {
     
     }
 
-    console.log('from play1 ', room.players[player_1].option)
+    // console.log('from play1 ', room.players[player_1].option)
 
   }, [play1Option, displayTime, selectOption])
 
@@ -280,10 +281,10 @@ const calculateResults = async () => {
   
 
    
-  console.log('arr3', resultArr[3])
-  console.log('arr4', resultArr[4])
-  console.log('arr5', resultArr[5])
-  console.log('Option', play1Option)
+  // console.log('arr3', resultArr[3])
+  // console.log('arr4', resultArr[4])
+  // console.log('arr5', resultArr[5])
+  // console.log('Option', play1Option)
 
   const Combo = {
     3: ['18-7-17','15-18-13','9-13-3','11-16-8'],
@@ -301,14 +302,14 @@ const calculateResults = async () => {
     if (resultArr[i].length === i) {
         let check_string = resultArr[i].join('-');
 
-        console.log('check string: ', check_string)
+        // console.log('check string: ', check_string)
       for (let j = 0; j < Combo[i].length; j++) {
         if (check_string === Combo[i][j]){
-          console.log('check get combo', check_string);
+          // console.log('check get combo', check_string);
 
           // change to combo
           let position = (i-1 + (2*i-1)*(-1))
-          console.log('position ', position)
+          // console.log('position ', position)
           optionList.splice(position);
           optionList.push([i,j].join('-'));
 
@@ -323,7 +324,7 @@ const calculateResults = async () => {
   }
 
 
-  console.log('list: ', optionList);
+  // console.log('list: ', optionList);
 
   setResult({
     show: true,
@@ -331,12 +332,10 @@ const calculateResults = async () => {
     options: optionList,
   })
 
-  console.log('result options:', result.options);
+  // console.log('result options:', result.options);
 
   players[player_1].option = result.options;
 
-  // players[player_1].option = result.options;
-  // console.log(result.options);
   socket.emit("room:update", room);
 
 
