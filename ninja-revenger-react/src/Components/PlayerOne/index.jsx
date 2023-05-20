@@ -61,9 +61,9 @@ const PlayerOne = ({ result }) => {
     
     for (let i = 0; i < (result.options).length; i++) {
 
-      console.log(gesture[(result.options)[i]])
-      addedGesture.push(gesture[(result.options)[i]])     
-    }
+            // console.log(gesture[(result.options)[i]])
+            addedGesture.push(gesture[(result.options)[i]])     
+        }
 
     setOption(addedGesture);
 

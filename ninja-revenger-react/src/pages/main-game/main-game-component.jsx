@@ -47,7 +47,7 @@ export const MainGame = () => {
     options: [],
   });
 
-  const [friendResult, setFriendResult] = useState({
+  const [partnerResult, setPartnerResult] = useState({
     show: false,
     reset: false,
     options: [],
@@ -227,7 +227,12 @@ export const MainGame = () => {
   // Game secton ========================================================================================================
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const numberArray = room.players[player_1].caller? [14, 15, 18, 13, 10]: [15, 18, 13, 16]
+  const numberArray = room.players[player_1].caller?
+
+          [2,17,1,16,15,18,13]:[11,16,8,14,7,12,0]
+      // [0,0]: []
+      // [15,18,13,2,17,1,16,9,13,3]: [4,14,15,12,13,18,7,17,5,18,11,10]
+      // [15, 18, 13, 5, 18, 11, 10, 9, 13, 3, 0]: [16, 0, 17, 6, 7, 9, 13, 3, 15, 18, 13]
 
   // for start
   useEffect(() => {
@@ -251,7 +256,7 @@ export const MainGame = () => {
         setPLay1Option(numberArray[currentIndex]);
         setCurrentIndex(currentIndex + 1);
         setSelectOption(true);
-      }, currentIndex * 1000); // 1 sec after start round
+      }, currentIndex * 200); // 1 sec after start round
 
     }
   }
@@ -283,16 +288,18 @@ export const MainGame = () => {
 
     if (play1Option !== null && play1Option !== undefined && selectOption && displayTime) {
 
-      calculateResults();
+      calculateCombo();
       setSelectOption(false)
-      // socket.emit("update gesture")
+
+      // update when player have new option
       socket.emit("room:update", room);
+
 
     }
 
-    if (connected){
+    if (connected && (room.players[player_2].option).length !== 0){
 
-    setFriendResult({
+    setPartnerResult({
       show: true,
       reset: false,
       options: room.players[player_2].option,
@@ -300,29 +307,11 @@ export const MainGame = () => {
 
     
   }
-    
-
     // console.log('from play1 ', room.players[player_1].option)
 
   }, [play1Option, displayTime, selectOption, room])
 
-  // useEffect(() => {
-  //   if (connected){
-
-  //     setFriendResult({
-  //       show: true,
-  //       reset: false,
-  //       options: room.players[player_2].option,
-  //     })
-  
-      
-  //   }
-  
-  //     socket.emit("room:update", room);
-
-  // }, [displayTime, room.players[player_2]])
-
-
+  // time over for each round
 
 const handleRoundEnd = () => {
   setCurrentRound(currentRound + 1);
@@ -332,20 +321,23 @@ const handleRoundEnd = () => {
 
   socket.emit("room:update", room);
 
-  setFriendResult({
+  if ((room.players[player_2].option).length !== 0){
+  setPartnerResult({
     show: true,
     reset: false,
     options: room.players[player_2].option,
   })
+ }
+
+  calculateResult();
     
-
-  // send info to the server
-
 };
 
 
-//================ game logic =======================
-const calculateResults = async () => {
+//================ game logic ======================= (start)
+
+// calculate gesture and combo for each player
+const calculateCombo = async () => {
   let added_arr = {s:false ,4:false ,5:false}
   const players = room?.players;
 
@@ -358,7 +350,6 @@ const calculateResults = async () => {
       added_arr[i] = true;
     }}
     
-
     // add arr5
     if (!added_arr[5] && (play1Option === 16 || play1Option === 4)) {
         // console.log('get 5')
@@ -373,8 +364,6 @@ const calculateResults = async () => {
             play1Option === 15 || play1Option === 9 || play1Option === 11)) {
               resultArr[3] = [...resultArr[3], play1Option]
       }
-  
-
   
   // console.log('arr3', resultArr[3])
   // console.log('arr4', resultArr[4])
@@ -431,12 +420,114 @@ const calculateResults = async () => {
 
   players[player_1].option = result.options;
 
-  // socket.emit("room:update", room);
-
-
 };
 
-//================ game logic =======================
+// calculate the result between 2 players
+
+const calculateResult = async () => {
+  const comboList = {
+    '3-0': '3A-1',
+    '3-1': '3P',
+    '3-2': '3C',
+    '3-3': '3A-2',
+    '4-0': '4P',
+    '4-1': '4C',
+    '4-2': '4A-1',
+    '4-3': '4A-2',
+    '5-0': '5A',
+    '5-1': '5P'
+  };
+
+  let playerList = [];
+  let partnerList = [];
+  let playerScore = 0;
+  let partnerScore = 0;
+
+  const maxLength = Math.max(partnerResult.options.length, result.options.length);
+
+  console.log('Last result:\nPlayer:', result.options, '\nPartner:', partnerResult.options);
+
+ // change into combo type
+
+  for (let i = 0; i < maxLength; i++) {
+    if (i < (result.options).length) {
+
+      if ((result.options[i]).length > 2){
+      playerList.push(comboList[(result.options[i])])
+      } else {
+        playerScore += 50;
+      }
+    }
+    if (i < (partnerResult.options).length) {
+
+      if ((partnerResult.options[i]).length > 2){
+        partnerList.push(comboList[(partnerResult.options[i])])
+        } else {
+          partnerScore += 50;
+        }
+    }
+  }
+
+  // const removeCombo = (combo, list) => {
+  //   list.splice(list.findIndex((str) => str === combo), 1);
+  // };
+
+ 
+  console.log('Player result:', playerList);
+  console.log('Partner result:', partnerList);
+
+  const processCombos = (list1, list2) => {
+    const deleteCombo = [];
+    
+    list1.forEach((combo) => {
+
+      if (combo[1] === 'P') {
+        // prevention
+        const counterString = combo[0] + 'C';
+        const index = list2.findIndex((str) => str.startsWith(combo[0]) 
+                                                && !str.startsWith(counterString));
+        if (index >= 0) {
+          list2.splice(index, 1);
+          deleteCombo.push(combo);
+        }
+      } else if (combo[1] === 'C') {
+        //counter attack
+
+        const loopNum = 5 - parseInt(combo[0]) + 1;
+        for (let j = 1; j < loopNum; j++) {
+
+          const attackCombo = (parseInt(combo[0]) + j).toString() + 'A';
+          const index = list2.findIndex((str) => str.startsWith(attackCombo));
+
+          if (index >= 0) {
+            list2.splice(index, 1);
+            deleteCombo.push(combo);
+            break;
+          }
+        }
+      }
+    });
+
+    for (let i = 0; i < deleteCombo.length; i++){
+        list1 = list1.filter(combo => combo !== deleteCombo[i])
+      }
+
+      return [list1, list2]
+
+  };
+
+  [playerList, partnerList] = processCombos(playerList, partnerList);
+  [partnerList, playerList] = processCombos(partnerList, playerList);
+
+  console.log('Player result:', playerList);
+  console.log(playerScore);
+  console.log('Partner result:', partnerList);
+  console.log(partnerScore);
+
+ 
+}
+
+//================ game logic ======================= (end)
 
 
   // make streams into video element
@@ -507,7 +598,7 @@ const calculateResults = async () => {
         />
         <div>
           {/* combo */}
-        <PlayerTwo result={friendResult} />
+        <PlayerTwo result={partnerResult} />
         </div>
       </div>
       {PartnerVideo}

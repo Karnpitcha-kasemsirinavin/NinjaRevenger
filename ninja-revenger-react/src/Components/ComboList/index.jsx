@@ -5,8 +5,8 @@ const ComboList = (props) => {
   
   return (
     <ul style={{ listStyleType: 'none' }}>
-      {option.map((data) => (
-        <ListItem key={data} value={data} />
+      {option.map((data, index) => (
+        <ListItem key={index} value={data} />
       ))}
     </ul>
   );
@@ -16,5 +16,6 @@ const ListItem = ({ value }) => {
   return <li>{value}</li>;
 
 };
+
 
 export default ComboList;
