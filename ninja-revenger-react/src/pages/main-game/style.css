@@ -1,25 +1,13 @@
 @import url('https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700%27');
 @import url('https://fonts.googleapis.com/css?family=Roboto%27');
 
-  /* padding */
-  .p-left40{
-    padding-left: 40%;
-  }
-
-  .flex-1{
-    flex: 1;
-  }
-  .flex-2{
-    flex: 2;
-  }
-  
   .wrapper {
     display: flex;
     align-items: center;
   }
   
   /* components */
-  .container {
+  .maingame-container {
     background-color: bisque;
     height: 100vh;
     width: 100vw;
@@ -35,7 +23,7 @@
     margin-left: 20px;
     grid-template-columns: 1fr 3fr;
     grid-template-rows: 2fr 1fr;
-    row-gap: 20px;
+    row-gap: 10px;
   }
 
   .right-player-con{
@@ -45,24 +33,24 @@
     margin-right: 20px;
     grid-template-columns: 3fr 1fr;
     grid-template-rows: 2fr 1fr;
-    row-gap: 20px;
+    row-gap: 10px;
   }
 
   .cam-left{
     background-color:darksalmon;
     display: grid;
-    grid-template-rows: 1fr 4fr 1fr;
-    height: 100%;
+    grid-template-rows: 1fr 2fr 60px;
+    height: auto;
     width: 50%;
-    border: 1px solid black;
+    /* border: 1px solid black; */
   }
   .cam-right{
     background-color:darksalmon;
     display: grid;
-    grid-template-rows: 1fr 4fr 1fr;
-    height: 100%;
+    grid-template-rows: 1fr 2fr 60px;
+    height: auto;
     width: 50%;
-    border: 1px solid black;
+    /* border: 1px solid black; */
   }
 
   .profile-left {
@@ -156,10 +144,12 @@
     z-index: 1;
   }
 
-  video {
-    border: 1px solid white;
-    width: fill;
-    height: fill;
+video {
+    /* border: 1px solid white; */
+    padding-right: 100px;
+    width: 80%;
+    height: auto;
+    justify-items:end;
     transform: rotateY(180deg);
     z-index: 0;
   }

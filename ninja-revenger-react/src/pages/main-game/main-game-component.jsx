@@ -1,6 +1,6 @@
 import { useEffect, useContext, useState, useRef } from 'react'
 import ExitButton from '../../Components/Exit_Button'
-import './style.css'
+import '../main-game/style.css'
 import '../../Components/Button/index.jsx'
 import { SocketContext } from "../../Context/SocketThing";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -122,7 +122,6 @@ const handleRoundEnd = () => {
   setCurrentRound(currentRound + 1);
   setDisplayTime(false);
   setStart(false);
-
 }
 
 
@@ -138,7 +137,7 @@ const handleRoundEnd = () => {
   );
 
   return (
-  <div className='container'>
+  <div className='maingame-container'>
     <div className='wrapper'>
     <img
           className='round'
@@ -168,16 +167,12 @@ const handleRoundEnd = () => {
           alt='star0'
         />
         </div>
-        <img
-          className='combo-left'
-          src={require("../..//images/combo3.png")}
-          alt='combo3'
-        />
+        <div>
+          
+        </div>
       </div>
       {UserVideo}
-      <div className='wrapper'>
       <ExitButton name="X"/>
-      </div>
     </div>
     {displayTIme && <CountdownTimer id='Timer' initialSec={10} TimerEnd={handleRoundEnd} />}
     <div className='cam-right'>
@@ -195,13 +190,11 @@ const handleRoundEnd = () => {
           src={require("../..//images/user-profile2-example.jpg")}
           alt="profile-right"
         />
-        <img
-          className='combo-right'
-          src={require("../..//images/combo2.png")}
-          alt='combo2'
-        />
+        <div>
+
+        </div>
       </div>
-    {PartnerVideo}
+      {PartnerVideo}
     </div>
   </div>
     )
