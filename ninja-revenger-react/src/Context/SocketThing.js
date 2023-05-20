@@ -66,21 +66,19 @@ const SocketContextProvider = ({ children }) => {
       if (play_1 === socket.id) {
         setPlayer_1(play_1);
         setPlayer_2(play_2);
-        if (play_2 && !room.private) {
-          socket.emit('id', { from: play_1, to: play_2, id: userId }) // bug
-          
-          // console.log('doing connection');
+        if (play_2) {
+          socket.emit('id', { from: play_1, to: play_2, id: userId })
         }
       } else {
         setPlayer_1(play_2);
         setPlayer_2(play_1);
-        if (play_2 && !room.private) {
-          socket.emit('id', { from: play_2, to: play_1, id: userId }) // bug
-          // console.log('doing connection');
+        if (play_2) {
+          socket.emit('id', { from: play_2, to: play_1, id: userId })
         }
       }
 
       // console.log(payload.players);
+
 
     });
 
