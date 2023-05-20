@@ -7,7 +7,7 @@ import ComboList from "../ComboList";
 
 const PlayerOne = ({ result }) => {
     const [score, setScore] = useState(0);
-    const {room, player_1} = useContext(SocketContext);
+    const {room, player_2} = useContext(SocketContext);
     const [option, setOption] = useState([]);
 
     // data
@@ -48,7 +48,7 @@ const PlayerOne = ({ result }) => {
     useEffect(() => {
         if (result.show) {
 
-            setScore(room.players[player_1].score);
+            setScore(room.players[player_2].score);
             changeToName()
             // console.log('PlayOne', option)
         } else if (result.reset) {
