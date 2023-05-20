@@ -5,7 +5,6 @@ import '../../Components/Button/index.jsx'
 import { SocketContext } from "../../Context/SocketThing";
 import { useNavigate, useLocation } from "react-router-dom";
 import CountdownTimer from '../../Components/Timer'
-import HandDetection from '../../Context/HandDetection';
 import PlayerOne from '../../Components/PlayerOne'
 import { connect } from 'socket.io-client';
 
@@ -349,7 +348,6 @@ const calculateResults = async () => {
         />
       </div>
       {UserVideo}
-      <HandDetection Input_Video={UserVideo} />
       <div className='wrapper'>
       <ExitButton name="X"/>
       </div>
