@@ -50,7 +50,7 @@ const PlayerOne = ({ result }) => {
 
             setScore(room.players[player_1].score);
             changeToName()
-            // console.log('PlayOne', option)
+            
         } else if (result.reset) {
         }
 
@@ -61,7 +61,7 @@ const PlayerOne = ({ result }) => {
         
         for (let i = 0; i < (result.options).length; i++) {
 
-            // console.log(gesture[(result.options)[i]])
+            console.log(gesture[(result.options)[i]])
             addedGesture.push(gesture[(result.options)[i]])     
         }
 
@@ -74,6 +74,14 @@ const PlayerOne = ({ result }) => {
 
     return (
         <div>
+          {/* {option.map((item, index) => (
+            <div key={index} className="custom-div">{item.value}</div>
+            )).join('\n')} */}
+          {/* <img
+          className='combo-left'
+          src={require("../../images/combo3.png")}
+          alt='combo3'
+        /> */}
         <ComboList option={option} />
         </div>
       );

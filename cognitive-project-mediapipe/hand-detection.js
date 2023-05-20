@@ -1,6 +1,7 @@
 const videoElement = document.getElementsByClassName('input_video')[0];
 const canvasElement = document.getElementsByClassName('output_canvas')[0];
 const canvasCtx = canvasElement.getContext('2d');
+const framesArray = [];
 
 //function for hands appearing on cam
 function onResults(results) {
@@ -34,18 +35,32 @@ function onResults(results) {
         drawLandmarks(canvasCtx, landmarks, {color: '#FF0000', radius: 1});
       }
     }
+
+    // Return the canvas image data
+    const imageData = canvasElement.toDataURL();
+    const img = new Image();
+    img.src = imageData;
+
+    // Append the image element to the body
+    document.body.appendChild(img);
+
+    //return img
+    return img
   }
   canvasCtx.restore();
 }
+
 // using the hand object from mediapipe
 const hands = new Hands({locateFile: (file) => {
   return `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.3.1632795355/${file}`;
 }});
+
 hands.setOptions({
   maxNumHands: 2,
   minDetectionConfidence: 0.5,
   minTrackingConfidence: 0.5
 });
+
 
 //execute onResults function if hand is detected
 hands.onResults(onResults);
