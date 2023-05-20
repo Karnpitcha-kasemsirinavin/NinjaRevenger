@@ -15,7 +15,7 @@ export const MainGame = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
-  // conneciyion
+  // connection
   const [partnerId, setPartnerId] = useState('')
   const [stream, setStream] = useState()
   const [connected, setConnected] = useState(false)
@@ -25,9 +25,8 @@ export const MainGame = () => {
   const partnerVideo = useRef()
   
   // time
-  const delay = ms => new Promise(res => setTimeout(res, ms));
   const [currentRound, setCurrentRound] = useState(1);
-  const [start, setStart] = useState(true); // Add start state
+  const [start, setStart] = useState(false); // Add start state
   const [displayTime, setDisplayTime] = useState(false);
   const [displayRound, setDisplayRound] = useState(false);
   const [renderVideo, setRenderVideo] = useState(true);
@@ -48,8 +47,8 @@ export const MainGame = () => {
 
 
   // Option for each player
-  const [play1Option, setPLay1Option] = useState(10); // each Option
-  const [optionList, setOptionList] = useState([])
+  const [play1Option, setPLay1Option] = useState(0); // each Option
+  const [optionList, setOptionList] = useState([]) // list for option
   const [selectOption, setSelectOption] = useState(false)
   // const [play2Option, setPLay2Option] = useState([]);
   const [resultArr, setResultArr] = useState({
@@ -76,13 +75,14 @@ export const MainGame = () => {
     // console.log(connected, caller, stream);
     if (connected && caller && stream && countConnect === 0) {
       const call = peer.call(partnerId, stream);
-      console.log('calling', partnerId);
+      // console.log('calling', partnerId);
       setCountConnect(1);
   
       call.on('stream', remote => {
         if (partnerVideo.current.srcObject !== remote && renderVideo) {
         partnerVideo.current.srcObject = remote;
         // console.log('user', stream, '\npartner', remote);
+        setStart(true);
         setRenderVideo(false);
         }
       });
@@ -100,24 +100,22 @@ export const MainGame = () => {
         setStream(stream);
       });
     
-    console.log('partnerid ', partnerId)
-    if (partnerId === ''){
+    
       socket.on('id', data => {
-        console.log('try to connect');
+        // console.log('try to connect');
         // console.log(data);
         socket.emit('answer', { from: player_1, to: data.from, id: userId })
         var conn = peer.connect(data.id);
         setPartnerId(data.id);
-        console.log('partnerid ', partnerId)
+        // console.log('partnerid ', partnerId)
       });
-    }
 
       socket.on('answer', data => {
         setPartnerId(data.id)
       })
   
       peer.on('connection', (err) => {
-        console.log('connected');
+        // console.log('connected');
         setConnected(true);
         
       });
@@ -130,7 +128,7 @@ export const MainGame = () => {
       peer.on('call', call => {
         getUserMedia({ video: true }, stream => {
           call.answer(stream);
-          console.log('answering');
+          // console.log('answering');
         });
   
         call.on('stream', remote => {
@@ -150,10 +148,10 @@ export const MainGame = () => {
 
       
       socket.on('caller', data => {
-        console.log('turn caller on');
+        // console.log('turn caller on');
         setCaller(true)
         if (countConnect === 0){
-          console.log('pass this')
+          
           socket.emit('id', { from: player_1, to: player_2, id: userId })
         }
         // console.log(partnerId);
@@ -172,10 +170,22 @@ export const MainGame = () => {
 
   }, [socket, navigate, peer, partnerId]);
 
+  // Generate name =====================================================================================================
+
+  const names = ['Tor', 'Foam', 'Mark', 'June', 'Nata', 'Mill'];
+  const [randomName, setRandomName] = useState('');
+  
+
+  const generateRandomName = () => {
+    const randomIndex = Math.floor(Math.random() * names.length);
+    const name = names[randomIndex];
+    setRandomName(name);
+  }
+
   // Game secton ========================================================================================================
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const numberArray = [14, 15, 18, 13, 10];
+  const numberArray = room.players[player_1].caller? [14, 15, 18, 13, 10]: [15, 18, 13, 16]
 
   // for start
   useEffect(() => {
@@ -238,8 +248,12 @@ export const MainGame = () => {
         reset: false,
         options: room.players[player_2].option,
       })
-    
+
+     
     }
+
+    socket.emit("room:update", room);
+    
 
     // console.log('from play1 ', room.players[player_1].option)
 
@@ -345,7 +359,7 @@ const calculateResults = async () => {
 
   players[player_1].option = result.options;
 
-  socket.emit("room:update", room);
+  // socket.emit("room:update", room);
 
 
 };

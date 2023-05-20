@@ -5,7 +5,7 @@ import styles from "./style.css";
 import ComboList from "../ComboList";
 
 
-const PlayerOne = ({ result }) => {
+const PlayerTwo = ({ result }) => {
     const [score, setScore] = useState(0);
     const {room, player_2} = useContext(SocketContext);
     const [option, setOption] = useState([]);
@@ -67,7 +67,7 @@ const PlayerOne = ({ result }) => {
 
         setOption(addedGesture);
 
-        console.log(option)
+        // console.log(option)
 
     }
 
@@ -87,5 +87,5 @@ const PlayerOne = ({ result }) => {
       );
 }
       
-export default PlayerOne;
+export default PlayerTwo;
 
