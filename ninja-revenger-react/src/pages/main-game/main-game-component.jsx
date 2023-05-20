@@ -7,6 +7,14 @@ import { useNavigate, useLocation } from "react-router-dom";
 import CountdownTimer from '../../Components/Timer';
 import PlayerOne from '../../Components/PlayerOne';
 import PlayerTwo from '../../Components/PlayerTwo';
+import art1 from '../../images/art1.png';
+import art2 from '../../images/art2.png';
+import art3 from '../../images/art3.png';
+import art4 from '../../images/art4.png';
+import art5 from '../../images/art5.png';
+import art6 from '../../images/art6.png';
+import art7 from '../../images/art7.png';
+import art8 from '../../images/art8.png';
 import { connect } from 'socket.io-client';
 
 
@@ -170,17 +178,51 @@ export const MainGame = () => {
 
   }, [socket, navigate, peer, partnerId]);
 
-  // Generate name =====================================================================================================
+	// Generate name =====================================================================================================
 
-  const names = ['Tor', 'Foam', 'Mark', 'June', 'Nata', 'Mill'];
-  const [randomName, setRandomName] = useState('');
-  
+	const firstnames = ['Tor', 'Foam', 'Mark', 'June', 'Nata', 'Mill'];
+  const surnames = ['1nwza', 'SudLhor', 'SudSouy', 'SecretService', 'React', 'HTML']
+	const [randomName1, setRandomName1] = useState('');
+  const [randomName2, setRandomName2] = useState('');
 
-  const generateRandomName = () => {
-    const randomIndex = Math.floor(Math.random() * names.length);
-    const name = names[randomIndex];
-    setRandomName(name);
+  useEffect(() => {
+    generateRandomName();
+  }, []);
+	
+	const generateRandomName = () => {
+		const randomIndexFirst1 = Math.floor(Math.random() * firstnames.length);
+    const randomIndexLast1 = Math.floor(Math.random() * surnames.length);
+
+		const randomIndexFirst2 = Math.floor(Math.random() * firstnames.length);
+    const randomIndexLast2 = Math.floor(Math.random() * surnames.length);
+
+		const name1 = firstnames[randomIndexFirst1] + " " +  surnames[randomIndexLast1];
+		const name2 = firstnames[randomIndexFirst2] + " " +  surnames[randomIndexLast2];
+		
+    setRandomName1(name1);
+		setRandomName2(name2);
+	};
+
+  // Random Profile
+  const images = [art1, art2, art3, art4, art5, art6, art7, art8];
+  const [randomImage1, setRandomImage1] = useState('');
+  const [randomImage2, setRandomImage2] = useState('');
+
+  useEffect(() => {
+    selectRandomImage();
+  }, []);
+
+  const selectRandomImage = () => {
+    const randomIndexImage1 = Math.floor(Math.random() * images.length);
+    const randomIndexImage2 = Math.floor(Math.random() * images.length);
+
+    const image1 = images[randomIndexImage1]
+    const image2 = images[randomIndexImage2]
+    
+    setRandomImage1(image1)
+    setRandomImage2(image2)
   }
+
 
   // Game secton ========================================================================================================
 
@@ -252,7 +294,7 @@ export const MainGame = () => {
       // update when player have new option
       socket.emit("room:update", room);
 
-     
+
     }
 
     if (connected && (room.players[player_2].option).length !== 0){
@@ -521,11 +563,11 @@ const calculateResult = async () => {
       <div className='left-player-con'>
         <img
           className='profile-left'
-          src={require("../../images/user-profile-example.png")}
+          src={randomImage1}
           alt="profile-left"
         />
         <div>
-        <p className='player-detail-left'>Natasha Romanoff</p>
+        <p className='player-detail-left'>{randomName1}</p>
         <img 
           className='stars-l'
           src={require("../../images/star0.png")}
@@ -542,7 +584,7 @@ const calculateResult = async () => {
     <div className='cam-right'>
       <div className='right-player-con'>
         <div>
-        <p className='player-detail-right'>Natasha Romanoff</p>
+        <p className='player-detail-right'>{randomName2}</p>
         <img
           className='stars-r'
           src={require("../../images/star0.png")}
@@ -551,7 +593,7 @@ const calculateResult = async () => {
         </div>
         <img
           className='profile-right'
-          src={require("../..//images/user-profile2-example.jpg")}
+          src={randomImage2}
           alt="profile-right"
         />
         <div>
