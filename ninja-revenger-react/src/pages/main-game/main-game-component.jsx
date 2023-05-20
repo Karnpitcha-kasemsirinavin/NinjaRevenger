@@ -99,14 +99,18 @@ export const MainGame = () => {
         userVideo.current.srcObject = stream;
         setStream(stream);
       });
-  
+    
+    console.log('partnerid ', partnerId)
+    if (partnerId === ''){
       socket.on('id', data => {
         console.log('try to connect');
         // console.log(data);
         socket.emit('answer', { from: player_1, to: data.from, id: userId })
         var conn = peer.connect(data.id);
         setPartnerId(data.id);
+        console.log('partnerid ', partnerId)
       });
+    }
 
       socket.on('answer', data => {
         setPartnerId(data.id)
@@ -144,10 +148,14 @@ export const MainGame = () => {
         navigate(`/`);
       });
 
+      
       socket.on('caller', data => {
         console.log('turn caller on');
         setCaller(true)
-        socket.emit('id', { from: player_1, to: player_2, id: userId })
+        if (countConnect === 0){
+          console.log('pass this')
+          socket.emit('id', { from: player_1, to: player_2, id: userId })
+        }
         // console.log(partnerId);
         // if (connected && room.players[player_1].caller && stream) {
         //   const call = peer.call(partnerId, stream);
@@ -159,9 +167,10 @@ export const MainGame = () => {
         //   });
         // }
       })
+    
     }
 
-  }, [socket, navigate, peer]);
+  }, [socket, navigate, peer, partnerId]);
 
   // Game secton ========================================================================================================
 
