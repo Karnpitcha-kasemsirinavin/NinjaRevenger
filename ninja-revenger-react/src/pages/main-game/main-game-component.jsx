@@ -1,6 +1,6 @@
 import { useEffect, useContext, useState, useRef } from 'react'
 import ExitButton from '../../Components/Exit_Button'
-import './style.css'
+import '../main-game/style.css'
 import '../../Components/Button/index.jsx'
 import { SocketContext } from "../../Context/SocketThing";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -347,7 +347,7 @@ const calculateResults = async () => {
   );
 
   return (
-  <div className='container'>
+  <div className='maingame-container'>
     <div className='wrapper'>
     <img
           className='round'
@@ -386,7 +386,6 @@ const calculateResults = async () => {
         <PlayerOne result={result} />
       </div>
       {UserVideo}
-      <div className='wrapper'>
       <ExitButton name="X"/>
       </div>
     </div>
@@ -406,13 +405,11 @@ const calculateResults = async () => {
           src={require("../..//images/user-profile2-example.jpg")}
           alt="profile-right"
         />
-        <img
-          className='combo-right'
-          src={require("../..//images/combo2.png")}
-          alt='combo2'
-        />
+        <div>
+
+        </div>
       </div>
-    {PartnerVideo}
+      {PartnerVideo}
     </div>
   </div>
     )
