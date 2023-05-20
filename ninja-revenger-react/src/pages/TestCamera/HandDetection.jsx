@@ -1,6 +1,6 @@
 // HandDetection.jsx
 import React, { useEffect } from 'react';
-import { Hands, Camera,drawConnectors, drawLandmarks, HAND_CONNECTIONS } from '@mediapipe/hands';
+// import { Hands, Camera,drawConnectors, drawLandmarks, HAND_CONNECTIONS } from '@mediapipe/hands';
 
 const HandDetection = () => {
   useEffect(() => {
