@@ -9,6 +9,8 @@ import LosePage from './pages/lose-page/index.jsx'
 import WinPage from './pages/win-page'
 import Room from "./pages/JoinFriend/join-friend-components";
 import { Routes, Route } from "react-router-dom";
+import TestCamera from './pages/TestCamera/HandDetection';
+import HandDetection from './pages/TestCamera/HandDetection';
 
 
 const App = () => {
@@ -26,6 +28,7 @@ const App = () => {
     {/* <LosePage/> */}
     {/* <WinPage/> */}
     {/* <JoinFriend/> */}
+    {/* <HandDetection/> */}
   </div>
   
   );
