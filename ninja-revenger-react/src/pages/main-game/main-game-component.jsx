@@ -14,6 +14,10 @@ export const MainGame = () => {
   const { socket, room, player_1, player_2, peer, userId} = useContext(SocketContext);
   const navigate = useNavigate();
   const location = useLocation();
+
+  // random names
+  const names = ['Tor', 'Foam', 'Mark', 'June', 'Nata', 'Mill'];
+  const [randomName, setRandomName] = useState('');
   
   // conneciyion
   const [partnerId, setPartnerId] = useState('')
@@ -245,7 +249,11 @@ export const MainGame = () => {
 
   }, [play1Option, displayTime, selectOption])
 
-
+const generateRandomName = () => {
+  const randomIndex = Math.floor(Math.random() * names.length);
+  const name = names[randomIndex];
+  setRandomName(name);
+}
 
 const handleRoundEnd = () => {
   setCurrentRound(currentRound + 1);
@@ -289,7 +297,7 @@ const calculateResults = async () => {
       }
   
 
-   
+  
   // console.log('arr3', resultArr[3])
   // console.log('arr4', resultArr[4])
   // console.log('arr5', resultArr[5])
