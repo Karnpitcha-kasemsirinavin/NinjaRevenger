@@ -67,6 +67,8 @@ const PlayerTwo = ({ result }) => {
 
         setOption(addedGesture);
 
+        console.log('PLayertwo:', addedGesture)
+
         // console.log(option)
 
     }

@@ -232,6 +232,7 @@ export const MainGame = () => {
   }, [start, selectOption, displayTime]);
 
 
+
   useEffect(() => {
     
     if (result.options.length === 1) {
@@ -242,22 +243,43 @@ export const MainGame = () => {
 
       calculateResults();
       setSelectOption(false)
-
-      setFriendResult({
-        show: true,
-        reset: false,
-        options: room.players[player_2].option,
-      })
+      // socket.emit("update gesture")
+      socket.emit("room:update", room);
 
      
     }
 
-    socket.emit("room:update", room);
+    if (connected){
+
+    setFriendResult({
+      show: true,
+      reset: false,
+      options: room.players[player_2].option,
+    })
+
+    
+  }
     
 
     // console.log('from play1 ', room.players[player_1].option)
 
-  }, [play1Option, displayTime, selectOption])
+  }, [play1Option, displayTime, selectOption, room])
+
+  // useEffect(() => {
+  //   if (connected){
+
+  //     setFriendResult({
+  //       show: true,
+  //       reset: false,
+  //       options: room.players[player_2].option,
+  //     })
+  
+      
+  //   }
+  
+  //     socket.emit("room:update", room);
+
+  // }, [displayTime, room.players[player_2]])
 
 
 
@@ -266,6 +288,15 @@ const handleRoundEnd = () => {
   setDisplayTime(false);
   setStart(false);
   console.log('Round End');
+
+  socket.emit("room:update", room);
+
+  setFriendResult({
+    show: true,
+    reset: false,
+    options: room.players[player_2].option,
+  })
+    
 
   // send info to the server
 
