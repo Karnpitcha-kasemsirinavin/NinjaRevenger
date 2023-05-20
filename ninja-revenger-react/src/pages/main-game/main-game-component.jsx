@@ -1,22 +1,25 @@
 import { useEffect, useContext, useState, useRef } from 'react'
 import ExitButton from '../../Components/Exit_Button'
-import './style.css'
+import '../main-game/style.css'
 import '../../Components/Button/index.jsx'
 import { SocketContext } from "../../Context/SocketThing";
 import { useNavigate, useLocation } from "react-router-dom";
-import CountdownTimer from '../../Components/Timer'
-import PlayerOne from '../../Components/PlayerOne'
+import CountdownTimer from '../../Components/Timer';
+import PlayerOne from '../../Components/PlayerOne';
+import PlayerTwo from '../../Components/PlayerTwo';
 import { connect } from 'socket.io-client';
 
 
 export const MainGame = () => {
-  const { socket, room, player_1, player_2, peer, userId } = useContext(SocketContext);
+  const { socket, room, player_1, player_2, peer } = useContext(SocketContext);
   const navigate = useNavigate();
   const location = useLocation();
   
+  // conneciyion
   const [partnerId, setPartnerId] = useState('')
   const [stream, setStream] = useState()
   const [connected, setConnected] = useState(false)
+  const [countConnect, setCountConnect] = useState(0)
 
   const userVideo = useRef()
   const partnerVideo = useRef()
@@ -25,33 +28,8 @@ export const MainGame = () => {
   const delay = ms => new Promise(res => setTimeout(res, ms));
   const [currentRound, setCurrentRound] = useState(1);
   const [start, setStart] = useState(false); // Add start state
-  const [displayTime, setDisplayTime] = useState(false);
+  const [displayTIme, setDisplayTime] = useState(false);
   const [displayRound, setDisplayRound] = useState(false);
-  const [renderVideo, setRenderVideo] = useState(true);
-  
-
-  // result
-  const [result, setResult] = useState({
-    show: false,
-    reset: false,
-  });
-
-  // Option for each player
-  const [play1Option, setPLay1Option] = useState(10);
-  // const [play2Option, setPLay2Option] = useState([]);
-  const [resultArr, setResultarr] = useState({
-    3: [0],
-    4: [],
-    5: [],
-  }); // for stacking
-  const Combo = {
-    3: [],
-    4: [],
-    5: [],
-  }
-
-  const [caller, setCaller] = useState(room.players[player_1].caller)
-
 
   useEffect(() => {
     let roomId = location.pathname.split("/")[2];
@@ -66,17 +44,14 @@ export const MainGame = () => {
   }, [socket, room, location.pathname, navigate]);
   
   useEffect(() => {
-    console.log(connected, caller, stream);
-    if (connected && caller && stream) {
+    if (connected && room.players[player_1].caller && stream) {
       const call = peer.call(partnerId, stream);
-      console.log('calling', partnerId);
+      console.log('calling');
   
       call.on('stream', remote => {
         if (partnerVideo.current.srcObject !== remote && renderVideo) {
         partnerVideo.current.srcObject = remote;
         console.log('user', stream, '\npartner', remote);
-        setRenderVideo(false);
-        }
       });
     }
 
@@ -91,23 +66,19 @@ export const MainGame = () => {
         userVideo.current.srcObject = stream;
         setStream(stream);
       });
-  
+    
+    console.log('partnerid ', partnerId)
+    if (partnerId === ''){
       socket.on('id', data => {
-        console.log('try to connect');
-        console.log(data);
-        socket.emit('answer', { from: player_1, to: data.from, id: userId })
         var conn = peer.connect(data.id);
         setPartnerId(data.id);
+        console.log('partnerid ', partnerId)
       });
-
-      socket.on('answer', data => {
-        setPartnerId(data.id)
-      })
   
       peer.on('connection', (err) => {
         // console.log('connected');
         setConnected(true);
-        setStart(true);
+        
       });
   
       peer.on('disconnect', () => {
@@ -125,55 +96,27 @@ export const MainGame = () => {
           // console.log('render', renderVideo);
           if (partnerVideo.current.srcObject !== remote && renderVideo) {
           partnerVideo.current.srcObject = remote;
-          setRenderVideo(false);
-          }
         });
       });
   
       socket.on("friend_disconn", () => {
-        console.log('pass na ja');
+        console.log('friend bye');
         navigate(`/`);
       });
-
-      socket.on('caller', data => {
-        console.log('turn caller on');
-        setCaller(true)
-        socket.emit('id', { from: player_1, to: player_2, id: userId })
-        // console.log(partnerId);
-        // if (connected && room.players[player_1].caller && stream) {
-        //   const call = peer.call(partnerId, stream);
-        //   console.log('calling', partnerId);
-      
-        //   call.on('stream', remote => {
-        //     partnerVideo.current.srcObject = remote;
-        //     console.log('user', stream, '\npartner', remote);
-        //   });
-        // }
-      })
     }
+  }, [socket, navigate, peer]);
 
-  }, [socket, navigate, peer, renderVideo]);
+  // Game secton ========================================================================================================
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const numberArray = [14, 15, 18, 13, 10];
 
   // for start
   useEffect(() => {
     const round_img = document.getElementById("round");
     const round_num = document.getElementById("round-num");
 
-    // for each round
-    const newRound = () => {
-
-      setTimeout(() => {
-        round_img.style.visibility = 'visible';
-        round_num.style.visibility = 'visible';
-        setDisplayTime(true);
-      }, 2000 + 3000); // make it visible after 5 secs
-
-      setTimeout(() => {
-       setPLay1Option(14) 
-      }, 2000 + 1000); // 0.5 sec after start round
-    }
-
-    if (start) {
+    if (connected) {
       setTimeout(() => {
         console.log('show start img');
       }, 2000); // make it visible after 2 seconds
@@ -181,28 +124,14 @@ export const MainGame = () => {
 
     if (start) {
        // show each round
-      newRound()
-    } else {
-      // when each roud end
-      round_img.style.visibility = 'hidden';
-      round_num.style.visibility = 'hidden';
+    setTimeout(() => {
+      round_img.style.visibility = 'visible';
+      round_num.style.visibility = 'visible';
+      setDisplayTime(true);
+    }, 2000 + 3000); // make it visible after 5 secs
     }
-
 
   }, [start]);
-
-  useEffect(() => {
-    const players = room?.players;
-
-    if (play1Option !== null && displayTime) {
-      room.players[player_1].option = play1Option;
-
-      console.log(Object.values(room.players[player_1].option));
-
-      calculateResults();
-    }
-
-  }, [play1Option, displayTime])
   
 
 
@@ -211,84 +140,64 @@ const handleRoundEnd = () => {
   setDisplayTime(false);
   setStart(false);
 
-  // send info to the server
-
-};
+}
 
 
-//================ game logic =======================
-const calculateResults = async () => {
-  const players = room?.players;
-  let foundArr = false;
-  
-  // if (
-  //   players &&
-  //   players[player_1]?.optionLock === true &&
-  //   players[player_2]?.optionLock === true
-  // ) {
-  // }
+   
+  // console.log('arr3', resultArr[3])
+  // console.log('arr4', resultArr[4])
+  // console.log('arr5', resultArr[5])
+  // console.log('Option', play1Option)
 
-  // check if arr empty 
-  // if empty check first patternn index 
-  // if not empty add to arr
-
-
-
-  // if (resultArr[5].length !== 0) {
-  //   resultArr[5] = [...resultArr[5], play1Option]
-  //   console.log('have 5')
-  // } else if (!foundArr && (play1Option === 16 || play1Option === 14)) {
-  //   console.log('get 5')
-  //             foundArr = true;
-  //             resultArr[5] = [...resultArr[5], play1Option]
-  //           }
-
-  // if (resultArr[4].length !== 0) {
-  //   resultArr[4] = [...resultArr[4], play1Option]
-  //   console.log('have 4')
-  // } else if (!foundArr && (play1Option === 45 || 
-  //   play1Option === 5 || play1Option === 2 || play1Option === 19)) {
-  //     foundArr = true;
-  //     resultArr[4] = [...resultArr[4], play1Option]
-  //   }
-
-  // if(resultArr[3].length !== 0){
-  //   resultArr[3] = [...resultArr[3], play1Option]
-  //   console.log('have 3');
-  // } else {
-  //   if (!foundArr && (play1Option === 18 || 
-  //     play1Option === 15 || play1Option === 9 || play1Option === 11)) {
-  //       foundArr = true;
-  //       resultArr[3] = [...resultArr[3], play1Option]
-  //     }
-  // }
-
-  for (let i = 3; i <= 5; i++) {
-    console.log('test ', resultArr[i]);
-
-    if (resultArr[i].length !== 0){
-      resultArr[i] = [...resultArr[i], play1Option]
-    } else if (!foundArr) {
-      for (let i = 0; i <= 5; i++) {
-        
-      }
-
-    }
-
+  const Combo = {
+    3: ['18-7-17','15-18-13','9-13-3','11-16-8'],
+    4: ['14-7-12-0','5-18-11-10','2-17-1-16','19-13-8-3'],
+    5: ['16-0-17-6-7','4-14-15-12-13'],
   }
-
-  const first_arr = [[1,2], []]
-
-
-  console.log('arr3', resultArr[3])
-  console.log('arr5', resultArr[5])
-  console.log('start check')
-  console.log('Option', play1Option)
 
   // check if any arr is full
   if (resultArr[3].length === 3) {
+    // for (i = 0; i < Combo[3])
 
   }
+
+  for (let i = 3; i <= 5; i++) {
+    if (resultArr[i].length === i) {
+        let check_string = resultArr[i].join('-');
+
+        // console.log('check string: ', check_string)
+      for (let j = 0; j < Combo[i].length; j++) {
+        if (check_string === Combo[i][j]){
+          // console.log('check get combo', check_string);
+
+          // change to combo
+          let position = (i-1 + (2*i-1)*(-1))
+          // console.log('position ', position)
+          optionList.splice(position);
+          optionList.push([i,j].join('-'));
+
+          resultArr[3].length = 0
+          resultArr[4].length = 0
+          resultArr[5].length = 0
+          break
+
+        }
+      }
+    }
+  }
+
+
+  // console.log('list: ', optionList);
+
+  setResult({
+    show: true,
+    reset: false,
+    options: optionList,
+  })
+
+  // console.log('result options:', result.options);
+
+  players[player_1].option = result.options;
 
   socket.emit("room:update", room);
 
@@ -309,8 +218,10 @@ const calculateResults = async () => {
     <video ref={partnerVideo} autoPlay/>
   );
 
+// HTML section =========================================================================================================
+
   return (
-  <div className='container'>
+  <div className='maingame-container'>
     <div className='wrapper'>
     <img
           className='round'
@@ -340,7 +251,6 @@ const calculateResults = async () => {
           alt='star0'
         />
         </div>
-        {/* combo */}
         <img
           className='combo-left'
           src={require("../..//images/combo3.png")}
@@ -348,11 +258,10 @@ const calculateResults = async () => {
         />
       </div>
       {UserVideo}
-      <div className='wrapper'>
       <ExitButton name="X"/>
       </div>
     </div>
-    {displayTime && <CountdownTimer id='Timer' initialSec={10} TimerEnd={handleRoundEnd} />}
+    {displayTIme && <CountdownTimer id='Timer' initialSec={10} TimerEnd={handleRoundEnd} />}
     <div className='cam-right'>
       <div className='right-player-con'>
         <div>
@@ -368,14 +277,13 @@ const calculateResults = async () => {
           src={require("../..//images/user-profile2-example.jpg")}
           alt="profile-right"
         />
-        <img
-          className='combo-right'
-          src={require("../..//images/combo2.png")}
-          alt='combo2'
-        />
+        <div>
+          {/* combo */}
+        <PlayerTwo result={friendResult} />
+        </div>
       </div>
-    {PartnerVideo}
+      {PartnerVideo}
     </div>
   </div>
-    )
+  )
 }
