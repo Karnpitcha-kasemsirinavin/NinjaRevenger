@@ -42,7 +42,7 @@ export const MainGame = () => {
   const [optionList, setOptionList] = useState([])
   const [selectOption, setSelectOption] = useState(false)
   // const [play2Option, setPLay2Option] = useState([]);
-  const [resultArr, setResultarr] = useState({
+  const [resultArr, setResultArr] = useState({
     3: [],
     4: [],
     5: [],
@@ -152,7 +152,7 @@ export const MainGame = () => {
   }, [socket, navigate, peer, renderVideo]);
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const numberArray = [14, 5, 18, 11, 10];
+  const numberArray = [14, 15, 18, 13, 10];
 
   // for start
   useEffect(() => {
@@ -255,11 +255,11 @@ const calculateResults = async () => {
     
 
     // add arr5
-    if (!added_arr[5] && (play1Option === 16 || play1Option === 14)) {
+    if (!added_arr[5] && (play1Option === 16 || play1Option === 4)) {
         // console.log('get 5')
           resultArr[5] = [...resultArr[5], play1Option]
       // add arr4
-    } else if (!added_arr[4]  && (play1Option === 45 || 
+    } else if (!added_arr[4]  && (play1Option === 14 || 
         play1Option === 5 || play1Option === 2 || play1Option === 19)) {
           resultArr[4] = [...resultArr[4], play1Option]
 
@@ -295,7 +295,17 @@ const calculateResults = async () => {
       for (let j = 0; j < Combo[i].length; j++) {
         if (check_string === Combo[i][j]){
           console.log('check get combo', check_string);
-          optionList.push([i,j].join('-'))
+
+          // change to combo
+          let position = (i-1 + (2*i-1)*(-1))
+          console.log('position ', position)
+          optionList.splice(position);
+          optionList.push([i,j].join('-'));
+
+          resultArr[3].length = 0
+          resultArr[4].length = 0
+          resultArr[5].length = 0
+          break
 
         }
       }
