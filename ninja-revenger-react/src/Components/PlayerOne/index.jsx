@@ -74,14 +74,6 @@ const PlayerOne = ({ result }) => {
 
     return (
         <div>
-          {/* {option.map((item, index) => (
-            <div key={index} className="custom-div">{item.value}</div>
-            )).join('\n')} */}
-          {/* <img
-          className='combo-left'
-          src={require("../../images/combo3.png")}
-          alt='combo3'
-        /> */}
         <ComboList option={option} />
         </div>
       );

@@ -4,8 +4,9 @@ import '../main-game/style.css'
 import '../../Components/Button/index.jsx'
 import { SocketContext } from "../../Context/SocketThing";
 import { useNavigate, useLocation } from "react-router-dom";
-import CountdownTimer from '../../Components/Timer'
-import PlayerOne from '../../Components/PlayerOne'
+import CountdownTimer from '../../Components/Timer';
+import PlayerOne from '../../Components/PlayerOne';
+import PlayerTwo from '../../Components/PlayerTwo';
 import { connect } from 'socket.io-client';
 
 
@@ -14,9 +15,11 @@ export const MainGame = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
+  // conneciyion
   const [partnerId, setPartnerId] = useState('')
   const [stream, setStream] = useState()
   const [connected, setConnected] = useState(false)
+  const [countConnect, setCountConnect] = useState(0)
 
   const userVideo = useRef()
   const partnerVideo = useRef()
@@ -36,6 +39,13 @@ export const MainGame = () => {
     reset: false,
     options: [],
   });
+
+  const [friendResult, setFriendResult] = useState({
+    show: false,
+    reset: false,
+    options: [],
+  });
+
 
   // Option for each player
   const [play1Option, setPLay1Option] = useState(10); // each Option
@@ -64,9 +74,10 @@ export const MainGame = () => {
   
   useEffect(() => {
     // console.log(connected, caller, stream);
-    if (connected && caller && stream) {
+    if (connected && caller && stream && countConnect === 0) {
       const call = peer.call(partnerId, stream);
       // console.log('calling', partnerId);
+      setCountConnect(1);
   
       call.on('stream', remote => {
         if (partnerVideo.current.srcObject !== remote && renderVideo) {
@@ -115,7 +126,7 @@ export const MainGame = () => {
       peer.on('call', call => {
         getUserMedia({ video: true }, stream => {
           call.answer(stream);
-          // console.log('answering');
+          console.log('answering');
         });
   
         call.on('stream', remote => {
@@ -149,7 +160,9 @@ export const MainGame = () => {
       })
     }
 
-  }, [socket, navigate, peer, renderVideo]);
+  }, [socket, navigate, peer]);
+
+  // Game secton ========================================================================================================
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const numberArray = [14, 15, 18, 13, 10];
@@ -196,7 +209,6 @@ export const MainGame = () => {
       round_num.style.visibility = 'hidden';
     }
 
-
   }, [start, selectOption, displayTime]);
 
 
@@ -208,21 +220,18 @@ export const MainGame = () => {
 
     if (play1Option !== null && play1Option !== undefined && selectOption && displayTime) {
 
-      // setResult({
-      //   show: false,
-      //   reset: false,
-      //   options: [... result.options, play1Option],
-      // })
-
-      // console.log(room.players[player_1].option)
-
       calculateResults();
       setSelectOption(false)
+
+      setFriendResult({
+        show: true,
+        reset: false,
+        options: room.players[player_2].option,
+      })
+    
     }
 
     console.log('from play1 ', room.players[player_1].option)
-
-
 
   }, [play1Option, displayTime, selectOption])
 
@@ -285,6 +294,7 @@ const calculateResults = async () => {
   // check if any arr is full
   if (resultArr[3].length === 3) {
     // for (i = 0; i < Combo[3])
+
   }
 
   for (let i = 3; i <= 5; i++) {
@@ -346,6 +356,8 @@ const calculateResults = async () => {
     <video ref={partnerVideo} autoPlay/>
   );
 
+// HTML section =========================================================================================================
+
   return (
   <div className='maingame-container'>
     <div className='wrapper'>
@@ -378,11 +390,6 @@ const calculateResults = async () => {
         />
         </div>
         {/* combo */}
-        {/* <img
-          className='combo-left'
-          src={require("../..//images/combo3.png")}
-          alt='combo3'
-        /> */}
         <PlayerOne result={result} />
       </div>
       {UserVideo}
@@ -405,7 +412,8 @@ const calculateResults = async () => {
           alt="profile-right"
         />
         <div>
-
+          {/* combo */}
+        <PlayerTwo result={friendResult} />
         </div>
       </div>
       {PartnerVideo}
