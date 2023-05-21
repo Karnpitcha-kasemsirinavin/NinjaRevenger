@@ -630,8 +630,10 @@ const calculateResult = async () => {
       </div>
       {UserVideo}
       <ExitButton name="X"/>
-      </div>
-    {displayTime && <CountdownTimer id='Timer' initialSec={10} TimerEnd={handleRoundEnd} />}
+    </div>
+    <div className="middle-container">
+      {displayTime && <CountdownTimer className='Timer' initialSec={10} TimerEnd={handleRoundEnd} />}
+    </div>
     <div className='cam-right'>
     { connected &&
       <div className='right-player-con'>
@@ -656,5 +658,5 @@ const calculateResult = async () => {
       {PartnerVideo}
     </div>
   </div>
-    )
+  )
 }
