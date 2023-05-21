@@ -37,7 +37,7 @@ const SocketContextProvider = ({ children }) => {
 	//   }
 
   useEffect(() => {
-    const socket = io('https://nostalgic-dream-93159.pktriot.net',
+    const socket = io('https://relaxed-bush-92325.pktriot.net',
     {
       reconnectionDelayMax: 10000,
       auth: {
@@ -70,6 +70,7 @@ const SocketContextProvider = ({ children }) => {
         setPlayer_2(play_2);
         if (play_2 && !room.private) {
           if (!isIdEmitted) {
+            // fix stranger but private cannot
             console.log('yang pass yuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu ')
             socket.emit('id', { from: play_2, to: play_1, id: userId });
             isIdEmitted = true; 

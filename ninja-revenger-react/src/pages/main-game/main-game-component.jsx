@@ -378,15 +378,19 @@ export const MainGame = () => {
       
     } else {
       
-      if (playerStar === 3) {
+      if (room.players[player_1].score === 2 || room.players[player_2].score === 2) {
+       if (room.players[player_1].score === 2 || room.players[player_2].score < 2){
         navigate('/win')
-      }
+       } else {
+        navigate('/lost')
+       }
+      } 
 
     }
   }
 
 
-  }, [play1Option, displayTime, selectOption, start])
+  }, [play1Option, displayTime, selectOption, start, connected, playerStar, partnerStar, player_2])
 
    // check ready status for next round 
 
@@ -436,7 +440,7 @@ export const MainGame = () => {
 
 
    
-  }, [start,finishResult, partnerReady, room]);
+  }, [start,finishResult, partnerReady, room, currentRound, player_1, player_2]);
 
 
   useEffect(() => {
@@ -471,9 +475,9 @@ export const MainGame = () => {
     console.log("playerscore: ", room.players[player_1].score, "partnerscore: ", room.players[player_2].score)
     }
 
-  }, [start, displayTime, playerStar]);
+  }, [start, displayTime, playerStar, connected, finishResult, partnerReady, player_1, player_2]);
 
-  
+  // finishResult', 'partnerReady', 'player_1', 'player_2', 'room', and 'socket'
 
   // time over for each round
 
