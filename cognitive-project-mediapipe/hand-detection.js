@@ -44,8 +44,6 @@ function onResults(results) {
     // Append the image element to the body
     document.body.appendChild(img);
 
-    //return img
-    return img
   }
   canvasCtx.restore();
 }
