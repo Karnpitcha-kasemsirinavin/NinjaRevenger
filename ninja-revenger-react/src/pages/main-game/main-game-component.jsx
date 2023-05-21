@@ -324,7 +324,7 @@ export const MainGame = () => {
 
    // check ready status for next round 
 
-   useEffect(() => {
+    useEffect(() => {
     
     socket.on('partnerReady', () => {
       setPartnerReady(true);
@@ -401,9 +401,9 @@ const handleRoundEnd = () => {
   }) 
 
  // calculate result
- if (!finishResult){
+  if (!finishResult){
   calculateResult();
- }
+  }
   setFinishResult(true);
 
   console.log('player ready')
@@ -412,8 +412,6 @@ const handleRoundEnd = () => {
   socket.emit('ready', { from: player_1, to: player_2})
 
 };
-
-
 
 
 //================ game logic ======================= (start)
