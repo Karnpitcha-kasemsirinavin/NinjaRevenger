@@ -1,10 +1,12 @@
-// HandDetection.jsx
 import React, { useEffect } from 'react';
+import '../TestCamera/style.css';
+
+import background from "../../images/background-nolight.png";
 
 const HandDetection = () => {
   useEffect(() => {
-    const videoElement = document.getElementsByClassName('input_video')[0];
-    const canvasElement = document.getElementsByClassName('output_canvas')[0];
+    const videoElement = document.getElementsByClassName('input-video')[0];
+    const canvasElement = document.getElementsByClassName('output-canvas')[0];
     const canvasCtx = canvasElement.getContext('2d');
 
     const loadScript = (src) => {
@@ -111,10 +113,14 @@ loadScripts();
   
 
   return (
-    <div className="container">
-      <video hidden className="input_video"></video>
-      <canvas className="output_canvas" width="1300px" height="600px"></canvas>
+    <>
+    <img src={background} alt="background" className="background" />
+    <div className="testcam-container">
+      <video hidden className="input-video"></video>
+      <canvas className="output-canvas" width="1300px" height="700px">
+      </canvas>
     </div>
+    </>
   )
 };
 

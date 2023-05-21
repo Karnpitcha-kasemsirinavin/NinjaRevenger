@@ -46,13 +46,9 @@ const PlayerTwo = ({ result }) => {
     }
 
     useEffect(() => {
-        if (result.show) {
 
-            setScore(room.players[player_2].score);
+            // setScore(room.players[player_2].score);
             changeToName()
-            // console.log('PlayOne', option)
-        } else if (result.reset) {
-        }
 
     }, [result])
 
@@ -61,14 +57,11 @@ const PlayerTwo = ({ result }) => {
         
         for (let i = 0; i < (result.options).length; i++) {
 
-            console.log(gesture[(result.options)[i]])
+            // console.log(gesture[(result.options)[i]])
             addedGesture.push(gesture[(result.options)[i]])     
         }
 
         setOption(addedGesture);
-
-        console.log('PLayertwo:', addedGesture)
-
         // console.log(option)
 
     }
@@ -84,7 +77,7 @@ const PlayerTwo = ({ result }) => {
           src={require("../../images/combo3.png")}
           alt='combo3'
         /> */}
-        <ComboList option={option} />
+        {result.shown && <ComboList option={option} />}
         </div>
       );
 }

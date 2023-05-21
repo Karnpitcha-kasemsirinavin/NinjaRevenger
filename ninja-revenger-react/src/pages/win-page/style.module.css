@@ -6,7 +6,7 @@
 
 .mainCanvas{
   display: grid;
-  grid-template-columns: 2fr 1fr 2fr;
+  grid-template-columns: 2fr 1.2fr 2fr;
 }
 
 .bg {
@@ -31,12 +31,13 @@
 
 .small_img {
   height: 16vh;
+  width: 20vw;
 }
 
 .box {
   grid-column-start: 2;
   grid-column-end: 3;
-  margin-top: 25%;
+  margin-top: 31%;
   position: relative;
   display: flex;
   flex-direction: column;

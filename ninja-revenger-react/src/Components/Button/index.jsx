@@ -2,7 +2,7 @@ import "./style.css";
 import { useContext } from "react";
 import { SocketContext } from "../../Context/SocketThing";
 
-// , type 
+// type 
 const Button = ({classname, name, type}) => {
   const { socket, navigate} = useContext(SocketContext);
 
@@ -13,7 +13,9 @@ const Button = ({classname, name, type}) => {
         navigate(`/room/${roomId}`);
       } else if (type === 'friend'){
         navigate(`/joinlink`);
-      }   
+      } else if (type === 'test-cam'){
+        navigate(`/test-cam`)
+      }
     });
   };
 

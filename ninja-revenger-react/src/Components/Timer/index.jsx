@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import '../Timer/style.css'
 
 const CountdownTimer = ({ initialSec , TimerEnd }) => {
     const [seconds, setSeconds] = useState(initialSec);
@@ -23,17 +24,16 @@ const CountdownTimer = ({ initialSec , TimerEnd }) => {
         return () => clearTimeout(endTimer); // clear pending time
       }
 
-
     }, [seconds, TimerEnd]);
 
     return (
-        <div>
+        <>
           {roundEnded ? (
-            <div>Round End</div>
+            <p className="timeText" >Round End</p>
           ) : (
-            <div>{seconds}</div>
+            <p className="timeText">{seconds}</p>
           )}
-        </div>
+        </>
       );
     
 }

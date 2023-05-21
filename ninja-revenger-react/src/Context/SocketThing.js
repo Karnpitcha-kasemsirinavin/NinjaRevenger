@@ -47,14 +47,15 @@ const SocketContextProvider = ({ children }) => {
       }
     });
     setSocket(socket);
-
-    console.log(socket)
+    
 
     socket.on("room:get", (payload) => {
       setRoom(payload);
       let play_1 = Object.keys(payload.players)[0];
       let play_2 = Object.keys(payload.players)[1];
 
+      // console.log(play_1.id)
+
       if (play_1 === socket.id) {
         setPlayer_1(play_1);
         setPlayer_2(play_2);
@@ -66,19 +67,29 @@ const SocketContextProvider = ({ children }) => {
       if (play_1 === socket.id) {
         setPlayer_1(play_1);
         setPlayer_2(play_2);
-        if (play_2) {
-          socket.emit('id', { from: play_1, to: play_2, id: userId })
+        if (play_2 && !room.private) {
+          socket.emit('id', { from: play_1, to: play_2, id: userId }) // bug
+          
+          // console.log('doing connection');
         }
       } else {
         setPlayer_1(play_2);
         setPlayer_2(play_1);
-        if (play_2) {
-          socket.emit('id', { from: play_2, to: play_1, id: userId })
+        if (play_2 && !room.private) {
+          socket.emit('id', { from: play_2, to: play_1, id: userId }) // bug
+          // console.log('doing connection');
         }
+      }
+
+      if (
+        payload?.players[play_1]?.score === 5 ||
+        payload?.players[play_2]?.score === 5
+      ) {
+        // let pathname = "/result";
+        // if (pathname !== location.pathname) navigate(pathname);
       }
 
       // console.log(payload.players);
-
 
     });
 

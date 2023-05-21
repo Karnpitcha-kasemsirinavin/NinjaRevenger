@@ -7,6 +7,14 @@ import { useNavigate, useLocation } from "react-router-dom";
 import CountdownTimer from '../../Components/Timer';
 import PlayerOne from '../../Components/PlayerOne';
 import PlayerTwo from '../../Components/PlayerTwo';
+import art1 from '../../images/art1.png';
+import art2 from '../../images/art2.png';
+import art3 from '../../images/art3.png';
+import art4 from '../../images/art4.png';
+import art5 from '../../images/art5.png';
+import art6 from '../../images/art6.png';
+import art7 from '../../images/art7.png';
+import art8 from '../../images/art8.png';
 import { connect } from 'socket.io-client';
 import axios from 'axios';
 
@@ -22,68 +30,47 @@ export const MainGame = () => {
   const [connected, setConnected] = useState(false)
   const [countConnect, setCountConnect] = useState(0)
 
+
   const userVideo = useRef()
   const partnerVideo = useRef()
+  const [renderVideo, setRenderVideo] = useState(true)
   
-  // time
-  const [currentRound, setCurrentRound] = useState(1);
-  const [start, setStart] = useState(false); // Add start state
-  const [displayTime, setDisplayTime] = useState(false);
-  const [displayRound, setDisplayRound] = useState(false);
-  const [renderVideo, setRenderVideo] = useState(true);
-
-  //capture  
-  const captureImage = () => {
-    const video = userVideo.current
-    const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth
-    canvas.height = video.videoHeight
-    const context = canvas.getContext("2d");
-    context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
-    const dataURL = canvas.toDataURL("image/webp");
-    console.log(dataURL);
-    // photo.setAttribute("src", data);
-
-    sendImageToFlask(dataURL);
-  }
-  
-  const sendImageToFlask = async (dataURL) => {
-    try {
-      const response = await axios.post('/process', { img: dataURL });
-      const modelOutput = response.data.model_output;
-      console.log('Model Output:', modelOutput);
-      // Process the model output as needed
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
-  // result
-  const [result, setResult] = useState({
-    show: false,
-    reset: false,
-    options: [],
-  });
-
-  const [friendResult, setFriendResult] = useState({
-    show: false,
-    reset: false,
-    options: [],
-  });
-
-
-  // Option for each player
-  const [play1Option, setPLay1Option] = useState(0); // each Option
-  const [optionList, setOptionList] = useState([]) // list for option
-  const [selectOption, setSelectOption] = useState(false)
-  // const [play2Option, setPLay2Option] = useState([]);
-  const [resultArr, setResultArr] = useState({
-    3: [],
-    4: [],
-    5: [],
-  }); // for stacking
-
   const [caller, setCaller] = useState(room.players[player_1].caller)
+
+ // Game var =======================================================
+
+    // time
+    const [currentRound, setCurrentRound] = useState(1);
+    const [start, setStart] = useState(false); // Add start
+    const [displayTime, setDisplayTime] = useState(false);
+  
+    // result
+    const [result, setResult] = useState({
+      shown: true,
+      options: [],
+    });
+  
+    const [partnerResult, setPartnerResult] = useState({
+      shown: true,
+      options: [],
+    });
+  
+    // Option for each player
+    const [play1Option, setPLay1Option] = useState(null); // each Option
+    const [optionList, setOptionList] = useState([]) // list for option
+    const [selectOption, setSelectOption] = useState(false)
+    // const [play2Option, setPLay2Option] = useState([]);
+    const [resultArr, setResultArr] = useState({
+      3: [],
+      4: [],
+      5: [],
+    });
+  
+    const [finishResult, setFinishResult] = useState(false);
+    const [partnerReady, setPartnerReady] = useState(false);
+
+     // Game var =======================================================
+  
 
   useEffect(() => {
     let roomId = location.pathname.split("/")[2];
@@ -95,6 +82,9 @@ export const MainGame = () => {
         if (err) navigate("/");
       });
     }
+
+    
+
   }, [socket, room, location.pathname, navigate]);
   
   useEffect(() => {
@@ -194,27 +184,67 @@ export const MainGame = () => {
         //   });
         // }
       })
-    
     }
+
 
   }, [socket, navigate, peer, partnerId]);
 
-  // Generate name =====================================================================================================
 
-  const names = ['Tor', 'Foam', 'Mark', 'June', 'Nata', 'Mill'];
-  const [randomName, setRandomName] = useState('');
-  
 
-  const generateRandomName = () => {
-    const randomIndex = Math.floor(Math.random() * names.length);
-    const name = names[randomIndex];
-    setRandomName(name);
+	// Generate name =====================================================================================================
+
+	const firstnames = ['Tor', 'Foam', 'Mark', 'June', 'Nata', 'Mill'];
+  const surnames = ['1nwza', 'SudLhor', 'SudSouy', 'SecretService', 'React', 'HTML'];
+	const [randomName1, setRandomName1] = useState('');
+  const [randomName2, setRandomName2] = useState('');
+
+  useEffect(() => {
+    generateRandomName();
+    selectRandomImage();
+    socket.emit("room:update", room);
+  }, [player_1])
+
+	const generateRandomName = () => {
+		const randomIndexFirst1 = Math.floor(Math.random() * firstnames.length);
+    const randomIndexLast1 = Math.floor(Math.random() * surnames.length);
+
+		const name1 = firstnames[randomIndexFirst1] + " " +  surnames[randomIndexLast1];
+
+    room.players[player_1].name = name1;	
+    
+		;
+	};
+
+  // Random Profile
+  const images = [art1, art2, art3, art4, art5, art6, art7, art8];
+  // const [randomImage1, setRandomImage1] = useState('');
+
+
+  const selectRandomImage = () => {
+    const randomIndexImage1 = Math.floor(Math.random() * images.length);
+    
+    room.players[player_1].image = randomIndexImage1;	
+
+    // const image1 = images[randomIndexImage1]
+    // const image2 = images[randomIndexImage1]
+    
   }
+
 
   // Game secton ========================================================================================================
 
+  const [playerStar, setPlayerStar] = useState(0);
+  const [partnerStar, setPartnerStar] = useState(0);
+  const [playerWin, setPlayerWin] = useState(0);
+  const [partnerWin, setPartnerWin] = useState(0);
+
   const [currentIndex, setCurrentIndex] = useState(0);
-  const numberArray = room.players[player_1].caller? [14, 15, 18, 13, 10]: [15, 18, 13, 16]
+  const numberArray = room.players[player_1].caller?
+
+          // [2,17,1,16,15,18,13]:[11,16,8,14,7,12,0]
+      // [0,0]: []
+      // [15, 18, 13, 2, 17, 1, 16, 9, 13, 3]: [4, 14, 15, 12, 13, 18, 7, 17, 5, 18, 11, 10]
+      [15, 18, 13, 5, 18, 11, 10, 9, 13, 3, 0]: [16, 0, 17, 6, 7, 9, 13, 3, 15, 18, 13]
 
   // for start
   useEffect(() => {
@@ -224,38 +254,50 @@ export const MainGame = () => {
     // for each round
     const newRound = () => {
 
+      if (currentRound === 1) {
+
       setTimeout(() => {
-        round_img.style.visibility = 'visible';
-        round_num.style.visibility = 'visible';
         setDisplayTime(true);
       }, 2000 + 3000); // make it visible after 5 secs
+    } else {
+      setTimeout(() => {
+        setDisplayTime(true);
+      }, 2000); // make it visible after 5 secs
+    }
 
       // generating test *********************
 
-      if (displayTime && !selectOption && currentIndex !== numberArray - 1) {
+      if (displayTime && !selectOption && currentIndex !== numberArray - 1 ) {
+
+        // console.log('pass generate test')
 
       setTimeout(() => {
         setPLay1Option(numberArray[currentIndex]);
         setCurrentIndex(currentIndex + 1);
         setSelectOption(true);
-      }, currentIndex * 1000); // 1 sec after start round
+      }, currentIndex * 200); // 1 sec after start round
 
     }
   }
 
-    if (start && currentIndex === 0) {
+  // start game
+
+    if (connected && currentRound === 1) {
       setTimeout(() => {
         console.log('show start img');
       }, 2000); // make it visible after 2 seconds
+
+      setTimeout(() => {
+        round_img.style.visibility = 'visible';
+        round_num.style.visibility = 'visible';
+      }, 2000 + 3000); // make it visible after 5 secs
+      
     }
 
-    if (start) {
+    if (start && playerWin < 5 && partnerWin < 5) {
        // show each round
       newRound()
-    } else {
-      // when each roud end
-      round_img.style.visibility = 'hidden';
-      round_num.style.visibility = 'hidden';
+
     }
 
   }, [start, selectOption, displayTime]);
@@ -263,77 +305,126 @@ export const MainGame = () => {
 
 
   useEffect(() => {
-    
-    if (result.options.length === 1) {
-      // console.log('updated', result.options)
-    }
 
     if (play1Option !== null && play1Option !== undefined && selectOption && displayTime) {
 
-      calculateResults();
+      calculateCombo();
       setSelectOption(false)
-      // socket.emit("update gesture")
+
+      // update when player have new option
       socket.emit("room:update", room);
 
-     
+
     }
 
-    if (connected){
+    if (connected && displayTime){
 
-    setFriendResult({
-      show: true,
-      reset: false,
+    setPartnerResult({
+      shown: true,
       options: room.players[player_2].option,
-    })
+    })}
+
+
+  }, [play1Option, displayTime, selectOption, start])
+
+   // check ready status for next round 
+
+   useEffect(() => {
+    
+    socket.on('partnerReady', () => {
+      setPartnerReady(true);
+      console.log('partnerReady')
+    });
+
+    if (partnerReady && finishResult){
+
+      setStart(true);
+      setPartnerReady(false);
+      setFinishResult(false);
+      setCurrentRound(currentRound + 1);
+      setDisplayTime(false);
+    }
+
+    console.log('round ', currentRound)
+    // console.log('Result', result)
+    // console.log('partner result', partnerResult)
 
     
-  }
-    
 
-    // console.log('from play1 ', room.players[player_1].option)
+    // Clean up the event listener on unmount
+    return () => {
+      socket.off('partnerReady');
+    };
 
-  }, [play1Option, displayTime, selectOption, room])
 
-  // useEffect(() => {
-  //   if (connected){
+    // start new round
+  }, [start,finishResult, partnerReady, room]);
 
-  //     setFriendResult({
-  //       show: true,
-  //       reset: false,
-  //       options: room.players[player_2].option,
-  //     })
-  
+  useEffect(() => {
+    if (start && !displayTime ) {
+      console.log('Starting a new round');
       
-  //   }
+      setPlayerStar(playerWin.toString());
+      setPartnerStar(partnerWin.toString());
+
+      room.players[player_1].score = playerWin;
+
+      setCurrentIndex(0) // generate test
+      setSelectOption(false);
+      setOptionList([]);
+      setResult({
+        shown: false,
+        options: [],
+      });
+      room.players[player_1].option = [];
+      socket.emit("room:update", room);
   
-  //     socket.emit("room:update", room);
+      setPartnerResult({
+        shown: false,
+        options: room.players[player_2].option,
+      });
 
-  // }, [displayTime, room.players[player_2]])
+    }
 
+    if (connected) {
+    console.log("playerscore: ", room.players[player_1].score, "partnerscore: ", room.players[player_2].score)
+    }
+  }, [start, displayTime]);
 
+  
+
+  // time over for each round
 
 const handleRoundEnd = () => {
-  setCurrentRound(currentRound + 1);
-  setDisplayTime(false);
   setStart(false);
   console.log('Round End');
 
   socket.emit("room:update", room);
 
-  setFriendResult({
-    show: true,
-    reset: false,
+  setPartnerResult({
     options: room.players[player_2].option,
-  })
-    
+  }) 
 
-  // send info to the server
+ // calculate result
+ if (!finishResult){
+  calculateResult();
+ }
+  setFinishResult(true);
+
+  console.log('player ready')
+
+  // check partner status
+  socket.emit('ready', { from: player_1, to: player_2})
 
 };
 
 
-//================ game logic =======================
-const calculateResults = async () => {
+
+
+//================ game logic ======================= (start)
+
+// calculate gesture and combo for each player
+const calculateCombo = async () => {
   let added_arr = {s:false ,4:false ,5:false}
   const players = room?.players;
 
@@ -346,7 +437,6 @@ const calculateResults = async () => {
       added_arr[i] = true;
     }}
     
-
     // add arr5
     if (!added_arr[5] && (play1Option === 16 || play1Option === 4)) {
         // console.log('get 5')
@@ -362,8 +452,6 @@ const calculateResults = async () => {
               resultArr[3] = [...resultArr[3], play1Option]
       }
   
-
-   
   // console.log('arr3', resultArr[3])
   // console.log('arr4', resultArr[4])
   // console.log('arr5', resultArr[5])
@@ -410,8 +498,7 @@ const calculateResults = async () => {
   // console.log('list: ', optionList);
 
   setResult({
-    show: true,
-    reset: false,
+    shown: true,
     options: optionList,
   })
 
@@ -419,13 +506,147 @@ const calculateResults = async () => {
 
   players[player_1].option = result.options;
 
-  // socket.emit("room:update", room);
-
-
 };
 
-//================ game logic =======================
+// calculate the result between 2 players
 
+const calculateResult = async () => {
+  const comboList = {
+    '3-0': '3A-1',
+    '3-1': '3P',
+    '3-2': '3C',
+    '3-3': '3A-2',
+    '4-0': '4P',
+    '4-1': '4C',
+    '4-2': '4A-1',
+    '4-3': '4A-2',
+    '5-0': '5A',
+    '5-1': '5P'
+  };
+
+  let playerList = [];
+  let partnerList = [];
+  let playerScore = 0;
+  let partnerScore = 0;
+
+  const maxLength = Math.max(partnerResult.options.length, result.options.length);
+
+  console.log('Last result:\nPlayer:', result.options, '\nPartner:', partnerResult.options);
+
+ // change into combo type
+
+  for (let i = 0; i < maxLength; i++) {
+    if (i < (result.options).length) {
+
+      if ((result.options[i]).length > 2){
+      playerList.push(comboList[(result.options[i])])
+      } else {
+        playerScore += 50;
+      }
+    }
+    if (i < (partnerResult.options).length) {
+
+      if ((partnerResult.options[i]).length > 2){
+        partnerList.push(comboList[(partnerResult.options[i])])
+        } else {
+          partnerScore += 50;
+        }
+    }
+  }
+
+  // const removeCombo = (combo, list) => {
+  //   list.splice(list.findIndex((str) => str === combo), 1);
+  // };
+
+  
+  console.log('Player result:', playerList);
+  console.log('Partner result:', partnerList);
+
+  const processCombos = (list1, list2) => {
+    const deleteCombo = [];
+    
+    list1.forEach((combo) => {
+
+      if (combo[1] === 'P') {
+        // prevention
+        const counterString = combo[0] + 'C';
+        const index = list2.findIndex((str) => str.startsWith(combo[0]) 
+                                                && !str.startsWith(counterString));
+        if (index >= 0) {
+          list2.splice(index, 1);
+          deleteCombo.push(combo);
+        }
+      } else if (combo[1] === 'C') {
+        //counter attack
+
+        const loopNum = 5 - parseInt(combo[0]) + 1;
+        for (let j = 1; j < loopNum; j++) {
+
+          const attackCombo = (parseInt(combo[0]) + j).toString() + 'A';
+          const index = list2.findIndex((str) => str.startsWith(attackCombo));
+
+          if (index >= 0) {
+            list2.splice(index, 1);
+            deleteCombo.push(combo);
+            break;
+          }
+        }
+      }
+    });
+
+    for (let i = 0; i < deleteCombo.length; i++){
+        list1 = list1.filter(combo => combo !== deleteCombo[i])
+      }
+
+      return [list1, list2]
+
+  };
+
+  const comboScore =  (list1, added_score) => {
+
+    let count = list1.filter(item => item.startsWith("3")).length;
+    added_score += count * 50;
+    count = list1.filter(item => item.startsWith("4")).length;
+    added_score += count * 75;
+    count = list1.filter(item => item.startsWith("5")).length;
+    added_score += count * 100;
+
+    return added_score
+
+  }
+    
+  [playerList, partnerList] = processCombos(playerList, partnerList);
+  [partnerList, playerList] = processCombos(partnerList, playerList);
+
+  // process the left combo score
+  if (playerList.length !== 0) {
+    playerScore = comboScore(playerList, playerScore);
+  }
+
+  if (partnerList.length !== 0) {
+    partnerScore = comboScore(partnerList, partnerScore);
+  }
+
+  // calculate winner
+  if (partnerScore > playerScore) {
+    setPartnerWin(partnerWin + 1)
+  } else if (partnerScore === playerScore) {
+    setPlayerWin(playerWin + 1)
+    setPartnerWin(partnerWin + 1)
+  } else {
+    setPlayerWin(playerWin + 1)
+  }
+
+
+  console.log('Player result:', playerList, "score: ",playerScore);
+  console.log('Partner result:', partnerList, "score: ", partnerScore);
+
+  playerScore = 0;
+  partnerScore = 0;
+
+}
+
+//================ game logic ======================= (end)
 
   // make streams into video element
   let UserVideo;
@@ -451,7 +672,7 @@ const calculateResults = async () => {
       />
       <img
           className='round-num'
-          src={require("../../images/round7.png")}
+          src={require("../../images/number/" + currentRound.toString() + ".png")}
           alt='round-num'
           id='round-num'
       />
@@ -460,14 +681,14 @@ const calculateResults = async () => {
       <div className='left-player-con'>
         <img
           className='profile-left'
-          src={require("../../images/user-profile-example.png")}
+          src={images[room.players[player_1].image]}
           alt="profile-left"
         />
         <div>
-        <p className='player-detail-left'>Natasha Romanoff</p>
+        <p className='player-detail-left'>{room.players[player_1].name}</p>
         <img 
           className='stars-l'
-          src={require("../../images/star0.png")}
+          src={require("../../images/star"+ playerStar +".png")}
           alt='star0'
         />
         </div>
@@ -476,30 +697,33 @@ const calculateResults = async () => {
       </div>
       {UserVideo}
       <ExitButton name="X"/>
-      </div>
-    {displayTime && <CountdownTimer id='Timer' initialSec={10} TimerEnd={handleRoundEnd} />}
+    </div>
+    <div className="middle-container">
+      {displayTime && <CountdownTimer className='Timer' initialSec={10} TimerEnd={handleRoundEnd} />}
+    </div>
     <div className='cam-right'>
+    { connected &&
       <div className='right-player-con'>
         <div>
-        <p className='player-detail-right'>Natasha Romanoff</p>
+        <p className='player-detail-right'>{room.players[player_2].name}</p>
         <img
           className='stars-r'
-          src={require("../../images/star0.png")}
+          src={require("../../images/star"+ partnerStar +".png")}
           alt='star0'
-        />
+          />
         </div>
         <img
           className='profile-right'
-          src={require("../..//images/user-profile2-example.jpg")}
+          src={images[room.players[player_2].image]}
           alt="profile-right"
         />
         <div>
           {/* combo */}
-        <PlayerTwo result={friendResult} />
+        <PlayerTwo result={partnerResult} />
         </div>
-      </div>
+      </div>}
       {PartnerVideo}
     </div>
   </div>
-    )
+  )
 }
