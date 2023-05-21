@@ -47,13 +47,14 @@ const SocketContextProvider = ({ children }) => {
       }
     });
     setSocket(socket);
-
-    console.log(socket)
+    
 
     socket.on("room:get", (payload) => {
       setRoom(payload);
       let play_1 = Object.keys(payload.players)[0];
       let play_2 = Object.keys(payload.players)[1];
+
+      // console.log(play_1.id)
 
       if (play_1 === socket.id) {
         setPlayer_1(play_1);
