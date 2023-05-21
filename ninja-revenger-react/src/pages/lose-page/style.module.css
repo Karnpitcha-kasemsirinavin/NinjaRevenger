@@ -14,11 +14,6 @@
   height: auto;
 }
 
-.sc {
-  font-size: 2.4rem;
-  margin: 1.2rem;
-}
-
 .img {
   position: absolute;
   height: 100%;
@@ -35,7 +30,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 40px;
   text-align: center;
   align-items: center;
   position: relative;

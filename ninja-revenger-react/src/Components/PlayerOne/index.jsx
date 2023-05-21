@@ -81,7 +81,7 @@ const PlayerOne = ({ result }) => {
       src={require("../../images/combo3.png")}
       alt='combo3'
     /> */}
-    { result.shown && <ComboList option={option} />}
+      { result.shown && <ComboList option={option} />}
     </div>
   );
 }
