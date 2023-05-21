@@ -46,14 +46,8 @@ const PlayerOne = ({ result }) => {
   }
 
   useEffect(() => {
-    if (result.show) {
-
-      setScore(room.players[player_1].score);
+    //   setScore(room.players[player_1].score);
       changeToName()
-      
-    } else if (result.reset) {
-    }
-
   }, [result])
 
   const changeToName = () => {
@@ -82,7 +76,7 @@ const PlayerOne = ({ result }) => {
       src={require("../../images/combo3.png")}
       alt='combo3'
     /> */}
-    <ComboList option={option} />
+    { result.shown && <ComboList option={option} />}
     </div>
   );
 }

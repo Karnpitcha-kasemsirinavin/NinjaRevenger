@@ -29,12 +29,13 @@ export const MainGame = () => {
   const [connected, setConnected] = useState(false)
   const [countConnect, setCountConnect] = useState(0)
 
+
   const userVideo = useRef()
   const partnerVideo = useRef()
   
   // time
   const [currentRound, setCurrentRound] = useState(1);
-  const [start, setStart] = useState(false); // Add start state
+  const [start, setStart] = useState(false); // Add start
   const [displayTime, setDisplayTime] = useState(false);
   const [displayRound, setDisplayRound] = useState(false);
   const [renderVideo, setRenderVideo] = useState(true);
@@ -42,14 +43,12 @@ export const MainGame = () => {
 
   // result
   const [result, setResult] = useState({
-    show: false,
-    reset: false,
+    shown: true,
     options: [],
   });
 
   const [partnerResult, setPartnerResult] = useState({
-    show: false,
-    reset: false,
+    shown: true,
     options: [],
   });
 
@@ -63,8 +62,12 @@ export const MainGame = () => {
     3: [],
     4: [],
     5: [],
-  }); // for stacking
+  });
 
+  const [finishResult, setFinishResult] = useState(false);
+  const [partnerReady, setPartnerReady] = useState(false);
+  
+  
   const [caller, setCaller] = useState(room.players[player_1].caller)
 
   useEffect(() => {
@@ -77,6 +80,9 @@ export const MainGame = () => {
         if (err) navigate("/");
       });
     }
+
+    
+
   }, [socket, room, location.pathname, navigate]);
   
   useEffect(() => {
@@ -175,9 +181,41 @@ export const MainGame = () => {
       })
     }
 
+
   }, [socket, navigate, peer, partnerId]);
 
-	// Generate name 
+  // check ready status for next round 
+
+  useEffect(() => {
+    
+    socket.on('partnerReady', () => {
+      setPartnerReady(true);
+      console.log('partnerReady')
+    });
+
+    if (partnerReady && finishResult){
+      setStart(true);
+      setPartnerReady(false);
+      setFinishResult(false);
+      setCurrentRound(currentRound + 1);
+      setDisplayTime(false);
+      setOptionList([])
+    }
+
+    console.log('round ', currentRound)
+
+    // Clean up the event listener on unmount
+    return () => {
+      socket.off('partnerReady');
+    };
+
+
+
+  }, [start,finishResult, partnerReady]);
+
+
+	// Generate name =====================================================================================================
+
 	const firstnames = ['Tor', 'Foam', 'Mark', 'June', 'Nata', 'Mill'];
   const surnames = ['1nwza', 'SudLhor', 'SudSouy', 'SecretService', 'React', 'HTML'];
 	const [randomName1, setRandomName1] = useState('');
@@ -185,40 +223,34 @@ export const MainGame = () => {
 
   useEffect(() => {
     generateRandomName();
-  }, []);
-	
+    selectRandomImage();
+    socket.emit("room:update", room);
+  }, [player_1])
+
 	const generateRandomName = () => {
 		const randomIndexFirst1 = Math.floor(Math.random() * firstnames.length);
     const randomIndexLast1 = Math.floor(Math.random() * surnames.length);
 
-		const randomIndexFirst2 = Math.floor(Math.random() * firstnames.length);
-    const randomIndexLast2 = Math.floor(Math.random() * surnames.length);
-
 		const name1 = firstnames[randomIndexFirst1] + " " +  surnames[randomIndexLast1];
-		const name2 = firstnames[randomIndexFirst2] + " " +  surnames[randomIndexLast2];
-		
-    setRandomName1(name1);
-		setRandomName2(name2);
+
+    room.players[player_1].name = name1;	
+    
+		;
 	};
 
   // Random Profile
   const images = [art1, art2, art3, art4, art5, art6, art7, art8];
-  const [randomImage1, setRandomImage1] = useState('');
-  const [randomImage2, setRandomImage2] = useState('');
+  // const [randomImage1, setRandomImage1] = useState('');
 
-  useEffect(() => {
-    selectRandomImage();
-  }, []);
 
   const selectRandomImage = () => {
     const randomIndexImage1 = Math.floor(Math.random() * images.length);
-    const randomIndexImage2 = Math.floor(Math.random() * images.length);
-
-    const image1 = images[randomIndexImage1]
-    const image2 = images[randomIndexImage2]
     
-    setRandomImage1(image1)
-    setRandomImage2(image2)
+    room.players[player_1].image = randomIndexImage1;	
+
+    // const image1 = images[randomIndexImage1]
+    // const image2 = images[randomIndexImage1]
+    
   }
 
 
@@ -240,11 +272,16 @@ export const MainGame = () => {
     // for each round
     const newRound = () => {
 
+      if (currentRound === 1) {
+
       setTimeout(() => {
-        round_img.style.visibility = 'visible';
-        round_num.style.visibility = 'visible';
         setDisplayTime(true);
       }, 2000 + 3000); // make it visible after 5 secs
+    } else {
+      setTimeout(() => {
+        setDisplayTime(true);
+      }, 2000); // make it visible after 5 secs
+    }
 
       // generating test *********************
 
@@ -259,19 +296,25 @@ export const MainGame = () => {
     }
   }
 
-    if (start && currentIndex === 0) {
+  // start game
+
+
+    if (connected && currentRound === 1) {
       setTimeout(() => {
         console.log('show start img');
       }, 2000); // make it visible after 2 seconds
+
+      setTimeout(() => {
+        round_img.style.visibility = 'visible';
+        round_num.style.visibility = 'visible';
+      }, 2000 + 3000); // make it visible after 5 secs
+      
     }
 
     if (start) {
        // show each round
       newRound()
-    } else {
-      // when each roud end
-      round_img.style.visibility = 'hidden';
-      round_num.style.visibility = 'hidden';
+
     }
 
   }, [start, selectOption, displayTime]);
@@ -280,9 +323,6 @@ export const MainGame = () => {
 
   useEffect(() => {
     
-    if (result.options.length === 1) {
-      // console.log('updated', result.options)
-    }
 
     if (play1Option !== null && play1Option !== undefined && selectOption && displayTime) {
 
@@ -295,11 +335,10 @@ export const MainGame = () => {
 
     }
 
-    if (connected && (room.players[player_2].option).length !== 0){
+    if (connected && displayTime){
 
     setPartnerResult({
-      show: true,
-      reset: false,
+      shown: true,
       options: room.players[player_2].option,
     })
 
@@ -312,8 +351,6 @@ export const MainGame = () => {
   // time over for each round
 
 const handleRoundEnd = () => {
-  setCurrentRound(currentRound + 1);
-  setDisplayTime(false);
   setStart(false);
   console.log('Round End');
 
@@ -321,13 +358,31 @@ const handleRoundEnd = () => {
 
   if ((room.players[player_2].option).length !== 0){
   setPartnerResult({
-    show: true,
-    reset: false,
     options: room.players[player_2].option,
-  })
-  }
+  }) 
+ }
 
+ // calculate result 
   calculateResult();
+  setFinishResult(true);
+
+  console.log('player ready')
+  // check partner status
+  socket.emit('ready', { from: player_1, to: player_2})
+
+  // setResult({
+  //   shown: false,
+  //   options: []
+  // })
+
+  // setPartnerResult({
+  //   shown: false,
+  //   options: room.players[player_2].option,
+  // })
+
+
+  socket.emit("room:update", room);
+
     
 };
 
@@ -409,8 +464,7 @@ const calculateCombo = async () => {
   // console.log('list: ', optionList);
 
   setResult({
-    show: true,
-    reset: false,
+    shown: true,
     options: optionList,
   })
 
@@ -551,7 +605,7 @@ const calculateResult = async () => {
       />
       <img
           className='round-num'
-          src={require("../../images/round7.png")}
+          src={require("../../images/number/" + currentRound.toString() + ".png")}
           alt='round-num'
           id='round-num'
       />
@@ -560,11 +614,11 @@ const calculateResult = async () => {
       <div className='left-player-con'>
         <img
           className='profile-left'
-          src={randomImage1}
+          src={images[room.players[player_1].image]}
           alt="profile-left"
         />
         <div>
-        <p className='player-detail-left'>{randomName1}</p>
+        <p className='player-detail-left'>{room.players[player_1].name}</p>
         <img 
           className='stars-l'
           src={require("../../images/star0.png")}
@@ -578,10 +632,12 @@ const calculateResult = async () => {
       <ExitButton name="X"/>
       </div>
     {displayTime && <CountdownTimer id='Timer' initialSec={10} TimerEnd={handleRoundEnd} />}
+    
     <div className='cam-right'>
+    { connected &&
       <div className='right-player-con'>
         <div>
-        <p className='player-detail-right'>{randomName2}</p>
+        <p className='player-detail-right'>{room.players[player_2].name}</p>
         <img
           className='stars-r'
           src={require("../../images/star0.png")}
@@ -590,14 +646,14 @@ const calculateResult = async () => {
         </div>
         <img
           className='profile-right'
-          src={randomImage2}
+          src={images[room.players[player_2].image]}
           alt="profile-right"
         />
         <div>
           {/* combo */}
         <PlayerTwo result={partnerResult} />
         </div>
-      </div>
+      </div>}
       {PartnerVideo}
     </div>
   </div>

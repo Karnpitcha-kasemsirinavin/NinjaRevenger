@@ -67,6 +67,6 @@ const HandDetection = ({ Input_Video }) => {
     camera.start();
   }, [Input_Video]);
 
-  return console.log("fuck")
+  return console.log("cannot use")
 };
 export default HandDetection;
