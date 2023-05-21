@@ -1,0 +1,8 @@
+@import url('https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700%27');
+@import url('https://fonts.googleapis.com/css?family=Roboto%27');
+
+li{
+	font-family: "Roboto", sans-serif;
+	font-weight: bold;
+  font-size: medium;
+}

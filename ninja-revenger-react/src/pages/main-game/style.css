@@ -73,7 +73,7 @@
   .player-detail-left{
     position: relative;
     width: 20vmin;
-    font-size: 2vmin;
+    font-size: 1.1rem;
     font-family: "Roboto", sans-serif;
     font-weight: bold;
     display: inline-block;
@@ -83,7 +83,7 @@
   .player-detail-right{
     position: relative;
     width: 20vmin;
-    font-size: 2vmin;
+    font-size: 1.1rem;
     font-family: "Roboto", sans-serif;
     font-weight: bold;
     display: inline-block;

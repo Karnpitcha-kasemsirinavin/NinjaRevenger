@@ -777,12 +777,12 @@ const calculateResult = async () => {
           alt="profile-left"
         />
         <div>
-        <p className='player-detail-left'>{room.players[player_1].name}</p>
-        <img 
-          className='stars-l'
-          src={require("../../images/star"+ room.players[player_1].score +".png")}
-          alt='star0'
-        />
+          <p className='player-detail-left'>{room.players[player_1].name}</p>
+          <img 
+            className='stars-l'
+            src={require("../../images/star"+ room.players[player_1].score +".png")}
+            alt='star0'
+          />
         </div>
         {/* combo */}
         <PlayerOne result={result} />
