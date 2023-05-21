@@ -47,7 +47,9 @@ const PlayerOne = ({ result }) => {
 
   useEffect(() => {
     //   setScore(room.players[player_1].score);
-      changeToName()
+    if (result.shown){
+        changeToName()
+    }
   }, [result])
 
   const changeToName = () => {

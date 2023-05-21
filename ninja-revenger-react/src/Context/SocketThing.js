@@ -81,6 +81,14 @@ const SocketContextProvider = ({ children }) => {
         }
       }
 
+      if (
+        payload?.players[play_1]?.score === 5 ||
+        payload?.players[play_2]?.score === 5
+      ) {
+        // let pathname = "/result";
+        // if (pathname !== location.pathname) navigate(pathname);
+      }
+
       // console.log(payload.players);
 
     });
