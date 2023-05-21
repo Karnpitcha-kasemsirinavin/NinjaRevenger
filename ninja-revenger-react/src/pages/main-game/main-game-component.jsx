@@ -16,6 +16,7 @@ import art6 from '../../images/art6.png';
 import art7 from '../../images/art7.png';
 import art8 from '../../images/art8.png';
 import { connect } from 'socket.io-client';
+// import axios from 'axios';
 
 
 export const MainGame = () => {
@@ -69,6 +70,8 @@ export const MainGame = () => {
     const [partnerReady, setPartnerReady] = useState(false);
 
      // Game var =======================================================
+
+  const [checkJoin, setCheckJoin] = useState(false)
   
 
   useEffect(() => {
@@ -76,12 +79,12 @@ export const MainGame = () => {
     let size = Object.keys(socket).length;
   
     // if stranger then join room
-    if (size > 0 && room.type === 'stranger') {
+    if (size > 0 && room.type === 'stranger' && !checkJoin) {
       socket.emit("room:join", { roomId }, (err, room) => {
         if (err) navigate("/");
       });
+      setCheckJoin(true)
     }
-
     
 
   }, [socket, room, location.pathname, navigate]);
@@ -97,7 +100,8 @@ export const MainGame = () => {
         if (partnerVideo.current.srcObject !== remote && renderVideo) {
         partnerVideo.current.srcObject = remote;
         // console.log('user', stream, '\npartner', remote);
-        setStart(true);
+        // setStart(true);
+        socket.emit('ready', {from: player_1, to: player_2})
         setRenderVideo(false);
         }
       });
@@ -113,6 +117,9 @@ export const MainGame = () => {
       getUserMedia({ video: true }, stream => {
         userVideo.current.srcObject = stream;
         setStream(stream);
+        // setTimeout(() => {
+        //   captureImage()
+        // }, 2000);
       });
     
     
@@ -150,7 +157,8 @@ export const MainGame = () => {
           // console.log('render', renderVideo);
           if (partnerVideo.current.srcObject !== remote && renderVideo) {
           partnerVideo.current.srcObject = remote;
-          setStart(true);
+          // setStart(true);
+          socket.emit('ready', {from: player_1, to: player_2})
           setRenderVideo(false);
           }
         });
@@ -234,13 +242,31 @@ export const MainGame = () => {
   const [playerWin, setPlayerWin] = useState(0);
   const [partnerWin, setPartnerWin] = useState(0);
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const numberArray = room.players[player_1].caller?
+  // useEffect(() => {
+  //   if (connected) {
+  //     if (room.players[player_1].score === 3 || room.players[player_2].score === 3){
+  //       if (playerWin === 3) {
+  //         navigate(`/win`);
+  //       } else {
+  //         navigate(`/lost`);
+  //       }
+  //     }
+  // }
+    
 
+  // }, [navigate, playerWin]);
+  
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const numberArray1 = room.players[player_1].caller?
           // [2,17,1,16,15,18,13]:[11,16,8,14,7,12,0]
       // [0,0]: []
       // [15, 18, 13, 2, 17, 1, 16, 9, 13, 3]: [4, 14, 15, 12, 13, 18, 7, 17, 5, 18, 11, 10]
       [15, 18, 13, 5, 18, 11, 10, 9, 13, 3, 0]: [16, 0, 17, 6, 7, 9, 13, 3, 15, 18, 13]
+
+  const numberArray2 = room.players[player_1].caller?
+  [2,17,1,16,15,18,13]:[11,16,8,14,7,12,0]
+  
 
   // for start
   useEffect(() => {
@@ -249,6 +275,9 @@ export const MainGame = () => {
 
     // for each round
     const newRound = () => {
+
+      
+      // generating test *********************
 
       if (currentRound === 1) {
 
@@ -261,26 +290,47 @@ export const MainGame = () => {
       }, 2000); // make it visible after 5 secs
     }
 
-      // generating test *********************
+    if (displayTime && !selectOption && currentIndex !== numberArray1 - 1 ) {
+    setTimeout(() => {
+      setPLay1Option(numberArray1[currentIndex]);
+      setCurrentIndex(currentIndex + 1);
+      setSelectOption(true);
+    }, currentIndex * 300); // 1 sec after start round
+  }
 
-      if (displayTime && !selectOption && currentIndex !== numberArray - 1 ) {
+  //   if (currentRound%2 === 1){
+  //     if (displayTime && !selectOption && currentIndex !== numberArray1 - 1 ) {
 
-        // console.log('pass generate test')
+  //       // console.log('pass generate test')
 
-      setTimeout(() => {
-        setPLay1Option(numberArray[currentIndex]);
-        setCurrentIndex(currentIndex + 1);
-        setSelectOption(true);
-      }, currentIndex * 200); // 1 sec after start round
+  //     setTimeout(() => {
+  //       setPLay1Option(numberArray1[currentIndex]);
+  //       setCurrentIndex(currentIndex + 1);
+  //       setSelectOption(true);
+  //     }, currentIndex * 200); // 1 sec after start round
 
-    }
+  //   }
+  // } else {
+  //   if (displayTime && !selectOption && currentIndex !== numberArray2 - 1 ) {
+
+  //     // console.log('pass generate test')
+
+  //   setTimeout(() => {
+  //     setPLay1Option(numberArray2[currentIndex]);
+  //     setCurrentIndex(currentIndex + 1);
+  //     setSelectOption(true);
+  //   }, currentIndex * 200); // 1 sec after start round
+
+  // }
+  // }
+
   }
 
   // start game
 
     if (connected && currentRound === 1) {
       setTimeout(() => {
-        console.log('show start img');
+        // console.log('show start img');
       }, 2000); // make it visible after 2 seconds
 
       setTimeout(() => {
@@ -290,13 +340,13 @@ export const MainGame = () => {
       
     }
 
-    if (start && playerWin < 5 && partnerWin < 5) {
+    if (start && playerWin < 5 && partnerWin < 5 ) {
        // show each round
       newRound()
 
     }
 
-  }, [start, selectOption, displayTime]);
+  }, [start, selectOption, displayTime, partnerReady]);
 
 
 
@@ -305,19 +355,35 @@ export const MainGame = () => {
     if (play1Option !== null && play1Option !== undefined && selectOption && displayTime) {
 
       calculateCombo();
-      setSelectOption(false)
+      setSelectOption(false);
 
       // update when player have new option
       socket.emit("room:update", room);
 
+
     }
 
-    if (connected && displayTime){
+    if (connected){
 
-    setPartnerResult({
-      shown: true,
-      options: room.players[player_2].option,
-    })}
+      setPartnerStar((room.players[player_2].score));
+      setPlayerStar(playerWin);
+    
+      if (displayTime){
+
+      setPartnerResult({
+        shown: true,
+        options: room.players[player_2].option,
+      })
+
+      
+    } else {
+      
+      if (playerStar === 3) {
+        navigate('/win')
+      }
+
+    }
+  }
 
 
   }, [play1Option, displayTime, selectOption, start])
@@ -329,21 +395,38 @@ export const MainGame = () => {
     socket.on('partnerReady', () => {
       setPartnerReady(true);
       console.log('partnerReady')
+      
     });
 
-    if (partnerReady && finishResult){
-
+    socket.on('startTime', () => {
       setStart(true);
+      console.log('start time')
+
+      
+      setPartnerResult({
+        shown: true,
+        options: [],
+      })
+      
+    });
+
+    console.log('finish result', finishResult)
+
+    if (partnerReady && finishResult) {
+
+      // setStart(true);
       setPartnerReady(false);
       setFinishResult(false);
-      setCurrentRound(currentRound + 1);
       setDisplayTime(false);
+      setCurrentRound(currentRound + 1);
+
+      room.players[player_1].round = currentRound
+
+      socket.emit("room:update", room);
+
+      console.log('round ', currentRound)
+      console.log('round from partner', room.players[player_2].round)
     }
-
-    console.log('round ', currentRound)
-    // console.log('Result', result)
-    // console.log('partner result', partnerResult)
-
     
 
     // Clean up the event listener on unmount
@@ -352,18 +435,17 @@ export const MainGame = () => {
     };
 
 
-    // start new round
+   
   }, [start,finishResult, partnerReady, room]);
 
+
   useEffect(() => {
-    if (start && !displayTime ) {
+    if (start && !displayTime && !partnerReady && !finishResult) {
       console.log('Starting a new round');
       
-      setPlayerStar(playerWin.toString());
-      setPartnerStar(partnerWin.toString());
+      // setPartnerStar(partnerWin.toString())
 
-      room.players[player_1].score = playerWin;
-
+      
       setCurrentIndex(0) // generate test
       setSelectOption(false);
       setOptionList([]);
@@ -372,19 +454,24 @@ export const MainGame = () => {
         options: [],
       });
       room.players[player_1].option = [];
+
       socket.emit("room:update", room);
-  
-      setPartnerResult({
-        shown: false,
-        options: room.players[player_2].option,
-      });
 
     }
 
     if (connected) {
+
+      setPartnerResult({
+        shown: false,
+        options: room.players[player_2].option,
+      });
+      setPartnerStar(room.players[player_2].score)
+
+
     console.log("playerscore: ", room.players[player_1].score, "partnerscore: ", room.players[player_2].score)
     }
-  }, [start, displayTime]);
+
+  }, [start, displayTime, playerStar]);
 
   
 
@@ -409,7 +496,8 @@ const handleRoundEnd = () => {
   console.log('player ready')
 
   // check partner status
-  socket.emit('ready', { from: player_1, to: player_2})
+  socket.emit('ready', {from: player_1, to: player_2})
+  socket.emit("room:update", room);
 
 };
 
@@ -524,6 +612,7 @@ const calculateResult = async () => {
 
   const maxLength = Math.max(partnerResult.options.length, result.options.length);
 
+  console.log('before calculate result')
   console.log('Last result:\nPlayer:', result.options, '\nPartner:', partnerResult.options);
 
  // change into combo type
@@ -622,17 +711,27 @@ const calculateResult = async () => {
 
   // calculate winner
   if (partnerScore > playerScore) {
-    setPartnerWin(partnerWin + 1)
+    // setPartnerWin(partnerWin + 1)
+
+    // room.players[player_2].score += 1;
+
   } else if (partnerScore === playerScore) {
-    setPlayerWin(playerWin + 1)
-    setPartnerWin(partnerWin + 1)
+    // setPlayerWin(playerWin + 1)
+    // setPartnerWin(partnerWin + 1)
+
+    room.players[player_1].score += 1;
+
   } else {
-    setPlayerWin(playerWin + 1)
+    // setPlayerWin(playerWin + 1)
+    room.players[player_1].score += 1;
+
   }
 
+  socket.emit('room:update', room);
 
-  console.log('Player result:', playerList, "score: ",playerScore);
-  console.log('Partner result:', partnerList, "score: ", partnerScore);
+  console.log('after calculate result')
+  console.log('Player result:', playerList, "score: ",room.players[player_1].score);
+  console.log('Partner result:', partnerList, "score: ", room.players[player_2].score);
 
   playerScore = 0;
   partnerScore = 0;
@@ -681,7 +780,7 @@ const calculateResult = async () => {
         <p className='player-detail-left'>{room.players[player_1].name}</p>
         <img 
           className='stars-l'
-          src={require("../../images/star"+ playerStar +".png")}
+          src={require("../../images/star"+ room.players[player_1].score +".png")}
           alt='star0'
         />
         </div>
