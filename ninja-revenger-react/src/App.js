@@ -1,16 +1,16 @@
 import './App.css';
 import React from 'react';
-// import { useRef } from 'react';  
 import { Home } from './pages/Home/components.jsx';
 import { MainGame } from'./pages/main-game/main-game-component.jsx';
 import { JoinFriend } from './pages/JoinFriend/join-friend-components.jsx';
+import HandDetection from './pages/TestCamera/HandDetection';
+import { Routes, Route } from "react-router-dom";
+
 import Loading  from './pages/loading';
 import LosePage from './pages/lose-page/index.jsx'
 import WinPage from './pages/win-page'
 import Room from "./pages/JoinFriend/join-friend-components";
-import { Routes, Route } from "react-router-dom";
 import TestCamera from './pages/TestCamera/HandDetection';
-import HandDetection from './pages/TestCamera/HandDetection';
 
 
 const App = () => {
@@ -23,6 +23,7 @@ const App = () => {
       <Route path="/" element={<Home />} />
       <Route path="/joinlink" element={<JoinFriend />} />
       <Route path="/room/:id" element={<MainGame />} />
+      <Route path="/test-cam" element={<HandDetection />} />
     </Routes>
     {/* <Loading/> */}
     {/* <LosePage/> */}

@@ -1,11 +1,11 @@
 .btn{
 	font-weight: 800;
 	position: relative;
-	
 	outline: none;
 	border: none;
 	height: 3rem;
 	width: 3rem;
+	align-items: center;
 	border-radius: 15px;
 	background: transparent;
 	font-size: 1rem;

@@ -173,15 +173,13 @@ export const MainGame = () => {
         //   });
         // }
       })
-    
     }
 
   }, [socket, navigate, peer, partnerId]);
 
-	// Generate name =====================================================================================================
-
+	// Generate name 
 	const firstnames = ['Tor', 'Foam', 'Mark', 'June', 'Nata', 'Mill'];
-  const surnames = ['1nwza', 'SudLhor', 'SudSouy', 'SecretService', 'React', 'HTML']
+  const surnames = ['1nwza', 'SudLhor', 'SudSouy', 'SecretService', 'React', 'HTML'];
 	const [randomName1, setRandomName1] = useState('');
   const [randomName2, setRandomName2] = useState('');
 
@@ -327,7 +325,7 @@ const handleRoundEnd = () => {
     reset: false,
     options: room.players[player_2].option,
   })
- }
+  }
 
   calculateResult();
     
@@ -472,7 +470,7 @@ const calculateResult = async () => {
   //   list.splice(list.findIndex((str) => str === combo), 1);
   // };
 
- 
+  
   console.log('Player result:', playerList);
   console.log('Partner result:', partnerList);
 
@@ -524,7 +522,6 @@ const calculateResult = async () => {
   console.log('Partner result:', partnerList);
   console.log(partnerScore);
 
- 
 }
 
 //================ game logic ======================= (end)
