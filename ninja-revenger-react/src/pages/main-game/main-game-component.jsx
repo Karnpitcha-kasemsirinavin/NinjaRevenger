@@ -8,6 +8,7 @@ import CountdownTimer from '../../Components/Timer';
 import PlayerOne from '../../Components/PlayerOne';
 import PlayerTwo from '../../Components/PlayerTwo';
 import { connect } from 'socket.io-client';
+import axios from 'axios';
 
 
 export const MainGame = () => {
@@ -30,7 +31,32 @@ export const MainGame = () => {
   const [displayTime, setDisplayTime] = useState(false);
   const [displayRound, setDisplayRound] = useState(false);
   const [renderVideo, setRenderVideo] = useState(true);
+
+  //capture  
+  const captureImage = () => {
+    const video = userVideo.current
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
+    const context = canvas.getContext("2d");
+    context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+    const dataURL = canvas.toDataURL("image/webp");
+    console.log(dataURL);
+    // photo.setAttribute("src", data);
+
+    sendImageToFlask(dataURL);
+  }
   
+  const sendImageToFlask = async (dataURL) => {
+    try {
+      const response = await axios.post('/process', { img: dataURL });
+      const modelOutput = response.data.model_output;
+      console.log('Model Output:', modelOutput);
+      // Process the model output as needed
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
   // result
   const [result, setResult] = useState({
@@ -98,6 +124,9 @@ export const MainGame = () => {
       getUserMedia({ video: true }, stream => {
         userVideo.current.srcObject = stream;
         setStream(stream);
+        setTimeout(() => {
+          captureImage()
+        }, 2000);
       });
     
     

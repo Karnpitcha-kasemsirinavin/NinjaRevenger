@@ -1,6 +1,5 @@
 // HandDetection.jsx
 import React, { useEffect } from 'react';
-import { Hands, Camera,drawConnectors, drawLandmarks, HAND_CONNECTIONS } from '@mediapipe/hands';
 
 const HandDetection = () => {
   useEffect(() => {
@@ -68,7 +67,15 @@ const HandDetection = () => {
         drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {lineWidth: 2});
         drawLandmarks(canvasCtx, landmarks, {color: '#FF0000', radius: 1});
       }
-      canvasCtx.restore();
+
+    // Return the canvas image data
+    const imageData = canvasElement.toDataURL();
+    const img = new Image();
+    img.src = imageData;
+
+    // Append the image element to the body
+    document.body.appendChild(img);
+    canvasCtx.restore();
     }
     // using the hand object from mediapipe
     const hands = new Hands({locateFile: (file) => {
@@ -80,6 +87,8 @@ const HandDetection = () => {
       minTrackingConfidence: 0.5
     });
     
+    
+
     //execute onResults function if hand is detected
     hands.onResults(onResults);
     
