@@ -16,6 +16,7 @@ import art6 from '../../images/art6.png';
 import art7 from '../../images/art7.png';
 import art8 from '../../images/art8.png';
 import { connect } from 'socket.io-client';
+// import axios from 'axios';
 
 
 export const MainGame = () => {
@@ -116,6 +117,9 @@ export const MainGame = () => {
       getUserMedia({ video: true }, stream => {
         userVideo.current.srcObject = stream;
         setStream(stream);
+        // setTimeout(() => {
+        //   captureImage()
+        // }, 2000);
       });
     
     
@@ -355,6 +359,7 @@ export const MainGame = () => {
 
       // update when player have new option
       socket.emit("room:update", room);
+
 
     }
 
@@ -786,8 +791,10 @@ const calculateResult = async () => {
       </div>
       {UserVideo}
       <ExitButton name="X"/>
-      </div>
-    {displayTime && <CountdownTimer id='Timer' initialSec={5} TimerEnd={handleRoundEnd} />}
+    </div>
+    <div className="middle-container">
+      {displayTime && <CountdownTimer className='Timer' initialSec={10} TimerEnd={handleRoundEnd} />}
+    </div>
     <div className='cam-right'>
     { connected &&
       <div className='right-player-con'>
@@ -812,5 +819,5 @@ const calculateResult = async () => {
       {PartnerVideo}
     </div>
   </div>
-    )
+  )
 }
