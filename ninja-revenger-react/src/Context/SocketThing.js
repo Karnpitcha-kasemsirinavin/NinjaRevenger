@@ -8,6 +8,8 @@ peer.on('open', id => {
   userId = id
 })
 
+var isIdEmitted = false
+
 // "undefined" means the URL will be computed from the `window.location` object
 // const URL = process.env.NODE_ENV === 'production' ? undefined : 'https://nostalgic-dream-93159.pktriot.net';
 
@@ -21,7 +23,6 @@ const SocketContextProvider = ({ children }) => {
   const [player_2, setPlayer_2] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
-
 
 
   
@@ -68,7 +69,11 @@ const SocketContextProvider = ({ children }) => {
         setPlayer_1(play_1);
         setPlayer_2(play_2);
         if (play_2 && !room.private) {
-          socket.emit('id', { from: play_1, to: play_2, id: userId }) // bug
+          if (!isIdEmitted) {
+            console.log('yang pass yuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu ')
+            socket.emit('id', { from: play_2, to: play_1, id: userId });
+            isIdEmitted = true; 
+          }
           
           // console.log('doing connection');
         }
@@ -76,20 +81,33 @@ const SocketContextProvider = ({ children }) => {
         setPlayer_1(play_2);
         setPlayer_2(play_1);
         if (play_2 && !room.private) {
-          socket.emit('id', { from: play_2, to: play_1, id: userId }) // bug
-          // console.log('doing connection');
-        }
-      }
-
-      if (
-        payload?.players[play_1]?.score === 5 ||
-        payload?.players[play_2]?.score === 5
-      ) {
-        // let pathname = "/result";
-        // if (pathname !== location.pathname) navigate(pathname);
+          if (!isIdEmitted) {
+            console.log('yang pass yuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu jaaaaaaaaaa')
+            socket.emit('id', { from: play_2, to: play_1, id: userId });
+            isIdEmitted = true; 
+        }}
       }
 
       // console.log(payload.players);
+
+      // if (
+      //   payload?.players[play_1]?.score === 1 ||
+      //   payload?.players[play_2]?.score === 1
+      // ) {
+      //   if ( payload?.players[play_1]?.score === 1){
+      //     console.log('score win as play 1: ')
+      //   let pathname = "/win";
+      //   if (pathname !== location.pathname) navigate(pathname);
+      //   } else if (payload?.players[play_2]?.score === 1){
+      //     console.log('score win as play 2: ')
+      //     let pathname = "/win";
+      //     if (pathname !== location.pathname) navigate(pathname);
+      //   } else {
+      //     console.log('lose: ')
+      //     let pathname = "/lost";
+      //     if (pathname !== location.pathname) navigate(pathname);
+      //   }
+      // }
 
     });
 
