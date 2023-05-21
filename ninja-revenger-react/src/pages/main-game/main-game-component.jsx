@@ -312,7 +312,7 @@ loadScripts();
 	// Generate name =====================================================================================================
 
 	const firstnames = ['Tor', 'Foam', 'Mark', 'June', 'Nata', 'Mill'];
-  const surnames = ['1nwza', 'SudLhor', 'SudSouy', 'SecretService', 'React', 'HTML'];
+  const surnames = ['1nwza', 'SudLhor', 'SudSuay', 'Romanoff', 'React', 'HTML'];
 	const [randomName1, setRandomName1] = useState('');
   const [randomName2, setRandomName2] = useState('');
 
@@ -915,12 +915,12 @@ const calculateResult = async () => {
     { connected &&
       <div className='right-player-con'>
         <div>
-        <p className='player-detail-right'>{room.players[player_2].name}</p>
-        <img
-          className='stars-r'
-          src={require("../../images/star"+ partnerStar +".png")}
-          alt='star0'
-          />
+          <p className='player-detail-right'>{room.players[player_2].name}</p>
+          <img
+            className='stars-r'
+            src={require("../../images/star"+ partnerStar +".png")}
+            alt='star0'
+            />
         </div>
         <img
           className='profile-right'
@@ -929,8 +929,8 @@ const calculateResult = async () => {
         />
         <div>
           {/* combo */}
-        <PlayerTwo result={partnerResult} />
         </div>
+        <PlayerTwo result={partnerResult} />
       </div>}
       {PartnerVideo}
     </div>
