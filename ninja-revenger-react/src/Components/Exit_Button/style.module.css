@@ -1,6 +1,7 @@
 .btn{
 	font-weight: 800;
 	position: relative;
+	margin-left: 10px;
 	outline: none;
 	border: none;
 	height: 3rem;

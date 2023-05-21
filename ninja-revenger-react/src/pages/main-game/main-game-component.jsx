@@ -632,7 +632,6 @@ const calculateResult = async () => {
       <ExitButton name="X"/>
       </div>
     {displayTime && <CountdownTimer id='Timer' initialSec={10} TimerEnd={handleRoundEnd} />}
-    
     <div className='cam-right'>
     { connected &&
       <div className='right-player-con'>

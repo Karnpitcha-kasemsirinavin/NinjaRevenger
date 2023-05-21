@@ -24,12 +24,14 @@ const App = () => {
       <Route path="/joinlink" element={<JoinFriend />} />
       <Route path="/room/:id" element={<MainGame />} />
       <Route path="/test-cam" element={<HandDetection />} />
+      <Route path="/win" element={<WinPage />} />
+      <Route path="/lost" element={<LosePage />} />
     </Routes>
     {/* <Loading/> */}
     {/* <LosePage/> */}
     {/* <WinPage/> */}
-    {/* <JoinFriend/> */}
     {/* <HandDetection/> */}
+    {/* <JoinFriend/> */}
   </div>
   
   );

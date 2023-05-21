@@ -10,8 +10,8 @@
   display: grid;
   align-items: start;
   justify-content: center;
-  height: 100%;
   width: 100%;
+  height: auto;
 }
 
 .sc {
@@ -27,10 +27,11 @@
 
 .small_img {
   height: 16vh;
+  width: 20vw;
 }
 
 .box {
-  margin-top: 25%;
+  margin-top: 32%;
   position: relative;
   display: flex;
   flex-direction: column;

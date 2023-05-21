@@ -19,8 +19,8 @@ function Box() {
       <div className={styles.box}>
         <img src={smallImage} className={styles.small_img} />
         <Score score="500" />
-        <Button name='friend' type='friend'/>
-        <Button name='return' type='return'/>
+        {/* <Button classname='result-btn' name='Play Again' type='stranger'/> */}
+        <Button classname='result-btn' name='return' type='return'/>
       </div>
     </div>
     </>

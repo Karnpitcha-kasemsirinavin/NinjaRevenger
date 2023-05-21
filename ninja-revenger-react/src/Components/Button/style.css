@@ -6,7 +6,6 @@
 		height: 5rem;
 		width: 15rem;
 		border-radius: 15px;
-		background: transparent;
 		font-size: 1rem;
 		font-family: inherit;
 		text-transform: capitalize;
@@ -21,8 +20,21 @@
 		scale: 1.02;
 	}
 
-	.bg-red{
-		background-color: red;
+	.result-btn{
+    position: relative;
+		outline: none;
+		border: none;
+		height: 5rem;
+		width: 11rem;
+		border-radius: 15px;
+		font-size: 1rem;
+		font-family: inherit;
+		text-transform: capitalize;
+		color: white;
+		background-color: rgb(73, 73, 73);
+		cursor: pointer;
+		margin-bottom: 10px;
+		z-index: 5;
 	}
 }
 
@@ -32,9 +44,8 @@
 		outline: none;
 		border: none;
 		height: 6rem;
-		width: 17rem;
+		width: 16rem;
 		border-radius: 15px;
-		background: transparent;
 		font-size: 1rem;
 		font-family: inherit;
 		text-transform: capitalize;
@@ -49,7 +60,20 @@
 		scale: 1.02;
 	}
 
-	.red{
-		background-color: red;
+	.result-btn{
+    position: relative;
+		outline: none;
+		border: none;
+		height: 6rem;
+		width: 13rem;
+		border-radius: 15px;
+		font-size: 1rem;
+		font-family: inherit;
+		text-transform: capitalize;
+		color: white;
+		background-color: rgb(73, 73, 73);
+		cursor: pointer;
+		margin-bottom: 10px;
+		z-index: 5;
 	}
 }
