@@ -137,8 +137,7 @@ const HandDetection = () => {
       height: 720,
     });
     camera.start();
-    console.log("fuck")
-
+    
   } catch (error) {
     console.error('Failed to load scripts:', error);
   }
