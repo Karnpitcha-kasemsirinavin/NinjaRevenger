@@ -137,7 +137,7 @@ const HandDetection = () => {
       height: 720,
     });
     camera.start();
-    
+
   } catch (error) {
     console.error('Failed to load scripts:', error);
   }
@@ -902,6 +902,7 @@ const calculateResult = async () => {
         {/* combo */}
         <PlayerOne result={result} />
       </div>
+        {/* {UserVideo} */}
         <HandDetection/>
         <video hidden ref={userVideo} className="user-video" autoPlay muted></video>
         <canvas ref={canvasRef} className="output-canvas"></canvas>
