@@ -180,7 +180,6 @@ export const MainGame = () => {
         //   });
         // }
       })
-    
     }
 
 
@@ -191,7 +190,7 @@ export const MainGame = () => {
 	// Generate name =====================================================================================================
 
 	const firstnames = ['Tor', 'Foam', 'Mark', 'June', 'Nata', 'Mill'];
-  const surnames = ['1nwza', 'SudLhor', 'SudSouy', 'SecretService', 'React', 'HTML']
+  const surnames = ['1nwza', 'SudLhor', 'SudSouy', 'SecretService', 'React', 'HTML'];
 	const [randomName1, setRandomName1] = useState('');
   const [randomName2, setRandomName2] = useState('');
 
@@ -554,7 +553,7 @@ const calculateResult = async () => {
   //   list.splice(list.findIndex((str) => str === combo), 1);
   // };
 
- 
+  
   console.log('Player result:', playerList);
   console.log('Partner result:', partnerList);
 
@@ -695,7 +694,6 @@ const calculateResult = async () => {
       <ExitButton name="X"/>
       </div>
     {displayTime && <CountdownTimer id='Timer' initialSec={10} TimerEnd={handleRoundEnd} />}
-    
     <div className='cam-right'>
     { connected &&
       <div className='right-player-con'>

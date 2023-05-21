@@ -16,8 +16,9 @@ function Box() {
       <div className={styles.box}>
         <img src={smallImage} className={styles.small_img} />
         <Score  score="500" />
-        <Button classname='red' name='friend' type='friend'/>
-        <Button classname='bg-red' name='return' type='return'/>
+        {/* <Button classname='result-btn' name='Play Again' type='stranger'/> */}
+        {/* vvvvvvvvvv ทำfunctionให้ด้วย vvvvvvvvvvvvvv */}
+        <Button classname='result-btn' name='Exit' type='return'/>
       </div>
     </div>
   );
