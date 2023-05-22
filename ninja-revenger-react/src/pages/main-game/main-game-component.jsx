@@ -7,7 +7,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import CountdownTimer from '../../Components/Timer'
 import PlayerOne from '../../Components/PlayerOne'
 import { connect } from 'socket.io-client';
-
+import axios from 'axios';
 
 export const MainGame = () => {
   const { socket, room, player_1, player_2, peer, userId } = useContext(SocketContext);
@@ -18,8 +18,8 @@ export const MainGame = () => {
   const [stream, setStream] = useState()
   const [connected, setConnected] = useState(false)
 
-  const userVideo = useRef()
-  const partnerVideo = useRef()
+  const userVideo = useRef(null)
+  const partnerVideo = useRef(null)
   
   // time
   const delay = ms => new Promise(res => setTimeout(res, ms));
@@ -28,6 +28,18 @@ export const MainGame = () => {
   const [displayTime, setDisplayTime] = useState(false);
   const [displayRound, setDisplayRound] = useState(false);
   const [renderVideo, setRenderVideo] = useState(true);
+
+  const captureImage = () => {
+    const video = userVideo.current
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
+    const context = canvas.getContext("2d");
+    context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+    const data = canvas.toDataURL("image/webp");
+    console.log(data);
+    // photo.setAttribute("src", data);
+  }
   
 
   // result
@@ -84,6 +96,9 @@ export const MainGame = () => {
       getUserMedia({ video: true }, stream => {
         userVideo.current.srcObject = stream;
         setStream(stream);
+        setTimeout(() => {
+          captureImage()
+        }, 2000);
       });
   
       socket.on('id', data => {
