@@ -560,7 +560,7 @@ const handleRoundEnd = async () => {
   
    if (finishResult) {
     socket.emit('ready', {from: player_1, to: player_2})
-    await wait(3000);
+    await wait(5000);
 
    }
 
