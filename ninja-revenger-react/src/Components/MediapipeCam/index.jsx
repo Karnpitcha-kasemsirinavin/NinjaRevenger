@@ -29,7 +29,35 @@ const MediapipeCam = () => {
         
         // Code to execute after all scripts are loaded
         const { Hands, Camera, drawConnectors, drawLandmarks, HAND_CONNECTIONS } = window;
-    
+  
+        // Define the desired frame rate (e.g., 0.2 FPS)
+        const desiredFrameRate = 1;
+        const frameInterval = 1000 / desiredFrameRate;
+        let lastCaptureTime = 0;
+
+        // Function to capture an image
+        function captureImage() {
+          const currentTime = performance.now();
+          const elapsedTime = currentTime - lastCaptureTime;
+
+          // Check if the desired frame rate interval has passed
+          if (elapsedTime >= frameInterval) {
+            // Capture the canvas image data
+            const imageData = canvasElement.toDataURL();
+            const img = new Image();
+            img.src = imageData;
+
+            // Append the image element to the body
+            document.body.appendChild(img);
+
+            // Update the last capture time
+            lastCaptureTime = currentTime;
+          }
+
+          // Request the next frame
+          requestAnimationFrame(captureImage);
+          }
+
     //function for hands appearing on cam
     function onResults(results) {
       //setting the canvas
@@ -52,29 +80,21 @@ const MediapipeCam = () => {
             console.log(`${hand}:`);
           }
       
-      //print the landmarks position
-      if (landmarks.length > 0) {
-        for (let j = 0; j < landmarks.length; j++) {const landmark = landmarks[j];
-          console.log(`Landmark ${j}: (${landmark.x}, ${landmark.y}, ${landmark.z})`);
+        //print the landmarks position
+        if (landmarks.length > 0) {
+          for (let j = 0; j < landmarks.length; j++) {const landmark = landmarks[j];
+            console.log(`Landmark ${j}: (${landmark.x}, ${landmark.y}, ${landmark.z})`);
+          }
+          //draw the connectors of landmarks and draw landmarks
+          drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {lineWidth: 2});
+          drawLandmarks(canvasCtx, landmarks, {color: '#FF0000', radius: 1});
+          
+          // Start capturing images
+          requestAnimationFrame(captureImage);
         }
-        //draw the connectors of landmarks and draw landmarks
-        drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {lineWidth: 2});
-        drawLandmarks(canvasCtx, landmarks, {color: '#FF0000', radius: 1});
-      }
-    }        
-        const landmarks = results.multiHandLandmarks[0]; // Assuming there is only one hand
-        //draw the connectors of landmarks and draw landmarks
-        drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {lineWidth: 2});
-        drawLandmarks(canvasCtx, landmarks, {color: '#FF0000', radius: 1});
-      }
+      }       
+    }
 
-    // Return the canvas image data
-    const imageData = canvasElement.toDataURL();
-    const img = new Image();
-    img.src = imageData;
-
-    // Append the image element to the body
-    document.body.appendChild(img);
     canvasCtx.restore();
     }
     // using the hand object from mediapipe
@@ -106,7 +126,6 @@ const MediapipeCam = () => {
 
 loadScripts();
 }, []);
-  
 
   return (
     <>
