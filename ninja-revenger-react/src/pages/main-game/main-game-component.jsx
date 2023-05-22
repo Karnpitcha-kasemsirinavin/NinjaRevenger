@@ -752,23 +752,23 @@ const calculateResult = async () => {
   return (
   <div className='maingame-container'>
     <div className='wrapper'>
-    <img
-          className='start-img'
-          src={require("../../images/start.png")}
-          id ='start_img'
-          
-      />
-    <img
-          className='round'
-          src={require("../../images/round-img.png")}
-          alt='round-img'
-          id='round'
+      <img
+        className='start-img'
+        src={require("../../images/start.png")}
+        id ='start_img'
+        
       />
       <img
-          className='round-num'
-          src={require("../../images/number/" + currentRound.toString() + ".png")}
-          alt='round-num'
-          id='round-num'
+        className='round'
+        src={require("../../images/round-img.png")}
+        alt='round-img'
+        id='round'
+      />
+      <img
+        className='round-num'
+        src={require("../../images/number/" + currentRound.toString() + ".png")}
+        alt='round-num'
+        id='round-num'
       />
     </div>
     <div className='cam-left'>
