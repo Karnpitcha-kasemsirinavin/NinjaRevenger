@@ -48,7 +48,8 @@ const MediapipeCam = () => {
         let lastCaptureTime = 0;
 
         // Function to capture an image
-        function captureImage() {
+        function captureImage(landmarks) {
+
           const currentTime = performance.now();
           const elapsedTime = currentTime - lastCaptureTime;
 
@@ -70,7 +71,12 @@ const MediapipeCam = () => {
           }
 
           // Request the next frame
-          requestAnimationFrame(captureImage);
+          if (landmarks.length > 0){
+            requestAnimationFrame(captureImage);
+          }
+          else {
+            cancelAnimationFrame(captureImage)
+          }
           }
 
     //function for hands appearing on cam
