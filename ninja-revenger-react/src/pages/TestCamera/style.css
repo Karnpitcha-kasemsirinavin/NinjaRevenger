@@ -1,6 +1,8 @@
 .testcam-container{
 	position: relative;
 	display: grid;
+  /* justify-content: center; */
+  /* align-items: center; */
   width: 100vw;
   height: 100vh;
   grid-template-columns: 1fr 2fr 1fr;
@@ -11,12 +13,4 @@
   position: absolute;
   width: 100vw;
   height: 100vh;
-}
-
-.output-canvas{
-	position: relative;
-  grid-area: 2 / 2 / 3 / 3;
-  width: 100%;
-	height: auto;
-	transform: rotateY(180deg);
 }

@@ -1,20 +1,22 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import '../MediapipeCam/style.css'
+import { SocketContext } from "../../Context/SocketThing";
+
 const { io } = require('socket.io-client')
 const url = 'https://peaceful-snow-18663.pktriot.net'
-const socket = io(url,
-  {
-    reconnectionDelayMax: 10000,
-    auth: {
-      token: '123'
-    },
-    query: {
-      'my-key': 'my-value'
-    }
-  })
 
 const MediapipeCam = () => {
+
+  const { socket } = useContext(SocketContext);
+
+
   useEffect(() => {
+    const socket = io(url)
+
+    socket.on('hand', data => {
+      console.log(data.hand);
+    })
+
     const videoElement = document.getElementsByClassName('input-video')[0];
     const canvasElement = document.getElementsByClassName('output-canvas')[0];
     const canvasCtx = canvasElement.getContext('2d');
@@ -59,8 +61,11 @@ const MediapipeCam = () => {
             const imageData = canvasElement.toDataURL('image/webp');
             const img = new Image();
             img.src = imageData;
-            console.log(imageData);
-            socket.emit('data', { image: imageData })
+            // console.log(imageData);
+            // console.log(socket.id);
+            socket.emit('data', { from: socket.id, image: imageData })
+
+            
 
             // Append the image element to the body
             // document.body.appendChild(img);
@@ -69,6 +74,8 @@ const MediapipeCam = () => {
             lastCaptureTime = currentTime;
             // console.log(lastCaptureTime)
           }
+
+          
 
           // Request the next frame
           if (landmarks.length > 0){
@@ -98,7 +105,7 @@ const MediapipeCam = () => {
             } else {
               hand = 'Hand 2';
             }
-            console.log(`${hand}:`);
+            // console.log(`${hand}:`);
           }
       
         //print the landmarks position
