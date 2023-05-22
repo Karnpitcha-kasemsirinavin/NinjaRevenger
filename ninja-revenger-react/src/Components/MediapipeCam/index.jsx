@@ -52,6 +52,8 @@ const MediapipeCam = () => {
 
             // Update the last capture time
             lastCaptureTime = currentTime;
+
+            console.log(lastCaptureTime)
           }
 
           // Request the next frame
@@ -82,9 +84,9 @@ const MediapipeCam = () => {
       
         //print the landmarks position
         if (landmarks.length > 0) {
-          for (let j = 0; j < landmarks.length; j++) {const landmark = landmarks[j];
-            console.log(`Landmark ${j}: (${landmark.x}, ${landmark.y}, ${landmark.z})`);
-          }
+          // for (let j = 0; j < landmarks.length; j++) {const landmark = landmarks[j];
+          //   console.log(`Landmark ${j}: (${landmark.x}, ${landmark.y}, ${landmark.z})`);
+          // }
           //draw the connectors of landmarks and draw landmarks
           drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {lineWidth: 2});
           drawLandmarks(canvasCtx, landmarks, {color: '#FF0000', radius: 1});
