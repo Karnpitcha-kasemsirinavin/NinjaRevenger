@@ -12,7 +12,7 @@ const HandDetection = () => {
     <img src={background} alt="background" className="background" />
     <div className="testcam-container">
       <MediapipeCam/>
-      <ExitButton classname='result-exit-btn' name="x"/>
+      <ExitButton classname='testcam-exit-btn' name="x"/>
     </div>
     </>
   )
