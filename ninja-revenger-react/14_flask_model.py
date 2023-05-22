@@ -6,21 +6,37 @@ import base64
 
 app = Flask(__name__)
 
-model = torch.hub.load('yolov5-master', 'custom', path='ninja-revenger-react/last.pt', source='local')
+model = torch.hub.load('ninja-revenger-react/yolov5-master', 'custom', path='ninja-revenger-react/last.pt', source='local')
 
-@app.route('/process', methods=['POST'])
-def process():
-    # Retrieve the variable sent from JavaScript
-    js_variable = request.form['js_variable']
-
+@app.route('/', methods=['POST'])
+def handle_post_request():
+    data = request.get_json()  # Access the JSON data sent in the request
+    # print(data)  # Print the received data
+    
     try:
-        img = to_cv2(js_variable) #convert base64 to cv2
+        img = to_cv2(data) #convert base64 to cv2
         output = predict(img)  # model prediction
+        print(output)
     except:
         output = "no detection"
 
     # Return the model's output as a JSON response
     return jsonify({'model_output': output})
+    # return 'Data received'
+
+# def process():
+#     # Retrieve the variable sent from JavaScript
+#     js_variable = request.form['js_variable']
+
+#     try:
+#         img = to_cv2(js_variable) #convert base64 to cv2
+#         output = predict(img)  # model prediction
+#         print(output)
+#     except:
+#         output = "no detection"
+
+#     # Return the model's output as a JSON response
+#     return jsonify({'model_output': output})
 
 def to_cv2(img):
     decoded_data = base64.b64decode(img)
@@ -35,4 +51,4 @@ def predict(img):
     return info[0]['class']
 
 if __name__ == '__main__':
-    app.run(port=4000, debug=True)
+    app.run(port=3600)
