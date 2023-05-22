@@ -9,12 +9,12 @@ import { BrowserRouter } from "react-router-dom"
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <BrowserRouter>
+   <SocketProviderGesture>
   <SocketContextProvider>
-    <SocketProviderGesture>
       <React.StrictMode>
           <App/>
       </React.StrictMode>
-      </SocketProviderGesture>
     </SocketContextProvider>
+    </SocketProviderGesture>
   </BrowserRouter>
 );

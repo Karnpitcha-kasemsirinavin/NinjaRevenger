@@ -23,7 +23,7 @@ import { connect } from 'socket.io-client';
 
 export const MainGame = () => {
   const { socket, room, player_1, player_2, peer, userId} = useContext(SocketContext);
-  const { handData } = useContext(SocketContextGesture);
+  const { handData, socket_gest } = useContext(SocketContextGesture);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -346,6 +346,9 @@ export const MainGame = () => {
     //   setSelectOption(true);
     // }, currentIndex * 500); // 1 sec after start round
 
+    console.log('pregesture: ', play1Option)
+    console.log('current gesture: ', preHandData)
+
     if (displayTime && !selectOption && preHandData !== handData){
 
       
@@ -363,14 +366,14 @@ export const MainGame = () => {
 
     if (start && partnerReady && finishResult) {
 
-      console.log('partner ready?', partnerReady, ' round: ', currentRound)
+      // console.log('partner ready?', partnerReady, ' round: ', currentRound)
 
       newRound()
       
     } else if (currentRound === 1){
 
       if (start && partnerReady) {
-      console.log('partner ready?', partnerReady, ' round: ', currentRound)
+      // console.log('partner ready?', partnerReady, ' round: ', currentRound)
 
       newRound()
 
@@ -378,7 +381,7 @@ export const MainGame = () => {
     }
     
 
-  }, [selectOption, displayTime, partnerReady, start, handData]);
+  }, [selectOption, displayTime, partnerReady, start, handData, preHandData]);
 
 // const [preHandData, setPreHandData] = useState(null)
 
