@@ -551,11 +551,13 @@ const handleRoundEnd = async () => {
    setFinishResult(true);
    setPlusRound(true);
    setStart(false);
-   setStartCalculate(false);
-    
-  socket.emit('ready', {from: player_1, to: player_2})
+  //  setStartCalculate(false);
+  
+   if (finishResult) {
+    socket.emit('ready', {from: player_1, to: player_2})
+    await wait(3000);
 
-   await wait(3000);
+   }
 
    console.log('finish round')
    }
@@ -796,8 +798,11 @@ const calculateResult = () => {
   // socket.emit('room:update', room);
 
   console.log('after calculate result')
-  console.log('Player result:', playerList, "score: ",room.players[player_1].score);
-  console.log('Partner result:', partnerList, "score: ", room.players[player_2].score);
+  console.log('Player result:', playerList, "score: ", playerWin);
+  console.log('Partner result:', partnerList, "score: ", partnerResult.score);
+
+  setPlayerStar(playerWin)
+  setPartnerStar(partnerResult.score)
 
   playerScore = 0;
   partnerScore = 0;
