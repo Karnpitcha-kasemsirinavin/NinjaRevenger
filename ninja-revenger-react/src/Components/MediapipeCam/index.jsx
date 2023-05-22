@@ -2,8 +2,8 @@ import React, { useEffect, useState, useContext, createContext } from 'react';
 import '../MediapipeCam/style.css'
 import { SocketContextGesture } from "../../Context/SocketHand";
 
-// const { io } = require('socket.io-client')
-// const url = 'https://peaceful-snow-18663.pktriot.net'
+const { io } = require('socket.io-client')
+const url = 'https://peaceful-snow-18663.pktriot.net'
 
 const MediapipeCam = () => {
   const { socket_gest } = useContext(SocketContextGesture);

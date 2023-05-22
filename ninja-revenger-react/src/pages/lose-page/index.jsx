@@ -20,7 +20,7 @@ function Box() {
           />
         {/* <Button classname='result-btn' name='Play Again' type='stranger'/> */}
         {/* vvvvvvvvvv ทำfunctionให้ด้วย vvvvvvvvvvvvvv */}
-        <Button classname='result-btn' name='Exit' type='return'/>
+        <Button classname='result-btn' name='Exit' type='return' create={false}/>
       </div>
     </div>
   );

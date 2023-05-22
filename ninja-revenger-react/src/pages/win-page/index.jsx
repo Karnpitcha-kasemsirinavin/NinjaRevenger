@@ -22,7 +22,7 @@ function Box() {
             alt='star0'
           />
         {/* <Button classname='result-btn' name='Play Again' type='stranger'/> */}
-        <Button classname='result-btn' name='Exit' type='return'/>
+        <Button classname='result-btn' name='Exit' type='return' create='false'/>
       </div>
     </div>
     </>

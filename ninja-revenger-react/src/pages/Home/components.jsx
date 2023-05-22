@@ -40,9 +40,9 @@ export const Home = () => {
 				alt="title"
 			/>
 			<div className='button-container'>
-				<Button name='Play with Friend' type="friend"/>
-				<Button name='Play with Stranger' type="stranger"/>
-				<Button name='Test Camera' type="test-cam"/>
+				<Button name='Play with Friend' type="friend" create={true}/>
+				<Button name='Play with Stranger' type="stranger" create={true}/>
+				<Button name='Test Camera' type="test-cam" create={false}/>
 			</div>
 		</div>
 	)
