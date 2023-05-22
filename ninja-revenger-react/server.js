@@ -9,7 +9,7 @@ const app = express();
 
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
-cors: { origin: "*" },
+    cors: { origin: "*" },
 });
 
 io.on("connection", (socket) => {
@@ -24,20 +24,22 @@ io.on("connection", (socket) => {
     });
 
     socket.on('data', data => {
-        console.log(data);
         const pyPort = 3600
         const url = 'http://127.0.0.1:' + pyPort; // Replace with your server URL
-        console.log(url);
+        // console.log(url);
         // const data = { message: 'Hello, Flask!' } // Replace with your string data
-
-        axios.post(url, data)
+        if (data.from) {
+            axios.post(url, data)
             .then(response => {
-                console.log(response.data); // Print the response from the server
+                console.log(data.from, response.data['hand']); // Print the response from the server
+                io.to(data.from).emit('hand', { hand: response.data['hand'] })
             })
             .catch(error => {
                 console.error(error);
             });
+        }
     })
+    
 
 });
 
