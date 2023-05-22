@@ -62,7 +62,7 @@ const MediapipeCam = () => {
             const img = new Image();
             img.src = imageData;
             // console.log(imageData);
-            console.log(socket.id);
+            // console.log(socket.id);
             socket.emit('data', { from: socket.id, image: imageData })
 
             
