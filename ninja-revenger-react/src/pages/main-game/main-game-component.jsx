@@ -489,7 +489,8 @@ export const MainGame = () => {
       setPartnerResult({
         shown: true,
         options: data.result,
-        length: data.length
+        length: data.length,
+        score: data.score,
       })
       // console.log("check if updated================", partnerResult.options)
     });
