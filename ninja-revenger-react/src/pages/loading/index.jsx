@@ -3,7 +3,7 @@ import styles from "./style.module.css";
 import star from "../../images/shuriken.png";
 import ninja from "../../images/ninja-1.png";
 
-function BlackScreenAnimation() {
+const BlackScreenAnimation = () => {
   return (
     <div className={styles.black_screen}>
       <div className={styles.square}>
@@ -15,5 +15,6 @@ function BlackScreenAnimation() {
     </div>
   );
 }
+
 
 export default BlackScreenAnimation;

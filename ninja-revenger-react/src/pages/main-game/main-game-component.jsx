@@ -1,9 +1,10 @@
 import { useEffect, useContext, useState, useRef } from 'react'
+import { useNavigate, useLocation } from "react-router-dom";
 import ExitButton from '../../Components/Exit_Button'
 import '../main-game/style.css'
 import '../../Components/Button/index.jsx'
 import { SocketContext } from "../../Context/SocketThing";
-import { useNavigate, useLocation } from "react-router-dom";
+import MediapipeCam from '../../Components/MediapipeCam';
 import CountdownTimer from '../../Components/Timer';
 import PlayerOne from '../../Components/PlayerOne';
 import PlayerTwo from '../../Components/PlayerTwo';
@@ -15,6 +16,7 @@ import art5 from '../../images/art5.png';
 import art6 from '../../images/art6.png';
 import art7 from '../../images/art7.png';
 import art8 from '../../images/art8.png';
+import  BlackScreenAnimation from '../loading'
 import { connect } from 'socket.io-client';
 // import axios from 'axios';
 
@@ -37,117 +39,8 @@ export const MainGame = () => {
   
   const [caller, setCaller] = useState(room.players[player_1].caller)
 
-// mediapipe =======================================================
-
-const HandDetection = () => {
-  useEffect(() => {
-    const video = userVideo.current
-    const canvasElement = document.getElementsByClassName('output-canvas')[0];
-    const canvasCtx = canvasElement.getContext('2d');
-
-    const loadScript = (src) => {
-      return new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = src;
-        script.async = true;
-        script.onload = resolve;
-        script.onerror = reject;
-        document.body.appendChild(script);
-      });
-    };
-
-    const loadScripts = async () => {
-      try {
-        await Promise.all([
-        await loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.3.1632795355/hands.js'),
-        await loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js'),
-        await loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js'),
-        await loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js'),
-        ]);
-        
-        // Code to execute after all scripts are loaded
-        const { Hands, Camera, drawConnectors, drawLandmarks, HAND_CONNECTIONS } = window;
-    
-    //function for hands appearing on cam
-    function onResults(results) {
-      //setting the canvas
-      canvasCtx.save();
-      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-      canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
-    
-      //if there is hand detected
-      if (results.multiHandLandmarks) {
-        //detect how many there are label hand 1 and 2
-        for (let i = 0; i < results.multiHandLandmarks.length; i++) {
-          const landmarks = results.multiHandLandmarks[i];
-          if (results.multiHandedness) {
-            let hand;
-            if (i == 0) {
-              hand = 'Hand 1';
-            } else {
-              hand = 'Hand 2';
-            }
-            console.log(`${hand}:`);
-          }
-      
-      //print the landmarks position
-      if (landmarks.length > 0) {
-        for (let j = 0; j < landmarks.length; j++) {const landmark = landmarks[j];
-          console.log(`Landmark ${j}: (${landmark.x}, ${landmark.y}, ${landmark.z})`);
-        }
-        //draw the connectors of landmarks and draw landmarks
-        drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {lineWidth: 2});
-        drawLandmarks(canvasCtx, landmarks, {color: '#FF0000', radius: 1});
-      }
-    }        
-        const landmarks = results.multiHandLandmarks[0]; // Assuming there is only one hand
-        //draw the connectors of landmarks and draw landmarks
-        drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {lineWidth: 2});
-        drawLandmarks(canvasCtx, landmarks, {color: '#FF0000', radius: 1});
-      }
-
-    // Return the canvas image data
-    const imageData = canvasElement.toDataURL();
-    const img = new Image();
-    img.src = imageData;
-
-    // Append the image element to the body
-   // document.body.appendChild(img);
-    canvasCtx.restore();
-    }
-    // using the hand object from mediapipe
-    const hands = new Hands({locateFile: (file) => {
-      return `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.3.1632795355/${file}`;
-    }});
-    hands.setOptions({
-      maxNumHands: 2,
-      minDetectionConfidence: 0.5,
-      minTrackingConfidence: 0.5
-    });
-
-    //execute onResults function if hand is detected
-    hands.onResults(onResults);
-    
-    //set the camera settings and send images
-    const camera = new Camera(video, {
-      onFrame: async () => {
-        await hands.send({ image: video });
-      },
-      width: 1280,
-      height: 720,
-    });
-    camera.start();
-
-  } catch (error) {
-    console.error('Failed to load scripts:', error);
-  }
-};
-
-loadScripts();
-}, []);
-  
-};
-
+  // animation 
+  const [callLoading, setCallLoading] = useState(false)
 
 
  // Game var =======================================================
@@ -303,13 +196,9 @@ loadScripts();
       })
     }
 
-
   }, [socket, navigate, peer, partnerId]);
 
-
-
 	// Generate name =====================================================================================================
-
 	const firstnames = ['Tor', 'Foam', 'Mark', 'June', 'Nata', 'Mill'];
   const surnames = ['1nwza', 'SudLhor', 'SudSuay', 'Romanoff', 'React', 'HTML'];
 	const [randomName1, setRandomName1] = useState('');
@@ -341,7 +230,6 @@ loadScripts();
     const randomIndexImage1 = Math.floor(Math.random() * images.length);
     
     room.players[player_1].image = randomIndexImage1;	
-
     // const image1 = images[randomIndexImage1]
     // const image2 = images[randomIndexImage1]
     
@@ -369,7 +257,6 @@ loadScripts();
 
   // }, [navigate, playerWin]);
   
-
   const [currentIndex, setCurrentIndex] = useState(0);
   const numberArray1 = room.players[player_1].caller?
           // [2,17,1,16,15,18,13]:[11,16,8,14,7,12,0]
@@ -379,21 +266,34 @@ loadScripts();
 
   const numberArray2 = room.players[player_1].caller?
   [2,17,1,16,15,18,13]:[11,16,8,14,7,12,0]
+
+  // show start image
+  useEffect(() => {
+    const round_img = document.getElementById("round");
+    const round_num = document.getElementById("round-num");
+    const start_img = document.getElementById("start_img");
+    
+    if (connected && currentRound === 1) {
+      setTimeout(() => {
+        start_img.style.visibility = 'visible';
+      }, 2000); // make it visible after 2 seconds
+        
+      setTimeout(() => {
+        start_img.style.visibility = 'hidden';
+        round_img.style.visibility = 'visible';
+        round_num.style.visibility = 'visible';
+      }, 2000 + 3000); // make it visible after 5 secs
+      
+    }
+  }, [connected])
   
 
   // for start
   useEffect(() => {
-    const round_img = document.getElementById("round");
-    const round_num = document.getElementById("round-num");
-
     // for each round
     const newRound = () => {
-
-      
-      // generating test *********************
-
+    // generating test ********************
       if (currentRound === 1) {
-
       setTimeout(() => {
         setDisplayTime(true);
       }, 2000 + 3000); // make it visible after 5 secs
@@ -410,7 +310,6 @@ loadScripts();
       setSelectOption(true);
     }, currentIndex * 300); // 1 sec after start round
   }
-
   //   if (currentRound%2 === 1){
   //     if (displayTime && !selectOption && currentIndex !== numberArray1 - 1 ) {
 
@@ -436,29 +335,12 @@ loadScripts();
 
   // }
   // }
-
   }
-
   // start game
-
-    if (connected && currentRound === 1) {
-      setTimeout(() => {
-        // console.log('show start img');
-      }, 2000); // make it visible after 2 seconds
-
-      setTimeout(() => {
-        round_img.style.visibility = 'visible';
-        round_num.style.visibility = 'visible';
-      }, 2000 + 3000); // make it visible after 5 secs
-      
-    }
-
     if (start && playerWin < 5 && partnerWin < 5 ) {
        // show each round
       newRound()
-
     }
-
   }, [start, selectOption, displayTime, partnerReady]);
 
 
@@ -466,40 +348,35 @@ loadScripts();
   useEffect(() => {
 
     if (play1Option !== null && play1Option !== undefined && selectOption && displayTime) {
-
       calculateCombo();
       setSelectOption(false);
-
       // update when player have new option
       socket.emit("room:update", room);
-
-
     }
 
     if (connected){
-
-      setPartnerStar((room.players[player_2].score));
+      // setPartnerStar((room.players[player_2].score));
       setPlayerStar(playerWin);
     
       if (displayTime){
-
       setPartnerResult({
         shown: true,
         options: room.players[player_2].option,
       })
-
-      
     } else {
-      
-      if (playerStar === 3) {
+      if (room.players[player_1].score === 2 || room.players[player_2].score === 2) {
+        if (room.players[player_1].score === 2 || room.players[player_2].score < 2){
         navigate('/win')
-      }
+        } else {
+        navigate('/lost')
+        }
+      } 
 
     }
   }
 
 
-  }, [play1Option, displayTime, selectOption, start])
+  }, [play1Option, displayTime, selectOption, start, connected, playerStar, partnerStar, player_2, result])
 
    // check ready status for next round 
 
@@ -512,6 +389,7 @@ loadScripts();
     });
 
     socket.on('startTime', () => {
+      // setCallLoading(false);
       setStart(true);
       console.log('start time')
 
@@ -541,24 +419,18 @@ loadScripts();
       console.log('round from partner', room.players[player_2].round)
     }
     
-
     // Clean up the event listener on unmount
     return () => {
       socket.off('partnerReady');
     };
-
-
-   
-  }, [start,finishResult, partnerReady, room]);
+  }, [start,finishResult, partnerReady, room, currentRound, player_1, player_2]);
 
 
   useEffect(() => {
     if (start && !displayTime && !partnerReady && !finishResult) {
       console.log('Starting a new round');
-      
-      // setPartnerStar(partnerWin.toString())
 
-      
+      // setPartnerStar(partnerWin.toString())
       setCurrentIndex(0) // generate test
       setSelectOption(false);
       setOptionList([]);
@@ -567,38 +439,44 @@ loadScripts();
         options: [],
       });
       room.players[player_1].option = [];
-
       socket.emit("room:update", room);
-
     }
 
     if (connected) {
+      // setPartnerResult({
+      //   shown: false,
+      //   options: room.players[player_2].option,
+      // });
+      room.players[player_1].option = result.options;
 
-      setPartnerResult({
-        shown: false,
-        options: room.players[player_2].option,
-      });
-      setPartnerStar(room.players[player_2].score)
-
-
+      // setPartnerStar(room.players[player_2].score)
+      if (!finishResult){
+        setPartnerStar(room.players[player_2].score)
     console.log("playerscore: ", room.players[player_1].score, "partnerscore: ", room.players[player_2].score)
+      }
     }
 
-  }, [start, displayTime, playerStar]);
+  }, [start, displayTime, playerStar, connected, finishResult, partnerReady, player_1, player_2, play1Option]);
 
-  
+  // finishResult', 'partnerReady', 'player_1', 'player_2', 'room', and 'socket'
 
   // time over for each round
 
 const handleRoundEnd = () => {
+  // setCallLoading(true);
   setStart(false);
   console.log('Round End');
 
   socket.emit("room:update", room);
 
-  setPartnerResult({
-    options: room.players[player_2].option,
-  }) 
+
+  while ((partnerResult.options).length !== (room.players[player_2].option).length){
+    socket.emit("room:update", room);
+
+    setPartnerResult({
+      options: room.players[player_2].option,
+    }) 
+  }
 
  // calculate result
   if (!finishResult){
@@ -614,9 +492,7 @@ const handleRoundEnd = () => {
 
 };
 
-
 //================ game logic ======================= (start)
-
 // calculate gesture and combo for each player
 const calculateCombo = async () => {
   let added_arr = {s:false ,4:false ,5:false}
@@ -687,19 +563,13 @@ const calculateCombo = async () => {
       }
     }
   }
-
-
   // console.log('list: ', optionList);
-
   setResult({
     shown: true,
     options: optionList,
   })
-
   // console.log('result options:', result.options);
-
-  players[player_1].option = result.options;
-
+  room.players[player_1].option = result.options;
 };
 
 // calculate the result between 2 players
@@ -853,6 +723,9 @@ const calculateResult = async () => {
 
 //================ game logic ======================= (end)
 
+
+const canvasRef = useRef();
+
   // make streams into video element
   let UserVideo;
     UserVideo = (
@@ -872,6 +745,12 @@ const calculateResult = async () => {
   return (
   <div className='maingame-container'>
     <div className='wrapper'>
+    <img
+          className='start-img'
+          src={require("../../images/start.png")}
+          id ='start_img'
+          
+      />
     <img
           className='round'
           src={require("../../images/round-img.png")}
@@ -903,16 +782,18 @@ const calculateResult = async () => {
         {/* combo */}
         <PlayerOne result={result} />
       </div>
-        {/* {UserVideo} */}
-        <HandDetection/>
-        <video hidden ref={userVideo} className="user-video" autoPlay muted></video>
-        <canvas ref={canvasRef} className="output-canvas"></canvas>
+      {/* {UserVideo} */}
+      <div>
+      <MediapipeCam/>
+      </div>
       <ExitButton name="X"/>
     </div>
+    {callLoading && < BlackScreenAnimation/> }
     <div className="middle-container">
       {displayTime && <CountdownTimer className='Timer' initialSec={10} TimerEnd={handleRoundEnd} />}
     </div>
     <div className='cam-right'>
+      {!connected && <h1 className='waiting-container'></h1>}
     { connected &&
       <div className='right-player-con'>
         <div>
@@ -936,6 +817,5 @@ const calculateResult = async () => {
       {PartnerVideo}
     </div>
   </div>
-  
   )
 }
