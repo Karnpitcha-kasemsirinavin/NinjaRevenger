@@ -485,6 +485,7 @@ export const MainGame = () => {
     });
 
     socket.on("friend_update", (data) => {
+      console.log(data);
       setPartnerResult({
         shown: true,
         options: data.result,
@@ -533,7 +534,7 @@ const handleRoundEnd = async () => {
   setDisplayTime(false);
 
 
-  socket.emit("friend_result", {from: player_1, 
+  socket.emit("friend_result", { 
     to: player_2, 
     result: result.options, 
     length: (result.options).length,
