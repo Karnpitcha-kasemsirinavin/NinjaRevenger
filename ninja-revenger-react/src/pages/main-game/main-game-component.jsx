@@ -533,16 +533,16 @@ const handleRoundEnd = async () => {
   //console.log('check round bf cal:', currentRound)
   console.log('=========== finishresult:' , finishResult, 'partnerReady: ', partnerReady)
   if (!finishResult && (countCalculate === currentRound)){
-   setCountCalculate(countCalculate + 1)
-   console.log('pass calculate result')
-   calculateResult();
+  setCountCalculate(countCalculate + 1)
+  console.log('pass calculate result')
+  calculateResult();
 
-   setPartnerReady(false)
-   setFinishResult(true);
-   setPlusRound(true);
-   setDisplayTime(false);
-   setStart(false)
-   
+  setPartnerReady(false)
+  setFinishResult(true);
+  setPlusRound(true);
+  setDisplayTime(false);
+  setStart(false)
+  
 
 
    //console.log('player ready')
@@ -550,17 +550,13 @@ const handleRoundEnd = async () => {
 
    // console.log('emit')
 
-   socket.emit('ready', {from: player_1, to: player_2})
+  socket.emit('ready', {from: player_1, to: player_2})
   //  await wait(2000);
 
   //  room.players[player_1].round = currentRound;
-   socket.emit("room:update", room);
-   
-
-   console.log('finish round')
-   }
-
-
+  socket.emit("room:update", room);
+  console.log('finish round')
+  }
 };
 
 const [countCalculate, setCountCalculate] = useState(1)
