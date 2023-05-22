@@ -863,7 +863,8 @@ const calculateResult = async () => {
   PartnerVideo = (
     <video ref={partnerVideo} autoPlay/>
   );
-
+  
+  //landmark video
   const canvasRef = useRef();
 
 // HTML section =========================================================================================================
