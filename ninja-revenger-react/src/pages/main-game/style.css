@@ -173,10 +173,10 @@
 
 video {
   /* border: 1px solid white; */
-  padding-right: 100px;
+  /* padding-right: 100px; */
   width: 80%;
   height: auto;
-  justify-items:end;
+  justify-self:center;
   transform: rotateY(180deg);
   z-index: 0;
 }
