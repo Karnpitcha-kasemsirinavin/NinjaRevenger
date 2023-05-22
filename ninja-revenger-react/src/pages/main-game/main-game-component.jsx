@@ -88,7 +88,7 @@ export const MainGame = () => {
     });
   
     const [finishResult, setFinishResult] = useState(false);
-    const [partnerReady, setPartnerReady] = useState(false);
+    let partnerReady = false;
 
      // Game var =======================================================
 
@@ -283,7 +283,7 @@ export const MainGame = () => {
   let partnerStar = 0;
   let playerStar = 0;
   let playerWin = 0;
-  const [partnerWin, setPartnerWin] = useState(0);
+  // const [partnerWin, setPartnerWin] = useState(0);
 
   useEffect(() => {
     if (connected) {
@@ -448,7 +448,7 @@ export const MainGame = () => {
     useEffect(() => {
     
     socket.on('partnerReady', () => {
-      setPartnerReady(true);
+      partnerReady = true;
       //console.log('partnerReady')
 
       // if (currentRound === 1) {
@@ -552,7 +552,7 @@ const handleRoundEnd = async () => {
    calculateResult();
    setCountCalculate(countCalculate + 1)
 
-   setPartnerReady(false)
+   partnerReady = false
    setFinishResult(true);
    setPlusRound(true);
    setStart(false);
