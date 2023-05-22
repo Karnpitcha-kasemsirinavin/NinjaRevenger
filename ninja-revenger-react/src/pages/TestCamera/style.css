@@ -1,6 +1,8 @@
 .testcam-container{
 	position: relative;
 	display: grid;
+  /* justify-content: center; */
+  /* align-items: center; */
   width: 100vw;
   height: 100vh;
   grid-template-columns: 1fr 2fr 1fr;
