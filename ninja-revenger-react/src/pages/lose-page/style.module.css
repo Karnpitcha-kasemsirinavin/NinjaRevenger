@@ -10,14 +10,9 @@
   display: grid;
   align-items: start;
   justify-content: center;
-  height: 100%;
   width: 100%;
-}
-
-.sc {
-  font-size: 2.4rem;
-  margin: 1.2rem;
-}
+  height: auto;
+} 
 
 .img {
   position: absolute;
@@ -27,14 +22,15 @@
 
 .small_img {
   height: 16vh;
+  width: 20vw;
 }
 
 .box {
-  margin-top: 25%;
+  margin-top: 32%;
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 40px;
   text-align: center;
   align-items: center;
   position: relative;

@@ -1,18 +1,8 @@
 @import url('https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700%27');
 @import url('https://fonts.googleapis.com/css?family=Roboto%27');
 
-.Timer {
-	/* position: absolute; */
-	visibility: hidden;
-}
-
-.timeText{
+li{
 	font-family: "Roboto", sans-serif;
 	font-weight: bold;
-	font-size: 2rem;
-	grid-column-start: 2;
-	grid-column-end: 3;
-	border-radius: 10px;
-	background-color: rgb(255, 205, 148);
-	padding: 5px;
+  font-size: medium;
 }

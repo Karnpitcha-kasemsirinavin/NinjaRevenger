@@ -8,7 +8,7 @@ const Button = ({ name, type}) => {
   // handle change depend on the type of the room (link with server)
   const handleChange = (type) => {
     socket.emit("room:create", { type }, (err, roomId) => {
-      navigate(`/room/${roomId}`);
+      navigate(`/`);
     });
   };
 

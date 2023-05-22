@@ -1,32 +1,19 @@
 @import url('https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700%27');
 @import url('https://fonts.googleapis.com/css?family=Roboto%27');
 
-  /* padding */
-  .p-left40{
-    padding-left: 40%;
-  }
-
-  .flex-1{
-    flex: 1;
-  }
-  .flex-2{
-    flex: 2;
-  }
-  
   .wrapper {
     display: flex;
     align-items: center;
   }
   
   /* components */
-  .container {
+  .maingame-container {
     background-color: bisque;
     height: 100vh;
     width: 100vw;
     display: flex;
     flex-direction: row;
     margin: 0 auto;
-    justify-content: flex-end;
   }
 
   .left-player-con{
@@ -34,8 +21,8 @@
     margin-top: 30px;
     margin-left: 20px;
     grid-template-columns: 1fr 3fr;
-    grid-template-rows: 2fr 1fr;
-    row-gap: 20px;
+    grid-template-rows: 1fr 1fr;
+    row-gap: 10px;
   }
 
   .right-player-con{
@@ -44,25 +31,27 @@
     margin-top: 30px;
     margin-right: 20px;
     grid-template-columns: 3fr 1fr;
-    grid-template-rows: 2fr 1fr;
-    row-gap: 20px;
+    grid-template-rows: 1fr 1fr;
+    row-gap: 10px;
   }
 
   .cam-left{
     background-color:darksalmon;
     display: grid;
-    grid-template-rows: 1fr 4fr 1fr;
-    height: 100%;
-    width: 50%;
-    border: 1px solid black;
+    grid-template-rows: 1fr 2fr 100px;
+    align-items: center;
+    height: auto;
+    width: 45%;
+    /* border: 1px solid black; */
   }
   .cam-right{
     background-color:darksalmon;
     display: grid;
-    grid-template-rows: 1fr 4fr 1fr;
-    height: 100%;
-    width: 50%;
-    border: 1px solid black;
+    grid-template-rows: 1fr 2fr 100px;
+    align-items: center;
+    height: auto;
+    width: 45%;
+    /* border: 1px solid black; */
   }
 
   .profile-left {
@@ -84,7 +73,7 @@
   .player-detail-left{
     position: relative;
     width: 20vmin;
-    font-size: 2vmin;
+    font-size: 1.1rem;
     font-family: "Roboto", sans-serif;
     font-weight: bold;
     display: inline-block;
@@ -94,7 +83,7 @@
   .player-detail-right{
     position: relative;
     width: 20vmin;
-    font-size: 2vmin;
+    font-size: 1.1rem;
     font-family: "Roboto", sans-serif;
     font-weight: bold;
     display: inline-block;
@@ -139,6 +128,17 @@
     visibility: hidden;
   }
 
+  .start-img{
+    position: absolute;
+    height: 20vh;
+    width: 24vw;
+    display: block;
+    left: 39%;
+    top: 10%;
+    z-index: 1;
+    visibility: hidden;
+  }
+
   .combo-left{
     position: relative;
     height: 8vh;
@@ -156,10 +156,59 @@
     z-index: 1;
   }
 
-  video {
-    border: 1px solid white;
-    width: fill;
-    height: fill;
+  .middle-container{
+    position: relative;
+    display: grid;
+    grid-template-columns: 10px 1fr 10px;
+    justify-items: center;
+    align-items: center;
+    width: 10%;
+  }
+
+video {
+    /* border: 1px solid white; */
+    padding-right: 100px;
+    width: 80%;
+    height: auto;
+    justify-items:end;
     transform: rotateY(180deg);
     z-index: 0;
   }
+
+  @keyframes waitingAnimation {
+    0% {
+      content: 'Waiting for another player .';
+    }
+    20% {
+      content: 'Waiting for another player ..';
+    }
+    40% {
+      content: 'Waiting for another player ...';
+    }
+
+    60% {
+      content: 'Waiting for another player ....';
+    }
+    80% {
+      content: 'Waiting for another player .....';
+    }
+  }
+  
+  .waiting-container {
+    font-family: "Roboto", sans-serif;
+    font-weight: bold;
+    font-size: x-large;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50vh;
+    color: black;
+  }
+
+  .waiting-container::after {
+    content: 'Waiting for another player';
+    animation: waitingAnimation 3s infinite;
+  }
+
+
+  

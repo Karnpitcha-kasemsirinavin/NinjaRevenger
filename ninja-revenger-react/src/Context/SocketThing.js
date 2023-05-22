@@ -8,6 +8,8 @@ peer.on('open', id => {
   userId = id
 })
 
+var isIdEmitted = false
+
 // "undefined" means the URL will be computed from the `window.location` object
 // const URL = process.env.NODE_ENV === 'production' ? undefined : 'https://nostalgic-dream-93159.pktriot.net';
 
@@ -35,7 +37,7 @@ const SocketContextProvider = ({ children }) => {
 	//   }
 
   useEffect(() => {
-    const socket = io('https://black-breeze-48357.pktriot.net',
+    const socket = io('https://relaxed-bush-92325.pktriot.net',
     {
       reconnectionDelayMax: 10000,
       auth: {
@@ -46,14 +48,15 @@ const SocketContextProvider = ({ children }) => {
       }
     });
     setSocket(socket);
-
-    console.log(socket)
+    
 
     socket.on("room:get", (payload) => {
       setRoom(payload);
       let play_1 = Object.keys(payload.players)[0];
       let play_2 = Object.keys(payload.players)[1];
 
+      // console.log(play_1.id)
+
       if (play_1 === socket.id) {
         setPlayer_1(play_1);
         setPlayer_2(play_2);
@@ -66,26 +69,48 @@ const SocketContextProvider = ({ children }) => {
         setPlayer_1(play_1);
         setPlayer_2(play_2);
         if (play_2 && !room.private) {
-          socket.emit('id', { from: play_1, to: play_2, id: userId })
-          console.log('doing connection');
+          if (!isIdEmitted) {
+            // fix stranger but private cannot
+            console.log('yang pass yuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu ')
+            socket.emit('id', { from: play_2, to: play_1, id: userId });
+            isIdEmitted = true; 
+          }
+          
+          // console.log('doing connection');
         }
       } else {
         setPlayer_1(play_2);
         setPlayer_2(play_1);
         if (play_2 && !room.private) {
-          socket.emit('id', { from: play_2, to: play_1, id: userId })
-          console.log('doing connection');
-        }
+          if (!isIdEmitted) {
+            console.log('yang pass yuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu jaaaaaaaaaa')
+            socket.emit('id', { from: play_2, to: play_1, id: userId });
+            isIdEmitted = true; 
+        }}
       }
 
-      console.log(payload.players);
+      // console.log(payload.players);
+
+      // if (
+      //   payload?.players[play_1]?.score === 1 ||
+      //   payload?.players[play_2]?.score === 1
+      // ) {
+      //   if ( payload?.players[play_1]?.score === 1){
+      //     console.log('score win as play 1: ')
+      //   let pathname = "/win";
+      //   if (pathname !== location.pathname) navigate(pathname);
+      //   } else if (payload?.players[play_2]?.score === 1){
+      //     console.log('score win as play 2: ')
+      //     let pathname = "/win";
+      //     if (pathname !== location.pathname) navigate(pathname);
+      //   } else {
+      //     console.log('lose: ')
+      //     let pathname = "/lost";
+      //     if (pathname !== location.pathname) navigate(pathname);
+      //   }
+      // }
 
     });
-
-    socket.on("room:bye", (payload) => {
-      
-    });
-
 
   }, []);
 
