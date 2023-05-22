@@ -73,6 +73,7 @@ export const MainGame = () => {
     const [partnerResult, setPartnerResult] = useState({
       shown: true,
       options: [],
+      length: 0
     });
   
     // Option for each player
@@ -220,6 +221,17 @@ export const MainGame = () => {
         // }
       })
 
+      socket.on("friend_update", (data) => {
+
+        console.log('get friend data', data)
+        setPartnerResult({
+          shown: true,
+          options: data.result,
+          length: data.length,
+        })
+        // setStartCalculate(true);
+      })
+
     }
 
   }, [socket, navigate, peer, partnerId]);
@@ -351,12 +363,17 @@ export const MainGame = () => {
     console.log('pregesture: ', play1Option)
     console.log('current gesture: ', preHandData)
 
+    // socket.emit("room:update", room)
+
     if (displayTime && !selectOption && preHandData !== handData){
 
+      console.log("check optionList: ", optionList, "check friendList: ", room.players[player_2].option )
       
       setPLay1Option(handData)
       setSelectOption(true)
       setPreHandData(handData)
+      // socket.emit("friend_result", {from: player_1, to: player_2, result: result.options, length: (result.options).length})
+      // socket.emit("room:update", room)
 
       // console.log('gesture from model: ', play1Option)
   } 
@@ -383,21 +400,25 @@ export const MainGame = () => {
     }
     
 
-  }, [selectOption, displayTime, partnerReady, start, handData, preHandData]);
+  }, [selectOption, displayTime, partnerReady, start, handData]);
 
 // const [preHandData, setPreHandData] = useState(null)
 
   useEffect(() => {
 
+    console.log('result ', result.options)
+
     if (selectOption && displayTime) {
       if (play1Option !== null && play1Option !== undefined && play1Option !== -1 ){
         console.log('gesture from model: ', play1Option)
       calculateCombo();
-      // setPreHandData(play1Option)
+      socket.emit("friend_result", {from: player_1, to: player_2, result: result.options, length: (result.options).length})
+      socket.emit("room:update", room);
+      // setPreHandData(play1Option).
       }
       setSelectOption(false);
       // update when player have new option
-      socket.emit("room:update", room);
+      
     }
 
     if (connected){
@@ -405,10 +426,11 @@ export const MainGame = () => {
       setPlayerStar(playerWin);
     
       if (displayTime){
-      setPartnerResult({
-        shown: true,
-        options: room.players[player_2].option,
-      })
+      // setPartnerResult({
+      //   shown: true,
+      //   options: room.players[player_2].option,
+      // })
+      //socket.emit("friend_result", {from: player_1, to: player_2, result: result.options, length: (result.options).length})
     } else {
       
       // if (room.players[player_1].score === 2 || room.players[player_2].score === 2) {
@@ -452,6 +474,7 @@ export const MainGame = () => {
         setPartnerResult({
           shown: true,
           options: [],
+          length: 0,
         })
   
         setResult({
@@ -462,11 +485,21 @@ export const MainGame = () => {
         setOptionList([]);
   
         room.players[player_1].option = []; 
+        // socket.emit("room:update");
       }
       console.log('start time , round: ', currentRound)
 
-      // socket.emit("room:update");
       
+      
+    });
+
+    socket.on("friend_update", (data) => {
+      setPartnerResult({
+        shown: true,
+        options: data.result,
+        length: data.length
+      })
+      console.log("check if updated================", partnerResult.options)
     });
 
 
@@ -484,8 +517,8 @@ export const MainGame = () => {
       setCurrentIndex(0) // generate test
       setSelectOption(false);
       setOptionList([]);
-      room.players[player_1].option = [];
-      socket.emit("room:update", room);
+      // room.players[player_1].option = [];
+      // socket.emit("room:update", room);
     }
 
     if (connected) {
@@ -513,7 +546,7 @@ const handleRoundEnd = async () => {
   setFinishResult(false)
   setPreHandData(null)
 
-  socket.emit("room:update", room);
+  // socket.emit("room:update", room);
 
 
   // while ((partnerResult.options).length !== (room.players[player_2].option).length){
@@ -525,10 +558,12 @@ const handleRoundEnd = async () => {
   // }
 
   // socket.emit("room:update", room);
+  socket.emit("friend_result", {from: player_1, to: player_2, result: result.options, length: (result.options).length})
 
-  setPartnerResult({
-    options: room.players[player_2].option,
-  }) 
+
+  // setPartnerResult({
+  //   options: room.players[player_2].option,
+  // }) 
 
   //console.log('check round bf cal:', currentRound)
   console.log('=========== finishresult:' , finishResult, 'partnerReady: ', partnerReady)
@@ -541,7 +576,8 @@ const handleRoundEnd = async () => {
    setFinishResult(true);
    setPlusRound(true);
    setDisplayTime(false);
-   setStart(false)
+   setStart(false);
+   setStartCalculate(false);
    
 
 
@@ -551,10 +587,10 @@ const handleRoundEnd = async () => {
    // console.log('emit')
 
    socket.emit('ready', {from: player_1, to: player_2})
-  //  await wait(2000);
+   await wait(2000);
 
   //  room.players[player_1].round = currentRound;
-   socket.emit("room:update", room);
+  //  socket.emit("room:update", room);
    
 
    console.log('finish round')
@@ -820,7 +856,7 @@ const calculateResult = async () => {
 
   }
 
-  socket.emit('room:update', room);
+  // socket.emit('room:update', room);
 
   console.log('after calculate result')
   console.log('Player result:', playerList, "score: ",room.players[player_1].score);
@@ -900,7 +936,7 @@ const calculateResult = async () => {
     </div>
     {callLoading && < BlackScreenAnimation/> }
     <div className="middle-container">
-      {displayTime && <CountdownTimer className='Timer' initialSec={1} TimerEnd={handleRoundEnd} />}
+      {displayTime && <CountdownTimer className='Timer' initialSec={5} TimerEnd={handleRoundEnd} />}
     </div>
     <div className='cam-right'>
       {!connected && <h1 className='waiting-container'></h1>}
