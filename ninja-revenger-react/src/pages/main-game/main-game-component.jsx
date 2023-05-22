@@ -15,6 +15,7 @@ import art5 from '../../images/art5.png';
 import art6 from '../../images/art6.png';
 import art7 from '../../images/art7.png';
 import art8 from '../../images/art8.png';
+import  BlackScreenAnimation from '../loading'
 import { connect } from 'socket.io-client';
 // import axios from 'axios';
 
@@ -36,6 +37,9 @@ export const MainGame = () => {
   const [renderVideo, setRenderVideo] = useState(true)
   
   const [caller, setCaller] = useState(room.players[player_1].caller)
+
+  // animation 
+  const [callLoading, setCallLoading] = useState(false)
 
 // mediapipe =======================================================
 
@@ -523,6 +527,7 @@ export const MainGame = () => {
     });
 
     socket.on('startTime', () => {
+      // setCallLoading(false);
       setStart(true);
       console.log('start time')
 
@@ -611,6 +616,7 @@ export const MainGame = () => {
   // time over for each round
 
 const handleRoundEnd = () => {
+  // setCallLoading(true);
   setStart(false);
   console.log('Round End');
 
@@ -941,10 +947,12 @@ const canvasRef = useRef();
         <canvas hidden ref={canvasRef} className="output-canvas"></canvas>
       <ExitButton name="X"/>
     </div>
+    {callLoading && < BlackScreenAnimation/> }
     <div className="middle-container">
       {displayTime && <CountdownTimer className='Timer' initialSec={10} TimerEnd={handleRoundEnd} />}
     </div>
     <div className='cam-right'>
+      {!connected && <h1 className='waiting-container'></h1>}
     { connected &&
       <div className='right-player-con'>
         <div>
