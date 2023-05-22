@@ -277,9 +277,12 @@ export const MainGame = () => {
 
   // Game secton ========================================================================================================
 
-  const [playerStar, setPlayerStar] = useState(0);
-  const [partnerStar, setPartnerStar] = useState(0);
-  const [playerWin, setPlayerWin] = useState(0);
+  // const [playerStar, setPlayerStar] = useState(0);
+  // const [partnerStar, setPartnerStar] = useState(0);
+  // const [playerWin, setPlayerWin] = useState(0);
+  let partnerStar = 0;
+  let playerStar = 0;
+  let playerWin = 0;
   const [partnerWin, setPartnerWin] = useState(0);
 
   useEffect(() => {
@@ -427,9 +430,9 @@ export const MainGame = () => {
 
     if (connected){
       // setPartnerStar((room.players[player_2].score));
-      setPlayerStar(playerWin);
+      playerStar = playerWin;
       if (partnerResult.score !== undefined){
-      setPartnerStar(partnerResult.score)
+      partnerStar = partnerResult.score;
       }
     
    
@@ -786,13 +789,13 @@ const calculateResult = () => {
     // room.players[player_2].score += 1;
 
   } else if (partnerScore === playerScore) {
-    setPlayerWin(playerWin + 1)
+    playerWin += 1
     // setPartnerWin(partnerWin + 1)
 
     room.players[player_1].score = playerWin;
 
   } else {
-    // setPlayerWin(playerWin + 1)
+    playerWin += 1
     room.players[player_1].score = playerWin;
 
   }
@@ -803,8 +806,8 @@ const calculateResult = () => {
   console.log('Player result:', playerList, "score: ", playerWin);
   console.log('Partner result:', partnerList, "score: ", partnerResult.score);
 
-  setPlayerStar(playerWin)
-  setPartnerStar(partnerResult.score)
+  playerStar = playerWin;
+  partnerStar = partnerResult.score
 
   playerScore = 0;
   partnerScore = 0;
