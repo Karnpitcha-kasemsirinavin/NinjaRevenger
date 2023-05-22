@@ -4,18 +4,6 @@ const dotenv = require("dotenv");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 
-// const url = 'https://localhost:3400/endpoint'; // Replace with your server URL
-
-// const data = { message: 'Hello, Flask!' } // Replace with your string data
-
-// axios.post(url, data)
-//   .then(response => {
-//     console.log(response.data); // Print the response from the server
-//   })
-//   .catch(error => {
-//     console.error(error);
-//   });
-
 dotenv.config();
 const app = express();
 
@@ -37,6 +25,18 @@ io.on("connection", (socket) => {
 
     socket.on('data', data => {
         console.log(data);
+        const pyPort = 3700
+        const url = 'https://localhost:/' + pyPort + '/endpoint'; // Replace with your server URL
+        console.log(url);
+        // const data = { message: 'Hello, Flask!' } // Replace with your string data
+
+        axios.post(url, data)
+            .then(response => {
+                console.log(response.data); // Print the response from the server
+            })
+            .catch(error => {
+                console.error(error);
+            });
     })
 
 });
