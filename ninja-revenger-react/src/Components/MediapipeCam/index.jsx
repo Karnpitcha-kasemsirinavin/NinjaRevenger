@@ -168,4 +168,4 @@ loadScripts();
   )
 };
 
-export { MediapipeCam };
+export default MediapipeCam;

@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import '../TestCamera/style.css';
-import { MediapipeCam} from '../../Components/MediapipeCam';
 import MediapipeCam from '../../Components/MediapipeCam';
 import ExitButton from '../../Components/Exit_Button';
 

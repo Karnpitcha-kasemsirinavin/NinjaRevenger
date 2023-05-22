@@ -4,7 +4,7 @@ import ExitButton from '../../Components/Exit_Button'
 import '../main-game/style.css'
 import '../../Components/Button/index.jsx'
 import { SocketContext } from "../../Context/SocketThing";
-import { MediapipeCam } from '../../Components/MediapipeCam';
+import MediapipeCam from '../../Components/MediapipeCam';
 import { SocketContextGesture } from '../../Context/SocketHand';
 import CountdownTimer from '../../Components/Timer';
 import PlayerOne from '../../Components/PlayerOne';
@@ -294,6 +294,8 @@ export const MainGame = () => {
   const numberArray2 = room.players[player_1].caller?
   [2,17,1,16,15,18,13]:[11,16,8,14,7,12,0]
 
+  const [preHandData, setPreHandData] = useState(null)
+
 
 
   // show start image
@@ -344,10 +346,12 @@ export const MainGame = () => {
     //   setSelectOption(true);
     // }, currentIndex * 500); // 1 sec after start round
 
-    if (displayTime && !selectOption){
+    if (displayTime && !selectOption && preHandData !== handData){
 
-     
-      // setPLay1Option(optionGesture())
+      
+      setPLay1Option(handData)
+      setSelectOption(true)
+      setPreHandData(handData)
 
       // console.log('gesture from model: ', play1Option)
   } 
@@ -372,22 +376,19 @@ export const MainGame = () => {
 
       }
     }
-
-    // let a = optionGesture();
-
-    console.log('gesture from model: ', handData)
     
 
+  }, [selectOption, displayTime, partnerReady, start, handData]);
 
-  }, [selectOption, displayTime, partnerReady, play1Option, start, handData]);
-
-
+// const [preHandData, setPreHandData] = useState(null)
 
   useEffect(() => {
 
     if (selectOption && displayTime) {
-      if (play1Option !== null && play1Option !== undefined ){
+      if (play1Option !== null && play1Option !== undefined && play1Option !== -1 ){
+        console.log('gesture from model: ', play1Option)
       calculateCombo();
+      // setPreHandData(play1Option)
       }
       setSelectOption(false);
       // update when player have new option
@@ -505,6 +506,7 @@ const [startCalculate, setStartCalculate] = useState(false)
 const handleRoundEnd = async () => {
   // console.log('Round End');
   setFinishResult(false)
+  setPreHandData(null)
 
   socket.emit("room:update", room);
 
