@@ -12,6 +12,7 @@ var isIdEmitted = false
 
 // "undefined" means the URL will be computed from the `window.location` object
 // const URL = process.env.NODE_ENV === 'production' ? undefined : 'https://nostalgic-dream-93159.pktriot.net';
+console.log('runn');
 
 const SocketContext = createContext();
 
@@ -55,7 +56,7 @@ const SocketContextProvider = ({ children }) => {
       let play_1 = Object.keys(payload.players)[0];
       let play_2 = Object.keys(payload.players)[1];
 
-      // console.log(play_1.id)
+      // // console.log(play_1.id)
 
       if (play_1 === socket.id) {
         setPlayer_1(play_1);
@@ -68,25 +69,25 @@ const SocketContextProvider = ({ children }) => {
       if (play_1 === socket.id) {
         setPlayer_1(play_1);
         setPlayer_2(play_2);
-        if (play_2 && !room.private) {
-          if (!isIdEmitted) {
+        // console.log("check connection play 2", play_2)
+        if (play_2 && !(room.private) && !isIdEmitted) {
             // fix stranger but private cannot
-            console.log('yang pass yuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu ')
-            socket.emit('id', { from: play_2, to: play_1, id: userId });
-            isIdEmitted = true; 
-          }
+            // console.log('yang pass yuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu ')
+            socket.emit('id', { from: play_2, to: play_1, id: userId }); 
+            isIdEmitted = true;
           
-          // console.log('doing connection');
+          // // console.log('doing connection');
         }
       } else {
         setPlayer_1(play_2);
         setPlayer_2(play_1);
-        if (play_2 && !room.private) {
-          if (!isIdEmitted) {
-            console.log('yang pass yuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu jaaaaaaaaaa')
+        // console.log("check connection play 2", play_2)
+        if (play_2 && !(room.private) && !isIdEmitted) {
+
+            // console.log('yang pass yuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu jaaaaaaaaaa')
             socket.emit('id', { from: play_2, to: play_1, id: userId });
-            isIdEmitted = true; 
-        }}
+            isIdEmitted = true;
+        }
       }
 
       // console.log(payload.players);
