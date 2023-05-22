@@ -39,114 +39,114 @@ export const MainGame = () => {
 
 // mediapipe =======================================================
 
-const HandDetection = () => {
-  useEffect(() => {
-    const video = userVideo.current
-    const canvasElement = document.getElementsByClassName('output-canvas')[0];
-    const canvasCtx = canvasElement.getContext('2d');
+// const HandDetection = () => {
+//   useEffect(() => {
+//     const video = userVideo.current
+//     const canvasElement = document.getElementsByClassName('output-canvas')[0];
+//     const canvasCtx = canvasElement.getContext('2d');
 
-    const loadScript = (src) => {
-      return new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = src;
-        script.async = true;
-        script.onload = resolve;
-        script.onerror = reject;
-        document.body.appendChild(script);
-      });
-    };
+//     const loadScript = (src) => {
+//       return new Promise((resolve, reject) => {
+//         const script = document.createElement('script');
+//         script.src = src;
+//         script.async = true;
+//         script.onload = resolve;
+//         script.onerror = reject;
+//         document.body.appendChild(script);
+//       });
+//     };
 
-    const loadScripts = async () => {
-      try {
-        await Promise.all([
-        await loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.3.1632795355/hands.js'),
-        await loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js'),
-        await loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js'),
-        await loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js'),
-        ]);
+//     const loadScripts = async () => {
+//       try {
+//         await Promise.all([
+//         await loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.3.1632795355/hands.js'),
+//         await loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js'),
+//         await loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js'),
+//         await loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js'),
+//         ]);
         
-        // Code to execute after all scripts are loaded
-        const { Hands, Camera, drawConnectors, drawLandmarks, HAND_CONNECTIONS } = window;
+//         // Code to execute after all scripts are loaded
+//         const { Hands, Camera, drawConnectors, drawLandmarks, HAND_CONNECTIONS } = window;
     
-    //function for hands appearing on cam
-    function onResults(results) {
-      //setting the canvas
-      canvasCtx.save();
-      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-      canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+//     //function for hands appearing on cam
+//     function onResults(results) {
+//       //setting the canvas
+//       canvasCtx.save();
+//       canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+//       canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
     
-      //if there is hand detected
-      if (results.multiHandLandmarks) {
-        //detect how many there are label hand 1 and 2
-        for (let i = 0; i < results.multiHandLandmarks.length; i++) {
-          const landmarks = results.multiHandLandmarks[i];
-          if (results.multiHandedness) {
-            let hand;
-            if (i == 0) {
-              hand = 'Hand 1';
-            } else {
-              hand = 'Hand 2';
-            }
-            console.log(`${hand}:`);
-          }
+//       //if there is hand detected
+//       if (results.multiHandLandmarks) {
+//         //detect how many there are label hand 1 and 2
+//         for (let i = 0; i < results.multiHandLandmarks.length; i++) {
+//           const landmarks = results.multiHandLandmarks[i];
+//           if (results.multiHandedness) {
+//             let hand;
+//             if (i == 0) {
+//               hand = 'Hand 1';
+//             } else {
+//               hand = 'Hand 2';
+//             }
+//             console.log(`${hand}:`);
+//           }
       
-      //print the landmarks position
-      if (landmarks.length > 0) {
-        for (let j = 0; j < landmarks.length; j++) {const landmark = landmarks[j];
-          console.log(`Landmark ${j}: (${landmark.x}, ${landmark.y}, ${landmark.z})`);
-        }
-        //draw the connectors of landmarks and draw landmarks
-        drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {lineWidth: 2});
-        drawLandmarks(canvasCtx, landmarks, {color: '#FF0000', radius: 1});
-      }
-    }        
-        const landmarks = results.multiHandLandmarks[0]; // Assuming there is only one hand
-        //draw the connectors of landmarks and draw landmarks
-        drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {lineWidth: 2});
-        drawLandmarks(canvasCtx, landmarks, {color: '#FF0000', radius: 1});
-      }
+//       //print the landmarks position
+//       if (landmarks.length > 0) {
+//         for (let j = 0; j < landmarks.length; j++) {const landmark = landmarks[j];
+//           console.log(`Landmark ${j}: (${landmark.x}, ${landmark.y}, ${landmark.z})`);
+//         }
+//         //draw the connectors of landmarks and draw landmarks
+//         drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {lineWidth: 2});
+//         drawLandmarks(canvasCtx, landmarks, {color: '#FF0000', radius: 1});
+//       }
+//     }        
+//         const landmarks = results.multiHandLandmarks[0]; // Assuming there is only one hand
+//         //draw the connectors of landmarks and draw landmarks
+//         drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {lineWidth: 2});
+//         drawLandmarks(canvasCtx, landmarks, {color: '#FF0000', radius: 1});
+//       }
 
-    // Return the canvas image data
-    const imageData = canvasElement.toDataURL();
-    const img = new Image();
-    img.src = imageData;
+//     // Return the canvas image data
+//     const imageData = canvasElement.toDataURL();
+//     const img = new Image();
+//     img.src = imageData;
 
-    // Append the image element to the body
-   // document.body.appendChild(img);
-    canvasCtx.restore();
-    }
-    // using the hand object from mediapipe
-    const hands = new Hands({locateFile: (file) => {
-      return `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.3.1632795355/${file}`;
-    }});
-    hands.setOptions({
-      maxNumHands: 2,
-      minDetectionConfidence: 0.5,
-      minTrackingConfidence: 0.5
-    });
+//     // Append the image element to the body
+//    // document.body.appendChild(img);
+//     canvasCtx.restore();
+//     }
+//     // using the hand object from mediapipe
+//     const hands = new Hands({locateFile: (file) => {
+//       return `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.3.1632795355/${file}`;
+//     }});
+//     hands.setOptions({
+//       maxNumHands: 2,
+//       minDetectionConfidence: 0.5,
+//       minTrackingConfidence: 0.5
+//     });
 
-    //execute onResults function if hand is detected
-    hands.onResults(onResults);
+//     //execute onResults function if hand is detected
+//     hands.onResults(onResults);
     
-    //set the camera settings and send images
-    const camera = new Camera(video, {
-      onFrame: async () => {
-        await hands.send({ image: video });
-      },
-      width: 1280,
-      height: 720,
-    });
-    camera.start();
+//     //set the camera settings and send images
+//     const camera = new Camera(video, {
+//       onFrame: async () => {
+//         await hands.send({ image: video });
+//       },
+//       width: 1280,
+//       height: 720,
+//     });
+//     camera.start();
 
-  } catch (error) {
-    console.error('Failed to load scripts:', error);
-  }
-};
+//   } catch (error) {
+//     console.error('Failed to load scripts:', error);
+//   }
+// };
 
-loadScripts();
-}, []);
+// loadScripts();
+// }, []);
   
-};
+// };
 
 
 
@@ -379,12 +379,31 @@ loadScripts();
 
   const numberArray2 = room.players[player_1].caller?
   [2,17,1,16,15,18,13]:[11,16,8,14,7,12,0]
+
+  // show start image
+  useEffect(() => {
+    const round_img = document.getElementById("round");
+    const round_num = document.getElementById("round-num");
+    const start_img = document.getElementById("start_img");
+    
+    if (connected && currentRound === 1) {
+      setTimeout(() => {
+        start_img.style.visibility = 'visible';
+      }, 2000); // make it visible after 2 seconds
+        
+      setTimeout(() => {
+        start_img.style.visibility = 'hidden';
+        round_img.style.visibility = 'visible';
+        round_num.style.visibility = 'visible';
+      }, 2000 + 3000); // make it visible after 5 secs
+      
+    }
+  }, [connected])
   
 
   // for start
   useEffect(() => {
-    const round_img = document.getElementById("round");
-    const round_num = document.getElementById("round-num");
+
 
     // for each round
     const newRound = () => {
@@ -441,18 +460,6 @@ loadScripts();
 
   // start game
 
-    if (connected && currentRound === 1) {
-      setTimeout(() => {
-        // console.log('show start img');
-      }, 2000); // make it visible after 2 seconds
-
-      setTimeout(() => {
-        round_img.style.visibility = 'visible';
-        round_num.style.visibility = 'visible';
-      }, 2000 + 3000); // make it visible after 5 secs
-      
-    }
-
     if (start && playerWin < 5 && partnerWin < 5 ) {
        // show each round
       newRound()
@@ -478,7 +485,7 @@ loadScripts();
 
     if (connected){
 
-      setPartnerStar((room.players[player_2].score));
+      // setPartnerStar((room.players[player_2].score));
       setPlayerStar(playerWin);
     
       if (displayTime){
@@ -503,7 +510,7 @@ loadScripts();
   }
 
 
-  }, [play1Option, displayTime, selectOption, start, connected, playerStar, partnerStar, player_2])
+  }, [play1Option, displayTime, selectOption, start, connected, playerStar, partnerStar, player_2, result])
 
    // check ready status for next round 
 
@@ -578,17 +585,26 @@ loadScripts();
 
     if (connected) {
 
-      setPartnerResult({
-        shown: false,
-        options: room.players[player_2].option,
-      });
-      setPartnerStar(room.players[player_2].score)
+      // setPartnerResult({
+      //   shown: false,
+      //   options: room.players[player_2].option,
+      // });
 
+      room.players[player_1].option = result.options;
+
+
+      // setPartnerStar(room.players[player_2].score)
+
+    
+      if (!finishResult){
+
+        setPartnerStar(room.players[player_2].score)
 
     console.log("playerscore: ", room.players[player_1].score, "partnerscore: ", room.players[player_2].score)
+      }
     }
 
-  }, [start, displayTime, playerStar, connected, finishResult, partnerReady, player_1, player_2]);
+  }, [start, displayTime, playerStar, connected, finishResult, partnerReady, player_1, player_2, play1Option]);
 
   // finishResult', 'partnerReady', 'player_1', 'player_2', 'room', and 'socket'
 
@@ -600,9 +616,14 @@ const handleRoundEnd = () => {
 
   socket.emit("room:update", room);
 
-  setPartnerResult({
-    options: room.players[player_2].option,
-  }) 
+
+  while ((partnerResult.options).length !== (room.players[player_2].option).length){
+    socket.emit("room:update", room);
+
+    setPartnerResult({
+      options: room.players[player_2].option,
+    }) 
+  }
 
  // calculate result
   if (!finishResult){
@@ -702,7 +723,7 @@ const calculateCombo = async () => {
 
   // console.log('result options:', result.options);
 
-  players[player_1].option = result.options;
+  room.players[player_1].option = result.options;
 
 };
 
@@ -857,6 +878,9 @@ const calculateResult = async () => {
 
 //================ game logic ======================= (end)
 
+
+const canvasRef = useRef();
+
   // make streams into video element
   let UserVideo;
     UserVideo = (
@@ -868,13 +892,18 @@ const calculateResult = async () => {
     <video ref={partnerVideo} autoPlay/>
   );
 
-  const canvasRef = useRef();
 
 // HTML section =========================================================================================================
 
   return (
   <div className='maingame-container'>
     <div className='wrapper'>
+    <img
+          className='start-img'
+          src={require("../../images/start.png")}
+          id ='start_img'
+          
+      />
     <img
           className='round'
           src={require("../../images/round-img.png")}
@@ -906,10 +935,10 @@ const calculateResult = async () => {
         {/* combo */}
         <PlayerOne result={result} />
       </div>
-        {/* {UserVideo} */}
-        <HandDetection/>
-        <video hidden ref={userVideo} className="user-video" autoPlay muted></video>
-        <canvas ref={canvasRef} className="output-canvas"></canvas>
+        {UserVideo}
+        {/* <HandDetection/> */}
+        {/* <video hidden ref={userVideo} className="user-video" autoPlay muted></video> */}
+        <canvas hidden ref={canvasRef} className="output-canvas"></canvas>
       <ExitButton name="X"/>
     </div>
     <div className="middle-container">
