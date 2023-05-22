@@ -1,21 +1,25 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useState, useContext, createContext } from 'react';
 import '../MediapipeCam/style.css'
-import { SocketContext } from "../../Context/SocketThing";
+import { SocketContextGesture } from "../../Context/SocketHand";
 
-const { io } = require('socket.io-client')
-const url = 'https://peaceful-snow-18663.pktriot.net'
+// const { io } = require('socket.io-client')
+// const url = 'https://peaceful-snow-18663.pktriot.net'
 
 const MediapipeCam = () => {
+  const { socket_gest } = useContext(SocketContextGesture);
 
-  const { socket } = useContext(SocketContext);
+  // const { socket } = useContext(SocketContext);
 
 
   useEffect(() => {
-    const socket = io(url)
+    // const socket = io(url)
 
-    socket.on('hand', data => {
-      console.log(data);
-    })
+    console.log("socket_gest from Mediapipe:", socket_gest)
+
+    // socket_gest.on('hand', data => {
+    //   console.log("raw data", data)
+    //   console.log("hand data", data.hand);
+    // })
 
     const videoElement = document.getElementsByClassName('input-video')[0];
     const canvasElement = document.getElementsByClassName('output-canvas')[0];
@@ -62,8 +66,8 @@ const MediapipeCam = () => {
             const img = new Image();
             img.src = imageData;
             // console.log(imageData);
-            console.log(socket.id);
-            socket.emit('data', { from: socket.id, image: imageData })
+            // console.log(socket_gest.id);
+            socket_gest.emit('data', { from: socket_gest.id, image: imageData })
 
             
 
@@ -164,4 +168,4 @@ loadScripts();
   )
 };
 
-export default MediapipeCam;
+export { MediapipeCam };

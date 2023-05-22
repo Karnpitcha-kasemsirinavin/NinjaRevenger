@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import '../TestCamera/style.css';
-import MediapipeCam from '../../Components/MediapipeCam';
+import { MediapipeCam} from '../../Components/MediapipeCam';
 
 import background from "../../images/background-nolight.png";
 

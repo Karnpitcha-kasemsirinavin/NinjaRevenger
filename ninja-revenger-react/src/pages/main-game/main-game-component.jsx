@@ -4,7 +4,8 @@ import ExitButton from '../../Components/Exit_Button'
 import '../main-game/style.css'
 import '../../Components/Button/index.jsx'
 import { SocketContext } from "../../Context/SocketThing";
-import MediapipeCam from '../../Components/MediapipeCam';
+import { MediapipeCam } from '../../Components/MediapipeCam';
+import { SocketContextGesture } from '../../Context/SocketHand';
 import CountdownTimer from '../../Components/Timer';
 import PlayerOne from '../../Components/PlayerOne';
 import PlayerTwo from '../../Components/PlayerTwo';
@@ -22,6 +23,8 @@ import { connect } from 'socket.io-client';
 
 export const MainGame = () => {
   const { socket, room, player_1, player_2, peer, userId} = useContext(SocketContext);
+  const { handData } = useContext(SocketContextGesture);
+
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -57,7 +60,7 @@ export const MainGame = () => {
     const context = canvas.getContext("2d");
     context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
     const data = canvas.toDataURL("image/webp");
-    console.log(data);
+    // console.log(data);
     // photo.setAttribute("src", data);
   }
   
@@ -105,7 +108,7 @@ export const MainGame = () => {
     
 
   }, [socket, room, location.pathname, navigate]);
-  
+
   useEffect(() => {
     // console.log(connected, caller, stream);
     if (connected && caller && stream && countConnect === 0) {
@@ -210,6 +213,7 @@ export const MainGame = () => {
         //   });
         // }
       })
+
     }
 
   }, [socket, navigate, peer, partnerId]);
@@ -283,6 +287,8 @@ export const MainGame = () => {
   const numberArray2 = room.players[player_1].caller?
   [2,17,1,16,15,18,13]:[11,16,8,14,7,12,0]
 
+
+
   // show start image
   useEffect(() => {
     const round_img = document.getElementById("round");
@@ -304,7 +310,6 @@ export const MainGame = () => {
   }, [connected, currentRound])
   
   const [getOption, setGetOption] = useState(true)
-
   const [countRound, setCountRound] = useState(false)
   // for start
   useEffect(() => {
@@ -322,24 +327,23 @@ export const MainGame = () => {
       }, 2000); // make it visible after 5 secs
     }
 
-    console.log('get current index for arr: ', currentIndex)
-    if (displayTime && !selectOption && (currentIndex < (numberArray1.length - 1))) {
-    setTimeout(() => {
-      // console.log('generate number')
+    // console.log('get current index for arr: ', currentIndex)
+    // if (displayTime && !selectOption && (currentIndex < (numberArray1.length - 1))) {
+    // setTimeout(() => {
+    //   // console.log('generate number')
 
-      setPLay1Option(numberArray1[currentIndex]);
-      setCurrentIndex(currentIndex + 1);
-      setSelectOption(true);
-    }, currentIndex * 500); // 1 sec after start round
+    //   setPLay1Option(numberArray1[currentIndex]);
+    //   setCurrentIndex(currentIndex + 1);
+    //   setSelectOption(true);
+    // }, currentIndex * 500); // 1 sec after start round
+
+    if (displayTime && !selectOption){
+
+     
+      // setPLay1Option(optionGesture())
+
+      // console.log('gesture from model: ', play1Option)
   } 
-
-
-  // if (currentIndex === numberArray1.length) {
-    
-  //   setPartnerReady(false);
-  // }
-
-  // console.log('play1Option: ', play1Option);
 
   }
 
@@ -362,7 +366,13 @@ export const MainGame = () => {
       }
     }
 
-  }, [selectOption, displayTime, partnerReady, play1Option, start]);
+    // let a = optionGesture();
+
+    console.log('gesture from model: ', handData)
+    
+
+
+  }, [selectOption, displayTime, partnerReady, play1Option, start, handData]);
 
 
 
@@ -578,6 +588,8 @@ const calculateCombo = async () => {
 
   optionList.push(play1Option.toString());
 
+  console.log('i try calculate combo')
+
   for (let i = 3; i <= 5; i++) {
 
     if (resultArr[i].length !== 0){
@@ -677,7 +689,7 @@ const calculateResult = async () => {
   let playerScore = 0;
   let partnerScore = 0;
 
-  const maxLength = Math.max(partnerResult.options.length, result.options.length);
+  const maxLength = Math.max((partnerResult.options).length, (result.options).length);
 
   //console.log('before calculate result')
   //// console.log('Last result:\nPlayer:', result.options, '\nPartner:', partnerResult.options);
