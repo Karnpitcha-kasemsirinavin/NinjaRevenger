@@ -55,9 +55,9 @@ const PlayerTwo = ({ result }) => {
     const changeToName = () => {
         let addedGesture = []
         
-        console.log('result length', result.length)
+        //console.log('result length', result.length)
         if (result.length > 0) {
-          console.log('passs update friend')
+          //console.log('passs update friend')
         for (let i = 0; i < (result.options).length; i++) {
 
             // console.log(gesture[(result.options)[i]])
