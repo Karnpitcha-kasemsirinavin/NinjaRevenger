@@ -132,7 +132,7 @@ export const MainGame = () => {
     } else {
       var getUserMedia = navigator.getUserMedia;
       getUserMedia({ video: true }, stream => {
-        userVideo.current.srcObject = stream;
+        userVideo.current = stream;
         setStream(stream);
         // setTimeout(() => {
         //   captureImage()

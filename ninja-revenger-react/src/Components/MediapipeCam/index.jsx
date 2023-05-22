@@ -1,5 +1,17 @@
 import React, { useEffect } from 'react';
 import '../MediapipeCam/style.css'
+const { io } = require('socket.io-client')
+const url = 'https://peaceful-snow-18663.pktriot.net'
+const socket = io(url,
+  {
+    reconnectionDelayMax: 10000,
+    auth: {
+      token: '123'
+    },
+    query: {
+      'my-key': 'my-value'
+    }
+  })
 
 const MediapipeCam = () => {
   useEffect(() => {
@@ -47,14 +59,14 @@ const MediapipeCam = () => {
             const img = new Image();
             img.src = imageData;
             console.log(imageData);
+            socket.emit('data', { image: imageData })
 
             // Append the image element to the body
-            document.body.appendChild(img);
+            // document.body.appendChild(img);
 
             // Update the last capture time
             lastCaptureTime = currentTime;
-
-            console.log(lastCaptureTime)
+            // console.log(lastCaptureTime)
           }
 
           // Request the next frame
