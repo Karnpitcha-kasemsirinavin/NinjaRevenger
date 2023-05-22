@@ -1,7 +1,7 @@
 .output-canvas{
 	position: relative;
-  /* grid-area: 2 / 2 / 3 / 3; */
-  width: 100%;
+  	grid-area: 2 / 2 / 3 / 3;
+  	width: 100%;
 	height: auto;
-	/* transform: rotateY(180deg); */
+	transform: rotateY(180deg);
 }
