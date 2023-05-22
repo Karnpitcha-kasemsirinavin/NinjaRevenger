@@ -148,6 +148,12 @@ export const MainGame = () => {
         // console.log('partnerid ', partnerId)
       });
 
+      socket.on('exited', data => {
+        peer.disconnect()
+        peer.destroy()
+        navigate(`/`)
+      })
+
       socket.on('answer', data => {
         setPartnerId(data.id)
       })
