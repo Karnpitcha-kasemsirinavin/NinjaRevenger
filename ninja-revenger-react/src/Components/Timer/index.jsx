@@ -13,15 +13,20 @@ const CountdownTimer = ({ initialSec , TimerEnd }) => {
 
         return () => clearTimeout(timer); // clear pending time
 
-      } else {
+      } 
+
+      else {
         setRoundEnded(true);
 
         const endTimer = setTimeout(() => {
             setRoundEnded(false);
             TimerEnd();
-        }, 5000); // 5 secs
+        }, 3000); // 5 secs
+
+        // TimerEnd();
 
         return () => clearTimeout(endTimer); // clear pending time
+        // return () => {}
       }
 
     }, [seconds, TimerEnd]);

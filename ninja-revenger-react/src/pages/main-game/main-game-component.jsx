@@ -45,7 +45,7 @@ export const MainGame = () => {
  // Game var =======================================================
 
     // time
-    const [currentRound, setCurrentRound] = useState(1);
+    const [currentRound, setCurrentRound] = useState(0);
     const [start, setStart] = useState(false); // Add start
     const [displayTime, setDisplayTime] = useState(false);
 
@@ -117,7 +117,6 @@ export const MainGame = () => {
         if (partnerVideo.current.srcObject !== remote && renderVideo) {
         partnerVideo.current.srcObject = remote;
         // console.log('user', stream, '\npartner', remote);
-        // setStart(true);
         socket.emit('ready', {from: player_1, to: player_2})
         setRenderVideo(false);
         }
@@ -156,11 +155,19 @@ export const MainGame = () => {
       peer.on('connection', (err) => {
         // console.log('connected');
         setConnected(true);
+        // if (currentRound === 0){
+        // setCurrentRound(currentRound + 1)
+        // }
+
+        // console.log('current round from connection: ', currentRound)
+        socket.emit('ready', {from: player_1, to: player_2})
         
       });
+
+      //console.log('current round from outside connection: ', currentRound)
   
       peer.on('disconnect', () => {
-        console.log('disconnect bye see u');
+        //console.log('disconnect bye see u');
       });
       
       // problem make video jerky
@@ -174,7 +181,6 @@ export const MainGame = () => {
           // console.log('render', renderVideo);
           if (partnerVideo.current.srcObject !== remote && renderVideo) {
           partnerVideo.current.srcObject = remote;
-          // setStart(true);
           socket.emit('ready', {from: player_1, to: player_2})
           setRenderVideo(false);
           }
@@ -295,9 +301,11 @@ export const MainGame = () => {
       }, 2000 + 3000); // make it visible after 5 secs
       
     }
-  }, [connected])
+  }, [connected, currentRound])
   
+  const [getOption, setGetOption] = useState(true)
 
+  const [countRound, setCountRound] = useState(false)
   // for start
   useEffect(() => {
     // for each round
@@ -308,57 +316,62 @@ export const MainGame = () => {
         setDisplayTime(true);
       }, 2000 + 3000); // make it visible after 5 secs
     } else {
+      console.log('initialize display time')
       setTimeout(() => {
         setDisplayTime(true);
       }, 2000); // make it visible after 5 secs
     }
 
-    if (displayTime && !selectOption && currentIndex !== numberArray1 - 1 ) {
+    console.log('get current index for arr: ', currentIndex)
+    if (displayTime && !selectOption && (currentIndex < (numberArray1.length - 1))) {
     setTimeout(() => {
+      // console.log('generate number')
+
       setPLay1Option(numberArray1[currentIndex]);
       setCurrentIndex(currentIndex + 1);
       setSelectOption(true);
-    }, currentIndex * 300); // 1 sec after start round
-  }
-  //   if (currentRound%2 === 1){
-  //     if (displayTime && !selectOption && currentIndex !== numberArray1 - 1 ) {
+    }, currentIndex * 500); // 1 sec after start round
+  } 
 
-  //       // console.log('pass generate test')
 
-  //     setTimeout(() => {
-  //       setPLay1Option(numberArray1[currentIndex]);
-  //       setCurrentIndex(currentIndex + 1);
-  //       setSelectOption(true);
-  //     }, currentIndex * 200); // 1 sec after start round
-
-  //   }
-  // } else {
-  //   if (displayTime && !selectOption && currentIndex !== numberArray2 - 1 ) {
-
-  //     // console.log('pass generate test')
-
-  //   setTimeout(() => {
-  //     setPLay1Option(numberArray2[currentIndex]);
-  //     setCurrentIndex(currentIndex + 1);
-  //     setSelectOption(true);
-  //   }, currentIndex * 200); // 1 sec after start round
-
+  // if (currentIndex === numberArray1.length) {
+    
+  //   setPartnerReady(false);
   // }
-  // }
+
+  // console.log('play1Option: ', play1Option);
+
   }
+
   // start game
-    if (start && playerWin < 5 && partnerWin < 5 ) {
-       // show each round
+    //console.log('start status:', start)
+
+    if (start && partnerReady && finishResult) {
+
+      console.log('partner ready?', partnerReady, ' round: ', currentRound)
+
       newRound()
+      
+    } else if (currentRound === 1){
+
+      if (start && partnerReady) {
+      console.log('partner ready?', partnerReady, ' round: ', currentRound)
+
+      newRound()
+
+      }
     }
-  }, [start, selectOption, displayTime, partnerReady]);
+
+  }, [selectOption, displayTime, partnerReady, play1Option, start]);
 
 
 
   useEffect(() => {
 
-    if (play1Option !== null && play1Option !== undefined && selectOption && displayTime) {
+    if (selectOption && displayTime) {
+      if (play1Option !== null && play1Option !== undefined ){
       calculateCombo();
+      }
       setSelectOption(false);
       // update when player have new option
       socket.emit("room:update", room);
@@ -374,13 +387,14 @@ export const MainGame = () => {
         options: room.players[player_2].option,
       })
     } else {
-      if (room.players[player_1].score === 2 || room.players[player_2].score === 2) {
-        if (room.players[player_1].score === 2 || room.players[player_2].score < 2){
-        navigate('/win')
-        } else {
-        navigate('/lost')
-        }
-      } 
+      
+      // if (room.players[player_1].score === 2 || room.players[player_2].score === 2) {
+      //  if (room.players[player_1].score === 2 || room.players[player_2].score < 2){
+      //   navigate('/win')
+      //  } else {
+      //   navigate('/lost')
+      //  }
+      // } 
 
     }
   }
@@ -390,79 +404,76 @@ export const MainGame = () => {
 
    // check ready status for next round 
 
+   const [plusRound, setPlusRound] = useState(true)
+
     useEffect(() => {
     
     socket.on('partnerReady', () => {
       setPartnerReady(true);
-      console.log('partnerReady')
+      //console.log('partnerReady')
+
+      // if (currentRound === 1) {
+      //   setFinishResult(true)
+      // }
       
     });
 
     socket.on('startTime', () => {
       // setCallLoading(false);
       setStart(true);
-      console.log('start time')
 
-      
-      setPartnerResult({
-        shown: true,
-        options: [],
-      })
+      if (plusRound){
+        setCurrentRound(currentRound + 1)
+        setPlusRound(false)
+
+        setPartnerResult({
+          shown: true,
+          options: [],
+        })
+  
+        setResult({
+          shown: false,
+          options: [],
+        });
+  
+        setOptionList([]);
+  
+        room.players[player_1].option = []; 
+      }
+      console.log('start time , round: ', currentRound)
+
+      // socket.emit("room:update");
       
     });
 
-    console.log('finish result', finishResult)
 
-    if (partnerReady && finishResult) {
-
-      // setStart(true);
-      setPartnerReady(false);
-      setFinishResult(false);
-      setDisplayTime(false);
-      setCurrentRound(currentRound + 1);
-
-      room.players[player_1].round = currentRound
-
-      socket.emit("room:update", room);
-
-      console.log('round ', currentRound)
-      console.log('round from partner', room.players[player_2].round)
-    }
-    
-    // Clean up the event listener on unmount
-    return () => {
-      socket.off('partnerReady');
-    };
-  }, [start,finishResult, partnerReady, room, currentRound, player_1, player_2]);
+   
+  }, [start,finishResult, partnerReady, room, currentRound, player_1, player_2, currentRound]);
 
 
   useEffect(() => {
     if (start && !displayTime && !partnerReady && !finishResult) {
-      console.log('Starting a new round');
-
+     // console.log('Starting a new round');
+      
       // setPartnerStar(partnerWin.toString())
+
+      // setStart(false)
       setCurrentIndex(0) // generate test
       setSelectOption(false);
       setOptionList([]);
-      setResult({
-        shown: false,
-        options: [],
-      });
       room.players[player_1].option = [];
       socket.emit("room:update", room);
     }
 
     if (connected) {
-      // setPartnerResult({
-      //   shown: false,
-      //   options: room.players[player_2].option,
-      // });
+
       room.players[player_1].option = result.options;
 
-      // setPartnerStar(room.players[player_2].score)
+
       if (!finishResult){
         setPartnerStar(room.players[player_2].score)
-    console.log("playerscore: ", room.players[player_1].score, "partnerscore: ", room.players[player_2].score)
+
+    //console.log("playerscore: ", room.players[player_1].score, "partnerscore: ", room.players[player_2].score)
       }
     }
 
@@ -472,35 +483,92 @@ export const MainGame = () => {
 
   // time over for each round
 
-const handleRoundEnd = () => {
-  // setCallLoading(true);
-  setStart(false);
-  console.log('Round End');
+const [startCalculate, setStartCalculate] = useState(false)
+
+const handleRoundEnd = async () => {
+  // console.log('Round End');
+  setFinishResult(false)
 
   socket.emit("room:update", room);
 
 
-  while ((partnerResult.options).length !== (room.players[player_2].option).length){
-    socket.emit("room:update", room);
+  // while ((partnerResult.options).length !== (room.players[player_2].option).length){
+  //   socket.emit("room:update", room);
 
-    setPartnerResult({
-      options: room.players[player_2].option,
-    }) 
-  }
+  //   setPartnerResult({
+  //     options: room.players[player_2].option,
+  //   }) 
+  // }
 
- // calculate result
-  if (!finishResult){
-  calculateResult();
-  }
-  setFinishResult(true);
+  // socket.emit("room:update", room);
 
-  console.log('player ready')
+  setPartnerResult({
+    options: room.players[player_2].option,
+  }) 
 
-  // check partner status
-  socket.emit('ready', {from: player_1, to: player_2})
-  socket.emit("room:update", room);
+  //console.log('check round bf cal:', currentRound)
+  console.log('=========== finishresult:' , finishResult, 'partnerReady: ', partnerReady)
+  if (!finishResult && (countCalculate === currentRound)){
+   setCountCalculate(countCalculate + 1)
+   console.log('pass calculate result')
+   calculateResult();
+
+   setPartnerReady(false)
+   setFinishResult(true);
+   setPlusRound(true);
+   setDisplayTime(false);
+   setStart(false)
+   
+
+
+   //console.log('player ready')
+   // check partner status
+
+   // console.log('emit')
+
+   socket.emit('ready', {from: player_1, to: player_2})
+  //  await wait(2000);
+
+  //  room.players[player_1].round = currentRound;
+   socket.emit("room:update", room);
+   
+
+   console.log('finish round')
+   }
+
 
 };
+
+const [countCalculate, setCountCalculate] = useState(1)
+
+useEffect(() => {
+   // calculate result
+  //  // console.log('check round bf cal:', currentRound)
+  //  // console.log('======================= finishresult:' , finishResult, 'startcal: ', startCalculate, 'partnerReady: ', partnerReady)
+  //  if (!finishResult && startCalculate && !partnerReady && (countCalculate === currentRound)){
+  //   setCountCalculate(countCalculate + 1)
+  //   // console.log('pass calculate result')
+  //   calculateResult();
+
+  //   setCurrentRound(currentRound + 1)
+  //   // console.log('player ready')
+  
+  //   // check partner status
+
+  //   // console.log('emit')
+
+  //   socket.emit('ready', {from: player_1, to: player_2})
+  //   socket.emit("room:update", room);
+  //   }
+
+    // if (finishResult) {
+    //   socket.emit('ready', {from: player_1, to: player_2})
+    //   socket.emit("room:update", room);
+    //   }
+
+
+}, [finishResult, startCalculate, partnerReady, countCalculate])
+
 
 //================ game logic ======================= (start)
 // calculate gesture and combo for each player
@@ -519,7 +587,7 @@ const calculateCombo = async () => {
     
     // add arr5
     if (!added_arr[5] && (play1Option === 16 || play1Option === 4)) {
-        // console.log('get 5')
+        // // console.log('get 5')
           resultArr[5] = [...resultArr[5], play1Option]
       // add arr4
     } else if (!added_arr[4]  && (play1Option === 14 || 
@@ -532,10 +600,10 @@ const calculateCombo = async () => {
               resultArr[3] = [...resultArr[3], play1Option]
       }
   
-  // console.log('arr3', resultArr[3])
-  // console.log('arr4', resultArr[4])
-  // console.log('arr5', resultArr[5])
-  // console.log('Option', play1Option)
+  // // console.log('arr3', resultArr[3])
+  // // console.log('arr4', resultArr[4])
+  // // console.log('arr5', resultArr[5])
+  // // console.log('Option', play1Option)
 
   const Combo = {
     3: ['18-7-17','15-18-13','9-13-3','11-16-8'],
@@ -553,14 +621,14 @@ const calculateCombo = async () => {
     if (resultArr[i].length === i) {
         let check_string = resultArr[i].join('-');
 
-        // console.log('check string: ', check_string)
+        // // console.log('check string: ', check_string)
       for (let j = 0; j < Combo[i].length; j++) {
         if (check_string === Combo[i][j]){
-          // console.log('check get combo', check_string);
+          // // console.log('check get combo', check_string);
 
           // change to combo
           let position = (i-1 + (2*i-1)*(-1))
-          // console.log('position ', position)
+          // // console.log('position ', position)
           optionList.splice(position);
           optionList.push([i,j].join('-'));
 
@@ -584,6 +652,12 @@ const calculateCombo = async () => {
 
 // calculate the result between 2 players
 
+const wait = (milliseconds) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, milliseconds);
+  });
+};
+
 const calculateResult = async () => {
   const comboList = {
     '3-0': '3A-1',
@@ -605,8 +679,8 @@ const calculateResult = async () => {
 
   const maxLength = Math.max(partnerResult.options.length, result.options.length);
 
-  console.log('before calculate result')
-  console.log('Last result:\nPlayer:', result.options, '\nPartner:', partnerResult.options);
+  //console.log('before calculate result')
+  //// console.log('Last result:\nPlayer:', result.options, '\nPartner:', partnerResult.options);
 
  // change into combo type
 
@@ -634,8 +708,8 @@ const calculateResult = async () => {
   // };
 
   
-  console.log('Player result:', playerList);
-  console.log('Partner result:', partnerList);
+  // console.log('Player result:', playerList);
+  // console.log('Partner result:', partnerList);
 
   const processCombos = (list1, list2) => {
     const deleteCombo = [];
@@ -729,6 +803,9 @@ const calculateResult = async () => {
   playerScore = 0;
   partnerScore = 0;
 
+  // console.log('check round in calfunction:', currentRound)
+
+
 }
 
 //================ game logic ======================= (end)
@@ -764,12 +841,12 @@ const calculateResult = async () => {
         alt='round-img'
         id='round'
       />
-      <img
-        className='round-num'
-        src={require("../../images/number/" + currentRound.toString() + ".png")}
-        alt='round-num'
-        id='round-num'
-      />
+      {currentRound !== 0 && <img
+          className='round-num'
+          src={require("../../images/number/" + currentRound + ".png")}
+          alt='round-num'
+          id='round-num'
+      />}
     </div>
     <div className='cam-left'>
       <div className='left-player-con'>
