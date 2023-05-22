@@ -18,7 +18,6 @@ import art7 from '../../images/art7.png';
 import art8 from '../../images/art8.png';
 import  BlackScreenAnimation from '../loading'
 import { connect } from 'socket.io-client';
-// import axios from 'axios';
 
 
 export const MainGame = () => {
@@ -33,8 +32,8 @@ export const MainGame = () => {
   const [countConnect, setCountConnect] = useState(0)
 
 
-  const userVideo = useRef()
-  const partnerVideo = useRef()
+  const userVideo = useRef(null)
+  const partnerVideo = useRef(null)
   const [renderVideo, setRenderVideo] = useState(true)
   
   const [caller, setCaller] = useState(room.players[player_1].caller)
@@ -49,6 +48,18 @@ export const MainGame = () => {
     const [currentRound, setCurrentRound] = useState(1);
     const [start, setStart] = useState(false); // Add start
     const [displayTime, setDisplayTime] = useState(false);
+
+  const captureImage = () => {
+    const video = userVideo.current
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
+    const context = canvas.getContext("2d");
+    context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+    const data = canvas.toDataURL("image/webp");
+    console.log(data);
+    // photo.setAttribute("src", data);
+  }
   
     // result
     const [result, setResult] = useState({
@@ -174,7 +185,6 @@ export const MainGame = () => {
         console.log('friend bye');
         navigate(`/`);
       });
-
       
       socket.on('caller', data => {
         // console.log('turn caller on');
