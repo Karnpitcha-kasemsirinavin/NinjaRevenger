@@ -1,0 +1,44 @@
+.exit-btn{
+	font-weight: 800;
+	position: relative;
+	margin-left: 10px;
+	outline: none;
+	border: none;
+	height: 3rem;
+	width: 3rem;
+	align-items: center;
+	border-radius: 15px;
+	background: transparent;
+	font-size: 1rem;
+	font-family: inherit;
+	text-transform: capitalize;
+	color: black;
+	background-color: bisque;
+	cursor: pointer;
+	z-index: 5;
+}
+
+.exit-btn:hover {
+	scale: 1.02;
+}
+
+.result-exit-btn{
+	font-weight: 800;
+	position: relative;
+	grid-area: 3 / 1 / 4 /2;
+	margin-left: 10px;
+	outline: none;
+	border: none;
+	height: 3rem;
+	width: 3rem;
+	align-self: center;
+	border-radius: 15px;
+	background: transparent;
+	font-size: 1rem;
+	font-family: inherit;
+	text-transform: capitalize;
+	color: black;
+	background-color: rgb(58, 143, 248);
+	cursor: pointer;
+	z-index: 5;
+}

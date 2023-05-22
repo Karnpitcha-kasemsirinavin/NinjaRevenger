@@ -259,16 +259,17 @@ export const MainGame = () => {
   const [playerWin, setPlayerWin] = useState(0);
   const [partnerWin, setPartnerWin] = useState(0);
 
-  // useEffect(() => {
-  //   if (connected) {
-  //     if (room.players[player_1].score === 3 || room.players[player_2].score === 3){
-  //       if (playerWin === 3) {
-  //         navigate(`/win`);
-  //       } else {
-  //         navigate(`/lost`);
-  //       }
-  //     }
-  // }
+  useEffect(() => {
+    if (connected) {
+      if (room.players[player_1].score === 3 || room.players[player_2].score === 3){
+        if (playerWin === 3) {
+          navigate(`/win`);
+        } else {
+          navigate(`/lost`);
+        }
+      }
+  }
+})
     
 
   // }, [navigate, playerWin]);
@@ -893,9 +894,6 @@ const calculateResult = async () => {
           src={images[room.players[player_2].image]}
           alt="profile-right"
         />
-        <div>
-          {/* combo */}
-        </div>
         <PlayerTwo result={partnerResult} />
       </div>}
       {PartnerVideo}
