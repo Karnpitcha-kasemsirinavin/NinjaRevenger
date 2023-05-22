@@ -14,7 +14,7 @@ const MediapipeCam = () => {
     const socket = io(url)
 
     socket.on('hand', data => {
-      console.log(data);
+      console.log(data.hand);
     })
 
     const videoElement = document.getElementsByClassName('input-video')[0];
