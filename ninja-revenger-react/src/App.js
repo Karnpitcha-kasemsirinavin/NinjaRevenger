@@ -5,10 +5,9 @@ import { MainGame } from'./pages/main-game/main-game-component.jsx';
 import { JoinFriend } from './pages/JoinFriend/join-friend-components.jsx';
 import HandDetection from './pages/TestCamera/HandDetection';
 import { Routes, Route } from "react-router-dom";
-
-import Loading  from './pages/loading';
 import LosePage from './pages/lose-page/index.jsx'
 import WinPage from './pages/win-page'
+import Loading  from './pages/loading';
 import Room from "./pages/JoinFriend/join-friend-components";
 import TestCamera from './pages/TestCamera/HandDetection';
 
