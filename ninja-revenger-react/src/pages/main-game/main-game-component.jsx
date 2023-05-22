@@ -151,6 +151,12 @@ export const MainGame = () => {
         // console.log('partnerid ', partnerId)
       });
 
+      socket.on('exited', data => {
+        peer.disconnect()
+        peer.destroy()
+        navigate(`/`)
+      })
+
       socket.on('answer', data => {
         setPartnerId(data.id)
       })
@@ -263,16 +269,17 @@ export const MainGame = () => {
   const [playerWin, setPlayerWin] = useState(0);
   const [partnerWin, setPartnerWin] = useState(0);
 
-  // useEffect(() => {
-  //   if (connected) {
-  //     if (room.players[player_1].score === 3 || room.players[player_2].score === 3){
-  //       if (playerWin === 3) {
-  //         navigate(`/win`);
-  //       } else {
-  //         navigate(`/lost`);
-  //       }
-  //     }
-  // }
+  useEffect(() => {
+    if (connected) {
+      if (room.players[player_1].score === 3 || room.players[player_2].score === 3){
+        if (playerWin === 3) {
+          navigate(`/win`);
+        } else {
+          navigate(`/lost`);
+        }
+      }
+  }
+})
     
 
   // }, [navigate, playerWin]);
@@ -879,8 +886,8 @@ const calculateResult = async () => {
         <PlayerOne result={result} />
       </div>
       {/* {UserVideo} */}
-      <div>
-      <MediapipeCam />
+      <div className="mediacam">
+      <MediapipeCam/>
       </div>
       <ExitButton name="X"/>
     </div>
@@ -905,9 +912,6 @@ const calculateResult = async () => {
           src={images[room.players[player_2].image]}
           alt="profile-right"
         />
-        <div>
-          {/* combo */}
-        </div>
         <PlayerTwo result={partnerResult} />
       </div>}
       {PartnerVideo}

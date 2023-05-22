@@ -19,19 +19,6 @@ const Button = ({classname, name, type}) => {
     });
   };
 
-  // const handleChange = (type) => {
-  
-
-  //   if (type === 'stranger'){
-  //     socket.emit("room:create", { type }, (err, roomId) => {
-  //     navigate(`/room/่${roomId}`);
-  //   });
-  //   } else if (type === 'friend'){
-  //     navigate(`/joinlink`);
-  //   }   
-
-  // };
-
   return (
     <button className={`btn ${classname}`} onClick={() => handleChange(type)}>
       {name}

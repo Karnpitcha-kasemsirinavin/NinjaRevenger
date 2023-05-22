@@ -1,19 +1,23 @@
-import styles from "./style.module.css";
+import "../Exit_Button/style.css";
 import { useContext } from "react";
 import { SocketContext } from "../../Context/SocketThing";
 
-const Button = ({ name, type}) => {
-  const { socket, navigate } = useContext(SocketContext);
+const Button = ({classname, name, type}) => {
+  const { socket, navigate, player_1, player_2, room, io, peer } = useContext(SocketContext);
 
   // handle change depend on the type of the room (link with server)
-  const handleChange = (type) => {
-    socket.emit("room:create", { type }, (err, roomId) => {
+  const roomId = room.roomId
+
+  const handleChange = () => {
+    socket.emit("room:exit", { roomId, player_1, player_2 }, (err) => {
+      peer.disconnect()
+      peer.destroy()
       navigate(`/`);
     });
   };
 
   return (
-    <button className={styles.btn} onClick={() => handleChange(type)}>
+    <button className={`exit-btn ${classname}`} onClick={() => handleChange()}>
       {name}
     </button>
   );
