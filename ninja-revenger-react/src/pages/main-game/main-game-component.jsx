@@ -271,8 +271,10 @@ export const MainGame = () => {
 
   useEffect(() => {
     if (connected) {
-      if (room.players[player_1].score === 3 || room.players[player_2].score === 3){
-        if (playerWin === 3) {
+      if (room.players[player_1].score === 2 || room.players[player_2].score === 2){
+        let roomId = location.pathname.split("/")[2];
+        socket.emit('room:delete', { roomId })
+        if (playerWin === 2) {
           navigate(`/win`);
         } else {
           navigate(`/lost`);
@@ -895,7 +897,7 @@ const calculateResult = async () => {
     </div>
     {callLoading && < BlackScreenAnimation/> }
     <div className="middle-container">
-      {displayTime && <CountdownTimer className='Timer' initialSec={10} TimerEnd={handleRoundEnd} />}
+      {displayTime && <CountdownTimer className='Timer' initialSec={1} TimerEnd={handleRoundEnd} />}
     </div>
     <div className='cam-right'>
       {!connected && <h1 className='waiting-container'></h1>}

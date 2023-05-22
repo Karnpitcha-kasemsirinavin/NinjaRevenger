@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import '../TestCamera/style.css';
 import MediapipeCam from '../../Components/MediapipeCam';
-import ExitButton from '../../Components/Exit_Button';
+import Button from '../../Components/Button';
 
 import background from "../../images/background-nolight.png";
 
@@ -11,7 +11,7 @@ const HandDetection = () => {
     <img src={background} alt="background" className="background" />
     <div className="testcam-container">
       <MediapipeCam/>
-      <ExitButton classname='testcam-exit-btn' name="x"/>
+      <Button classname='testcam-exit-btn' name="x" type="return"/>
     </div>
     </>
   )
