@@ -21,7 +21,7 @@
     margin-top: 30px;
     margin-left: 20px;
     grid-template-columns: 1fr 3fr;
-    grid-template-rows: 2fr 1fr;
+    grid-template-rows: 1fr 1fr;
     row-gap: 10px;
   }
 
@@ -31,7 +31,7 @@
     margin-top: 30px;
     margin-right: 20px;
     grid-template-columns: 3fr 1fr;
-    grid-template-rows: 2fr 1fr;
+    grid-template-rows: 1fr 1fr;
     row-gap: 10px;
   }
 
@@ -73,7 +73,7 @@
   .player-detail-left{
     position: relative;
     width: 20vmin;
-    font-size: 2vmin;
+    font-size: 1.1rem;
     font-family: "Roboto", sans-serif;
     font-weight: bold;
     display: inline-block;
@@ -83,7 +83,7 @@
   .player-detail-right{
     position: relative;
     width: 20vmin;
-    font-size: 2vmin;
+    font-size: 1.1rem;
     font-family: "Roboto", sans-serif;
     font-weight: bold;
     display: inline-block;

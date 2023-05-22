@@ -1,4 +1,5 @@
 import React from 'react';
+import '../ComboList/style.css'
 
 const ComboList = (props) => {
   const option = props.option;

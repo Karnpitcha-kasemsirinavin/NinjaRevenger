@@ -42,17 +42,17 @@ const HandDetection = () => {
       //if there is hand detected
       if (results.multiHandLandmarks) {
         //detect how many there are label hand 1 and 2
-    for (let i = 0; i < results.multiHandLandmarks.length; i++) {
-      const landmarks = results.multiHandLandmarks[i];
-      if (results.multiHandedness) {
-        let hand;
-        if (i == 0) {
-          hand = 'Hand 1';
-        } else {
-          hand = 'Hand 2';
-        }
-        console.log(`${hand}:`);
-      }
+        for (let i = 0; i < results.multiHandLandmarks.length; i++) {
+          const landmarks = results.multiHandLandmarks[i];
+          if (results.multiHandedness) {
+            let hand;
+            if (i == 0) {
+              hand = 'Hand 1';
+            } else {
+              hand = 'Hand 2';
+            }
+            console.log(`${hand}:`);
+          }
       
       //print the landmarks position
       if (landmarks.length > 0) {
@@ -88,8 +88,6 @@ const HandDetection = () => {
       minDetectionConfidence: 0.5,
       minTrackingConfidence: 0.5
     });
-    
-    
 
     //execute onResults function if hand is detected
     hands.onResults(onResults);
@@ -125,4 +123,3 @@ loadScripts();
 };
 
 export default HandDetection;
-
