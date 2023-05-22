@@ -49,7 +49,7 @@ const MediapipeCam = () => {
             console.log(imageData);
 
             // Append the image element to the body
-            document.body.appendChild(img);
+            // document.body.appendChild(img);
 
             // Update the last capture time
             lastCaptureTime = currentTime;
