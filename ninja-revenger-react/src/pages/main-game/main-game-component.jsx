@@ -867,7 +867,7 @@ const calculateResult = async () => {
         <PlayerOne result={result} />
       </div>
       {/* {UserVideo} */}
-      <div>
+      <div className="mediacam">
       <MediapipeCam/>
       </div>
       <ExitButton name="X"/>
