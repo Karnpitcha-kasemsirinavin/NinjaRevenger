@@ -1,9 +1,10 @@
 import { useEffect, useContext, useState, useRef } from 'react'
+import { useNavigate, useLocation } from "react-router-dom";
 import ExitButton from '../../Components/Exit_Button'
 import '../main-game/style.css'
 import '../../Components/Button/index.jsx'
 import { SocketContext } from "../../Context/SocketThing";
-import { useNavigate, useLocation } from "react-router-dom";
+import MediapipeCam from '../../Components/MediapipeCam';
 import CountdownTimer from '../../Components/Timer';
 import PlayerOne from '../../Components/PlayerOne';
 import PlayerTwo from '../../Components/PlayerTwo';
@@ -17,7 +18,6 @@ import art7 from '../../images/art7.png';
 import art8 from '../../images/art8.png';
 import  BlackScreenAnimation from '../loading'
 import { connect } from 'socket.io-client';
-// import axios from 'axios';
 
 
 export const MainGame = () => {
@@ -32,126 +32,14 @@ export const MainGame = () => {
   const [countConnect, setCountConnect] = useState(0)
 
 
-  const userVideo = useRef()
-  const partnerVideo = useRef()
+  const userVideo = useRef(null)
+  const partnerVideo = useRef(null)
   const [renderVideo, setRenderVideo] = useState(true)
   
   const [caller, setCaller] = useState(room.players[player_1].caller)
 
   // animation 
   const [callLoading, setCallLoading] = useState(false)
-
-// mediapipe =======================================================
-
-// const HandDetection = () => {
-//   useEffect(() => {
-//     const video = userVideo.current
-//     const canvasElement = document.getElementsByClassName('output-canvas')[0];
-//     const canvasCtx = canvasElement.getContext('2d');
-
-//     const loadScript = (src) => {
-//       return new Promise((resolve, reject) => {
-//         const script = document.createElement('script');
-//         script.src = src;
-//         script.async = true;
-//         script.onload = resolve;
-//         script.onerror = reject;
-//         document.body.appendChild(script);
-//       });
-//     };
-
-//     const loadScripts = async () => {
-//       try {
-//         await Promise.all([
-//         await loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.3.1632795355/hands.js'),
-//         await loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js'),
-//         await loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js'),
-//         await loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js'),
-//         ]);
-        
-//         // Code to execute after all scripts are loaded
-//         const { Hands, Camera, drawConnectors, drawLandmarks, HAND_CONNECTIONS } = window;
-    
-//     //function for hands appearing on cam
-//     function onResults(results) {
-//       //setting the canvas
-//       canvasCtx.save();
-//       canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-//       canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
-    
-//       //if there is hand detected
-//       if (results.multiHandLandmarks) {
-//         //detect how many there are label hand 1 and 2
-//         for (let i = 0; i < results.multiHandLandmarks.length; i++) {
-//           const landmarks = results.multiHandLandmarks[i];
-//           if (results.multiHandedness) {
-//             let hand;
-//             if (i == 0) {
-//               hand = 'Hand 1';
-//             } else {
-//               hand = 'Hand 2';
-//             }
-//             //console.log(`${hand}:`);
-//           }
-      
-//       //print the landmarks position
-//       if (landmarks.length > 0) {
-//         for (let j = 0; j < landmarks.length; j++) {const landmark = landmarks[j];
-//           //console.log(`Landmark ${j}: (${landmark.x}, ${landmark.y}, ${landmark.z})`);
-//         }
-//         //draw the connectors of landmarks and draw landmarks
-//         drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {lineWidth: 2});
-//         drawLandmarks(canvasCtx, landmarks, {color: '#FF0000', radius: 1});
-//       }
-//     }        
-//         const landmarks = results.multiHandLandmarks[0]; // Assuming there is only one hand
-//         //draw the connectors of landmarks and draw landmarks
-//         drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {lineWidth: 2});
-//         drawLandmarks(canvasCtx, landmarks, {color: '#FF0000', radius: 1});
-//       }
-
-//     // Return the canvas image data
-//     const imageData = canvasElement.toDataURL();
-//     const img = new Image();
-//     img.src = imageData;
-
-//     // Append the image element to the body
-//    // document.body.appendChild(img);
-//     canvasCtx.restore();
-//     }
-//     // using the hand object from mediapipe
-//     const hands = new Hands({locateFile: (file) => {
-//       return `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.3.1632795355/${file}`;
-//     }});
-//     hands.setOptions({
-//       maxNumHands: 2,
-//       minDetectionConfidence: 0.5,
-//       minTrackingConfidence: 0.5
-//     });
-
-//     //execute onResults function if hand is detected
-//     hands.onResults(onResults);
-    
-//     //set the camera settings and send images
-//     const camera = new Camera(video, {
-//       onFrame: async () => {
-//         await hands.send({ image: video });
-//       },
-//       width: 1280,
-//       height: 720,
-//     });
-//     camera.start();
-
-//   } catch (error) {
-//     console.error('Failed to load scripts:', error);
-//   }
-// };
-
-// loadScripts();
-// }, []);
-  
-// };
-
 
 
  // Game var =======================================================
@@ -160,6 +48,18 @@ export const MainGame = () => {
     const [currentRound, setCurrentRound] = useState(0);
     const [start, setStart] = useState(false); // Add start
     const [displayTime, setDisplayTime] = useState(false);
+
+  const captureImage = () => {
+    const video = userVideo.current
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
+    const context = canvas.getContext("2d");
+    context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+    const data = canvas.toDataURL("image/webp");
+    console.log(data);
+    // photo.setAttribute("src", data);
+  }
   
     // result
     const [result, setResult] = useState({
@@ -231,7 +131,7 @@ export const MainGame = () => {
     } else {
       var getUserMedia = navigator.getUserMedia;
       getUserMedia({ video: true }, stream => {
-        userVideo.current.srcObject = stream;
+        userVideo.current = stream;
         setStream(stream);
         // setTimeout(() => {
         //   captureImage()
@@ -287,11 +187,10 @@ export const MainGame = () => {
         });
       });
   
-      // socket.on("friend_disconn", () => {
-      //   console.log('friend bye');
-      //   navigate(`/`);
-      // });
-
+      socket.on("friend_disconn", () => {
+        console.log('friend bye');
+        navigate(`/`);
+      });
       
       socket.on('caller', data => {
         // console.log('turn caller on');
@@ -313,13 +212,9 @@ export const MainGame = () => {
       })
     }
 
-
   }, [socket, navigate, peer, partnerId]);
 
-
-
 	// Generate name =====================================================================================================
-
 	const firstnames = ['Tor', 'Foam', 'Mark', 'June', 'Nata', 'Mill'];
   const surnames = ['1nwza', 'SudLhor', 'SudSuay', 'Romanoff', 'React', 'HTML'];
 	const [randomName1, setRandomName1] = useState('');
@@ -351,7 +246,6 @@ export const MainGame = () => {
     const randomIndexImage1 = Math.floor(Math.random() * images.length);
     
     room.players[player_1].image = randomIndexImage1;	
-
     // const image1 = images[randomIndexImage1]
     // const image2 = images[randomIndexImage1]
     
@@ -379,7 +273,6 @@ export const MainGame = () => {
 
   // }, [navigate, playerWin]);
   
-
   const [currentIndex, setCurrentIndex] = useState(0);
   const numberArray1 = room.players[player_1].caller?
           // [2,17,1,16,15,18,13]:[11,16,8,14,7,12,0]
@@ -415,16 +308,10 @@ export const MainGame = () => {
   const [countRound, setCountRound] = useState(false)
   // for start
   useEffect(() => {
-
-
     // for each round
     const newRound = () => {
-
-      //console.log("pass new round naaaaaa")    
-      // generating test *********************
-
+    // generating test ********************
       if (currentRound === 1) {
-
       setTimeout(() => {
         setDisplayTime(true);
       }, 2000 + 3000); // make it visible after 5 secs
@@ -486,24 +373,19 @@ export const MainGame = () => {
       calculateCombo();
       }
       setSelectOption(false);
-
       // update when player have new option
       socket.emit("room:update", room);
     }
 
     if (connected){
-
       // setPartnerStar((room.players[player_2].score));
       setPlayerStar(playerWin);
     
       if (displayTime){
-
       setPartnerResult({
         shown: true,
         options: room.players[player_2].option,
       })
-
-      
     } else {
       
       // if (room.players[player_1].score === 2 || room.players[player_2].score === 2) {
@@ -580,17 +462,15 @@ export const MainGame = () => {
       setSelectOption(false);
       setOptionList([]);
       room.players[player_1].option = [];
-
       socket.emit("room:update", room);
-
     }
 
     if (connected) {
 
       room.players[player_1].option = result.options;
 
-      if (!finishResult){
 
+      if (!finishResult){
         setPartnerStar(room.players[player_2].score)
 
     //console.log("playerscore: ", room.players[player_1].score, "partnerscore: ", room.players[player_2].score)
@@ -691,7 +571,6 @@ useEffect(() => {
 
 
 //================ game logic ======================= (start)
-
 // calculate gesture and combo for each player
 const calculateCombo = async () => {
   let added_arr = {s:false ,4:false ,5:false}
@@ -762,19 +641,13 @@ const calculateCombo = async () => {
       }
     }
   }
-
-
   // console.log('list: ', optionList);
-
   setResult({
     shown: true,
     options: optionList,
   })
-
   // console.log('result options:', result.options);
-
   room.players[player_1].option = result.options;
-
 };
 
 // calculate the result between 2 players
@@ -937,9 +810,6 @@ const calculateResult = async () => {
 
 //================ game logic ======================= (end)
 
-
-const canvasRef = useRef();
-
   // make streams into video element
   let UserVideo;
     UserVideo = (
@@ -950,24 +820,26 @@ const canvasRef = useRef();
   PartnerVideo = (
     <video ref={partnerVideo} autoPlay/>
   );
-
+  
+  //landmark video
+  const canvasRef = useRef();
 
 // HTML section =========================================================================================================
 
   return (
   <div className='maingame-container'>
     <div className='wrapper'>
-    <img
-          className='start-img'
-          src={require("../../images/start.png")}
-          id ='start_img'
-          
+      <img
+        className='start-img'
+        src={require("../../images/start.png")}
+        id ='start_img'
+        
       />
-    <img
-          className='round'
-          src={require("../../images/round-img.png")}
-          alt='round-img'
-          id='round'
+      <img
+        className='round'
+        src={require("../../images/round-img.png")}
+        alt='round-img'
+        id='round'
       />
       {currentRound !== 0 && <img
           className='round-num'
@@ -994,10 +866,10 @@ const canvasRef = useRef();
         {/* combo */}
         <PlayerOne result={result} />
       </div>
-        {UserVideo}
-        {/* <HandDetection/> */}
-        {/* <video hidden ref={userVideo} className="user-video" autoPlay muted></video> */}
-        <canvas hidden ref={canvasRef} className="output-canvas"></canvas>
+      {/* {UserVideo} */}
+      <div>
+      <MediapipeCam/>
+      </div>
       <ExitButton name="X"/>
     </div>
     {callLoading && < BlackScreenAnimation/> }
@@ -1029,6 +901,5 @@ const canvasRef = useRef();
       {PartnerVideo}
     </div>
   </div>
-  
   )
 }

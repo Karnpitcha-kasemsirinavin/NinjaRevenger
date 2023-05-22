@@ -35,7 +35,6 @@ const HandDetection = ({ Input_Video }) => {
         const imageData = canvasElement.toDataURL();
         const img = new Image();
         img.src = imageData;
-
       }
       canvasCtx.restore();
     }
@@ -53,7 +52,7 @@ const HandDetection = ({ Input_Video }) => {
       minTrackingConfidence: 0.5,
     });
 
-    // execute onResults function if hand is detected
+    // execute onResults function
     hands.onResults(onResults);
 
     // set the camera settings and send images
