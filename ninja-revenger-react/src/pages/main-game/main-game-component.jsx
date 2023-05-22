@@ -723,9 +723,6 @@ const calculateResult = async () => {
 
 //================ game logic ======================= (end)
 
-
-const canvasRef = useRef();
-
   // make streams into video element
   let UserVideo;
     UserVideo = (
@@ -736,7 +733,9 @@ const canvasRef = useRef();
   PartnerVideo = (
     <video ref={partnerVideo} autoPlay/>
   );
-
+  
+  //landmark video
+  const canvasRef = useRef();
 
 // HTML section =========================================================================================================
 
