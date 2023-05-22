@@ -43,9 +43,10 @@ const MediapipeCam = () => {
           // Check if the desired frame rate interval has passed
           if (elapsedTime >= frameInterval) {
             // Capture the canvas image data
-            const imageData = canvasElement.toDataURL();
+            const imageData = canvasElement.toDataURL('image/webp');
             const img = new Image();
             img.src = imageData;
+            console.log(imageData);
 
             // Append the image element to the body
             document.body.appendChild(img);
