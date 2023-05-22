@@ -25,8 +25,8 @@ io.on("connection", (socket) => {
 
     socket.on('data', data => {
         console.log(data);
-        const pyPort = 3700
-        const url = 'https://localhost:/' + pyPort + '/endpoint'; // Replace with your server URL
+        const pyPort = 3600
+        const url = 'http://127.0.0.1:' + pyPort; // Replace with your server URL
         console.log(url);
         // const data = { message: 'Hello, Flask!' } // Replace with your string data
 
