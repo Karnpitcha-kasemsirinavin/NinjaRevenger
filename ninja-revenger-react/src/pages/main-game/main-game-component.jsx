@@ -21,12 +21,14 @@ import  BlackScreenAnimation from '../loading'
 import { connect } from 'socket.io-client';
 
 
+
 export const MainGame = () => {
   const { socket, room, player_1, player_2, peer, userId, setIdEmitted, setJoined } = useContext(SocketContext);
-  const { handData } = useContext(SocketContextGesture);
+  const { handData, socket_gest } = useContext(SocketContextGesture);
 
   const navigate = useNavigate();
   const location = useLocation();
+  var roomId = location.pathname.split("/")[2];
   
   // connection
   const [partnerId, setPartnerId] = useState('')
@@ -73,6 +75,7 @@ export const MainGame = () => {
     const [partnerResult, setPartnerResult] = useState({
       shown: true,
       options: [],
+      length: 0
     });
   
     // Option for each player
@@ -127,6 +130,8 @@ export const MainGame = () => {
     }
 
   }, [connected, room.players, player_1, stream, partnerId, peer, renderVideo]);
+
+  const [countCalculate, setCountCalculate] = useState(1)
   
   useEffect(() => {
     if (socket.id === undefined) {
@@ -228,9 +233,36 @@ export const MainGame = () => {
         // }
       })
 
+      socket.on("friend_update", (data) => {
+
+        //console.log('get friend data', data)
+        setPartnerResult({
+          shown: true,
+          options: data.result,
+          length: data.length,
+          score: data.score,
+        })
+        // setStartCalculate(true);
+      })
+
+      socket.on("result", (data) => {
+
+        console.log(data)
+        setPlayerWin(data.user)
+        setPlayerStar(data.user)
+        setPartnerStar(data.partner)
+        room.players[player_1].score = playerWin;
+
+        setPartnerReady(false)
+        setFinishResult(true);
+        setPlusRound(true);
+        socket.emit('ready', {from: player_1, to: player_2})
+
+      })
+
     }
 
-  }, [socket, navigate, peer, partnerId, connected]);
+  }, [socket, navigate, peer, partnerId, countCalculate, currentRound]);
 
 	// Generate name =====================================================================================================
 	const firstnames = ['Tor', 'Foam', 'Mark', 'June', 'Nata', 'Mill'];
@@ -275,11 +307,15 @@ export const MainGame = () => {
   const [playerStar, setPlayerStar] = useState(0);
   const [partnerStar, setPartnerStar] = useState(0);
   const [playerWin, setPlayerWin] = useState(0);
-  const [partnerWin, setPartnerWin] = useState(0);
+  // let partnerStar = 0;
+  // let playerStar = 0;
+  // let playerWin = 0;
+  // const [partnerWin, setPartnerWin] = useState(0);
 
   useEffect(() => {
     if (connected) {
-      if (room.players[player_1].score === 1 || room.players[player_2].score === 1){
+
+      if (playerStar === 1 || partnerStar === 1){
         let roomId = location.pathname.split("/")[2];
         socket.emit('room:delete', { roomId })
         setPartnerId('')
@@ -293,10 +329,7 @@ export const MainGame = () => {
         }
       }
   }
-})
-    
-
-  // }, [navigate, playerWin]);
+}, [navigate, playerStar, partnerStar, connected]);
   
   const [currentIndex, setCurrentIndex] = useState(0);
   const numberArray1 = room.players[player_1].caller?
@@ -360,31 +393,39 @@ export const MainGame = () => {
     //   setSelectOption(true);
     // }, currentIndex * 500); // 1 sec after start round
 
-    if (displayTime && !selectOption && preHandData !== handData){
+    //console.log('pregesture: ', play1Option)
+   //console.log('current gesture: ', preHandData)
 
+    // socket.emit("room:update", room)
+
+    if (displayTime && !selectOption && preHandData !== handData && handData !== -1 && handData !== null){
+
+      console.log("check optionList: ", optionList, "check friendList: ", room.players[player_2].option )
       
       setPLay1Option(handData)
       setSelectOption(true)
       setPreHandData(handData)
+      // socket.emit("friend_result", {from: player_1, to: player_2, result: result.options, length: (result.options).length})
+      // socket.emit("room:update", room)
 
-      // console.log('gesture from model: ', play1Option)
+      // // console.log('gesture from model: ', play1Option)
   } 
 
   }
 
   // start game
-    //console.log('start status:', start)
+    //// console.log('start status:', start)
 
     if (start && partnerReady && finishResult) {
 
-      console.log('partner ready?', partnerReady, ' round: ', currentRound)
+      // // console.log('partner ready?', partnerReady, ' round: ', currentRound)
 
       newRound()
       
     } else if (currentRound === 1){
 
       if (start && partnerReady) {
-      console.log('partner ready?', partnerReady, ' round: ', currentRound)
+      // // console.log('partner ready?', partnerReady, ' round: ', currentRound)
 
       newRound()
 
@@ -392,43 +433,39 @@ export const MainGame = () => {
     }
     
 
-  }, [selectOption, displayTime, partnerReady, start, handData]);
+  }, [selectOption, partnerReady, start, handData, finishResult, displayTime, currentRound]);
 
 // const [preHandData, setPreHandData] = useState(null)
 
   useEffect(() => {
 
+    // console.log('result ', result.options)
+
     if (selectOption && displayTime) {
       if (play1Option !== null && play1Option !== undefined && play1Option !== -1 ){
-        console.log('gesture from model: ', play1Option)
+        // console.log('gesture from model: ', play1Option)
       calculateCombo();
-      // setPreHandData(play1Option)
+      socket.emit("friend_result", {from: player_1, 
+        to: player_2, 
+        result: result.options, 
+        length: (result.options).length,
+        score: playerWin
+      })
+      socket.emit("room:update", room);
+      // setPreHandData(play1Option).
       }
       setSelectOption(false);
       // update when player have new option
-      socket.emit("room:update", room);
+      
     }
 
     if (connected){
       // setPartnerStar((room.players[player_2].score));
-      setPlayerStar(playerWin);
+      // if (partnerResult.score !== undefined){
+      // partnerStar = partnerResult.score;
+      // }
     
-      if (displayTime){
-      setPartnerResult({
-        shown: true,
-        options: room.players[player_2].option,
-      })
-    } else {
-      
-      // if (room.players[player_1].score === 2 || room.players[player_2].score === 2) {
-      //  if (room.players[player_1].score === 2 || room.players[player_2].score < 2){
-      //   navigate('/win')
-      //  } else {
-      //   navigate('/lost')
-      //  }
-      // } 
-
-    }
+   
   }
 
 
@@ -461,6 +498,7 @@ export const MainGame = () => {
         setPartnerResult({
           shown: true,
           options: [],
+          length: 0,
         })
   
         setResult({
@@ -471,11 +509,23 @@ export const MainGame = () => {
         setOptionList([]);
   
         room.players[player_1].option = []; 
+        // socket.emit("room:update");
       }
-      console.log('start time , round: ', currentRound)
+      //console.log('start time , round: ', currentRound)
 
-      // socket.emit("room:update");
       
+      
+    });
+
+    socket.on("friend_update", (data) => {
+      console.log(data);
+      setPartnerResult({
+        shown: true,
+        options: data.result,
+        length: data.length,
+        score: data.score,
+      })
+      // console.log("check if updated================", partnerResult.options)
     });
 
 
@@ -485,7 +535,7 @@ export const MainGame = () => {
 
   useEffect(() => {
     if (start && !displayTime && !partnerReady && !finishResult) {
-     // console.log('Starting a new round');
+     // // console.log('Starting a new round');
       
       // setPartnerStar(partnerWin.toString())
 
@@ -493,20 +543,15 @@ export const MainGame = () => {
       setCurrentIndex(0) // generate test
       setSelectOption(false);
       setOptionList([]);
-      room.players[player_1].option = [];
-      socket.emit("room:update", room);
+      // room.players[player_1].option = [];
+      // socket.emit("room:update", room);
     }
 
     if (connected) {
 
       room.players[player_1].option = result.options;
+      console.log("info check", countCalculate, currentRound, finishResult)
 
-
-      if (!finishResult){
-        setPartnerStar(room.players[player_2].score)
-
-    //console.log("playerscore: ", room.players[player_1].score, "partnerscore: ", room.players[player_2].score)
-      }
     }
 
   }, [start, displayTime, playerStar, connected, finishResult, partnerReady, player_1, player_2, play1Option]);
@@ -518,89 +563,54 @@ export const MainGame = () => {
 const [startCalculate, setStartCalculate] = useState(false)
 
 const handleRoundEnd = async () => {
-  // console.log('Round End');
+
+  console.log(countCalculate)
+  // // console.log('Round End');
   setFinishResult(false)
   setPreHandData(null)
+  setDisplayTime(false);
+  setStart(false);
 
-  socket.emit("room:update", room);
+
+  socket.emit("friend_result", { 
+    to: player_2, 
+    result: result.options, 
+    length: (result.options).length,
+    score: playerWin
+  })
 
 
-  // while ((partnerResult.options).length !== (room.players[player_2].option).length){
-  //   socket.emit("room:update", room);
-
-  //   setPartnerResult({
-  //     options: room.players[player_2].option,
-  //   }) 
-  // }
-
-  // socket.emit("room:update", room);
-
-  setPartnerResult({
-    options: room.players[player_2].option,
-  }) 
-
-  //console.log('check round bf cal:', currentRound)
-  console.log('=========== finishresult:' , finishResult, 'partnerReady: ', partnerReady)
+  console.log('countcalculate', countCalculate, currentRound)
   if (!finishResult && (countCalculate === currentRound)){
+   // console.log('pass calculate result')
+   console.log('countcalculate inside', countCalculate, currentRound)
+   socket.emit('calResult', {roomId, to: player_2, from: player_1, 
+  partnerList: partnerResult.options, playerList: result.options, 
+  playerScore: playerWin, partnerScore:partnerResult.score})
+  //  calculateResult();
    setCountCalculate(countCalculate + 1)
-   console.log('pass calculate result')
-   calculateResult();
 
-   setPartnerReady(false)
-   setFinishResult(true);
-   setPlusRound(true);
-   setDisplayTime(false);
-   setStart(false)
-   
+  //  setPartnerReady(false)
+  //  setFinishResult(true);
+  //  setPlusRound(true);
+  //  setStart(false);
+  //  socket.emit('ready', {from: player_1, to: player_2})
+  //  setStartCalculate(false);
+  
+  //  if (finishResult) {
+  //   socket.emit('ready', {from: player_1, to: player_2})
+  //   await wait(5000);
 
+  //  }
 
-   //console.log('player ready')
-   // check partner status
-
-   // console.log('emit')
-
-   socket.emit('ready', {from: player_1, to: player_2})
-  //  await wait(2000);
-
-  //  room.players[player_1].round = currentRound;
-   socket.emit("room:update", room);
-   
-
-   console.log('finish round')
+  //  console.log('finish round')
    }
 
 
 };
 
-const [countCalculate, setCountCalculate] = useState(1)
-
-useEffect(() => {
-   // calculate result
-  //  // console.log('check round bf cal:', currentRound)
-  //  // console.log('======================= finishresult:' , finishResult, 'startcal: ', startCalculate, 'partnerReady: ', partnerReady)
-  //  if (!finishResult && startCalculate && !partnerReady && (countCalculate === currentRound)){
-  //   setCountCalculate(countCalculate + 1)
-  //   // console.log('pass calculate result')
-  //   calculateResult();
-
-  //   setCurrentRound(currentRound + 1)
-  //   // console.log('player ready')
-  
-  //   // check partner status
-
-  //   // console.log('emit')
-
-  //   socket.emit('ready', {from: player_1, to: player_2})
-  //   socket.emit("room:update", room);
-  //   }
-
-    // if (finishResult) {
-    //   socket.emit('ready', {from: player_1, to: player_2})
-    //   socket.emit("room:update", room);
-    //   }
 
 
-}, [finishResult, startCalculate, partnerReady, countCalculate])
 
 
 //================ game logic ======================= (start)
@@ -611,7 +621,7 @@ const calculateCombo = async () => {
 
   optionList.push(play1Option.toString());
 
-  console.log('i try calculate combo')
+  //console.log('i try calculate combo')
 
   for (let i = 3; i <= 5; i++) {
 
@@ -649,7 +659,6 @@ const calculateCombo = async () => {
   // check if any arr is full
   if (resultArr[3].length === 3) {
     // for (i = 0; i < Combo[3])
-
   }
 
   for (let i = 3; i <= 5; i++) {
@@ -693,155 +702,158 @@ const wait = (milliseconds) => {
   });
 };
 
-const calculateResult = async () => {
-  const comboList = {
-    '3-0': '3A-1',
-    '3-1': '3P',
-    '3-2': '3C',
-    '3-3': '3A-2',
-    '4-0': '4P',
-    '4-1': '4C',
-    '4-2': '4A-1',
-    '4-3': '4A-2',
-    '5-0': '5A',
-    '5-1': '5P'
-  };
+// const calculateResult = () => {
+//   const comboList = {
+//     '3-0': '3A-1',
+//     '3-1': '3P',
+//     '3-2': '3C',
+//     '3-3': '3A-2',
+//     '4-0': '4P',
+//     '4-1': '4C',
+//     '4-2': '4A-1',
+//     '4-3': '4A-2',
+//     '5-0': '5A',
+//     '5-1': '5P'
+//   };
 
-  let playerList = [];
-  let partnerList = [];
-  let playerScore = 0;
-  let partnerScore = 0;
+//   let playerList = [];
+//   let partnerList = [];
+//   let playerScore = 0;
+//   let partnerScore = 0;
 
-  const maxLength = Math.max((partnerResult.options).length, (result.options).length);
+//   const maxLength = Math.max((partnerResult.options).length, (result.options).length);
 
-  //console.log('before calculate result')
-  //// console.log('Last result:\nPlayer:', result.options, '\nPartner:', partnerResult.options);
+//   //console.log('before calculate result')
+//   //// console.log('Last result:\nPlayer:', result.options, '\nPartner:', partnerResult.options);
 
- // change into combo type
+//  // change into combo type
 
-  for (let i = 0; i < maxLength; i++) {
-    if (i < (result.options).length) {
+//   for (let i = 0; i < maxLength; i++) {
+//     if (i < (result.options).length) {
 
-      if ((result.options[i]).length > 2){
-      playerList.push(comboList[(result.options[i])])
-      } else {
-        playerScore += 50;
-      }
-    }
-    if (i < (partnerResult.options).length) {
+//       if ((result.options[i]).length > 2){
+//       playerList.push(comboList[(result.options[i])])
+//       } else {
+//         playerScore += 50;
+//       }
+//     }
+//     if (i < (partnerResult.options).length) {
 
-      if ((partnerResult.options[i]).length > 2){
-        partnerList.push(comboList[(partnerResult.options[i])])
-        } else {
-          partnerScore += 50;
-        }
-    }
-  }
+//       if ((partnerResult.options[i]).length > 2){
+//         partnerList.push(comboList[(partnerResult.options[i])])
+//         } else {
+//           partnerScore += 50;
+//         }
+//     }
+//   }
 
-  // const removeCombo = (combo, list) => {
-  //   list.splice(list.findIndex((str) => str === combo), 1);
-  // };
+//   // const removeCombo = (combo, list) => {
+//   //   list.splice(list.findIndex((str) => str === combo), 1);
+//   // };
 
   
-  // console.log('Player result:', playerList);
-  // console.log('Partner result:', partnerList);
+//   // console.log('Player result:', playerList);
+//   // console.log('Partner result:', partnerList);
 
-  const processCombos = (list1, list2) => {
-    const deleteCombo = [];
+//   const processCombos = (list1, list2) => {
+//     const deleteCombo = [];
     
-    list1.forEach((combo) => {
+//     list1.forEach((combo) => {
 
-      if (combo[1] === 'P') {
-        // prevention
-        const counterString = combo[0] + 'C';
-        const index = list2.findIndex((str) => str.startsWith(combo[0]) 
-                                                && !str.startsWith(counterString));
-        if (index >= 0) {
-          list2.splice(index, 1);
-          deleteCombo.push(combo);
-        }
-      } else if (combo[1] === 'C') {
-        //counter attack
+//       if (combo[1] === 'P') {
+//         // prevention
+//         const counterString = combo[0] + 'C';
+//         const index = list2.findIndex((str) => str.startsWith(combo[0]) 
+//                                                 && !str.startsWith(counterString));
+//         if (index >= 0) {
+//           list2.splice(index, 1);
+//           deleteCombo.push(combo);
+//         }
+//       } else if (combo[1] === 'C') {
+//         //counter attack
 
-        const loopNum = 5 - parseInt(combo[0]) + 1;
-        for (let j = 1; j < loopNum; j++) {
+//         const loopNum = 5 - parseInt(combo[0]) + 1;
+//         for (let j = 1; j < loopNum; j++) {
 
-          const attackCombo = (parseInt(combo[0]) + j).toString() + 'A';
-          const index = list2.findIndex((str) => str.startsWith(attackCombo));
+//           const attackCombo = (parseInt(combo[0]) + j).toString() + 'A';
+//           const index = list2.findIndex((str) => str.startsWith(attackCombo));
 
-          if (index >= 0) {
-            list2.splice(index, 1);
-            deleteCombo.push(combo);
-            break;
-          }
-        }
-      }
-    });
+//           if (index >= 0) {
+//             list2.splice(index, 1);
+//             deleteCombo.push(combo);
+//             break;
+//           }
+//         }
+//       }
+//     });
 
-    for (let i = 0; i < deleteCombo.length; i++){
-        list1 = list1.filter(combo => combo !== deleteCombo[i])
-      }
+//     for (let i = 0; i < deleteCombo.length; i++){
+//         list1 = list1.filter(combo => combo !== deleteCombo[i])
+//       }
 
-      return [list1, list2]
+//       return [list1, list2]
 
-  };
+//   };
 
-  const comboScore =  (list1, added_score) => {
+//   const comboScore =  (list1, added_score) => {
 
-    let count = list1.filter(item => item.startsWith("3")).length;
-    added_score += count * 50;
-    count = list1.filter(item => item.startsWith("4")).length;
-    added_score += count * 75;
-    count = list1.filter(item => item.startsWith("5")).length;
-    added_score += count * 100;
+//     let count = list1.filter(item => item.startsWith("3")).length;
+//     added_score += count * 50;
+//     count = list1.filter(item => item.startsWith("4")).length;
+//     added_score += count * 75;
+//     count = list1.filter(item => item.startsWith("5")).length;
+//     added_score += count * 100;
 
-    return added_score
+//     return added_score
 
-  }
+//   }
     
-  [playerList, partnerList] = processCombos(playerList, partnerList);
-  [partnerList, playerList] = processCombos(partnerList, playerList);
+//   [playerList, partnerList] = processCombos(playerList, partnerList);
+//   [partnerList, playerList] = processCombos(partnerList, playerList);
 
-  // process the left combo score
-  if (playerList.length !== 0) {
-    playerScore = comboScore(playerList, playerScore);
-  }
+//   // process the left combo score
+//   if (playerList.length !== 0) {
+//     playerScore = comboScore(playerList, playerScore);
+//   }
 
-  if (partnerList.length !== 0) {
-    partnerScore = comboScore(partnerList, partnerScore);
-  }
+//   if (partnerList.length !== 0) {
+//     partnerScore = comboScore(partnerList, partnerScore);
+//   }
 
-  // calculate winner
-  if (partnerScore > playerScore) {
-    // setPartnerWin(partnerWin + 1)
+//   // calculate winner
+//   if (partnerScore > playerScore) {
+//     // setPartnerWin(partnerWin + 1)
 
-    // room.players[player_2].score += 1;
+//     // room.players[player_2].score += 1;
 
-  } else if (partnerScore === playerScore) {
-    // setPlayerWin(playerWin + 1)
-    // setPartnerWin(partnerWin + 1)
+//   } else if (partnerScore === playerScore) {
+//     playerWin += 1
+//     // setPartnerWin(partnerWin + 1)
 
-    room.players[player_1].score += 1;
+//     room.players[player_1].score = playerWin;
 
-  } else {
-    // setPlayerWin(playerWin + 1)
-    room.players[player_1].score += 1;
+//   } else {
+//     playerWin += 1
+//     room.players[player_1].score = playerWin;
 
-  }
+//   }
 
-  socket.emit('room:update', room);
+//   // socket.emit('room:update', room);
 
-  console.log('after calculate result')
-  console.log('Player result:', playerList, "score: ",room.players[player_1].score);
-  console.log('Partner result:', partnerList, "score: ", room.players[player_2].score);
+//   console.log('after calculate result')
+//   console.log('Player result:', playerList, "score: ", playerWin);
+//   console.log('Partner result:', partnerList, "score: ", partnerResult.score);
 
-  playerScore = 0;
-  partnerScore = 0;
+//   playerStar = playerWin;
+//   partnerStar = partnerResult.score
 
-  // console.log('check round in calfunction:', currentRound)
+//   playerScore = 0;
+//   partnerScore = 0;
+
+//   // console.log('check round in calfunction:', currentRound)
 
 
-}
+// }
 
 //================ game logic ======================= (end)
 
@@ -894,7 +906,7 @@ const calculateResult = async () => {
           <p className='player-detail-left'>{room.players[player_1].name}</p>
           <img 
             className='stars-l'
-            src={require("../../images/star"+ room.players[player_1].score +".png")}
+            src={require("../../images/star"+ playerStar +".png")}
             alt='star0'
           />
         </div>
@@ -909,7 +921,7 @@ const calculateResult = async () => {
     </div>
     {callLoading && < BlackScreenAnimation/> }
     <div className="middle-container">
-      {displayTime && <CountdownTimer className='Timer' initialSec={1} TimerEnd={handleRoundEnd} />}
+      {displayTime && <CountdownTimer className='Timer' initialSec={5} TimerEnd={handleRoundEnd} />}
     </div>
     <div className='cam-right'>
       {!connected && <h1 className='waiting-container'></h1>}

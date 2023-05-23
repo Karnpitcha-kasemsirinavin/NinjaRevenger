@@ -2,8 +2,8 @@ import React, { useEffect, useState, useContext, createContext } from 'react';
 import '../MediapipeCam/style.css'
 import { SocketContextGesture } from "../../Context/SocketHand";
 
-// const { io } = require('socket.io-client')
-// const url = 'https://peaceful-snow-18663.pktriot.net'
+const { io } = require('socket.io-client')
+const url = 'https://peaceful-snow-18663.pktriot.net'
 
 const MediapipeCam = () => {
   const { socket_gest } = useContext(SocketContextGesture);
@@ -49,7 +49,7 @@ const MediapipeCam = () => {
         const { Hands, Camera, drawConnectors, drawLandmarks, HAND_CONNECTIONS } = window;
   
         // Define the desired frame rate (e.g., 0.2 FPS)
-        const desiredFrameRate = 1;
+        const desiredFrameRate = (2);
         const frameInterval = 1000 / desiredFrameRate;
         let lastCaptureTime = 0;
 

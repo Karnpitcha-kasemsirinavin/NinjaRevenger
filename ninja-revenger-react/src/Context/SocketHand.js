@@ -8,10 +8,10 @@ const SocketProviderGesture = ({ children }) => {
   const [socket_gest, setSocketGest] = useState({});
 
   useEffect(() => {
-    const socket_gest = io('https://peaceful-snow-18663.pktriot.net');
+    const socket_gest = io('https://angry-snowflake-73883.pktriot.net');
     
     setSocketGest(socket_gest);
-    
+
     socket_gest.on('hand', data => {
       console.log("raw data", data);
       console.log("hand data", data.hand);
