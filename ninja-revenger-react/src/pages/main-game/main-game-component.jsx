@@ -22,7 +22,7 @@ import { connect } from 'socket.io-client';
 
 
 export const MainGame = () => {
-  const { socket, room, player_1, player_2, peer, userId} = useContext(SocketContext);
+  const { socket, room, player_1, player_2, peer, userId, setIdEmitted, setJoined } = useContext(SocketContext);
   const { handData } = useContext(SocketContextGesture);
 
   const navigate = useNavigate();
@@ -35,8 +35,8 @@ export const MainGame = () => {
   const [countConnect, setCountConnect] = useState(0)
 
 
-  const userVideo = useRef(null)
-  const partnerVideo = useRef(null)
+  const userVideo = useRef()
+  const partnerVideo = useRef()
   const [renderVideo, setRenderVideo] = useState(true)
   
   const [caller, setCaller] = useState(room.players[player_1].caller)
@@ -110,14 +110,14 @@ export const MainGame = () => {
   }, [socket, room, location.pathname, navigate]);
 
   useEffect(() => {
-    // console.log(connected, caller, stream);
-    if (connected && caller && stream && countConnect === 0) {
+    console.log(connected, caller, stream, countConnect === 0, partnerId);
+    if (connected && caller && stream && countConnect === 0 && partnerId) {
       const call = peer.call(partnerId, stream);
       // console.log('calling', partnerId);
       setCountConnect(1);
   
       call.on('stream', remote => {
-        if (partnerVideo.current.srcObject !== remote && renderVideo) {
+        if (partnerVideo.current !== remote && renderVideo) {
         partnerVideo.current.srcObject = remote;
         // console.log('user', stream, '\npartner', remote);
         socket.emit('ready', {from: player_1, to: player_2})
@@ -141,28 +141,36 @@ export const MainGame = () => {
         // }, 2000);
       });
     
-    
-      socket.on('id', data => {
-        // console.log('try to connect');
-        // console.log(data);
-        socket.emit('answer', { from: player_1, to: data.from, id: userId })
-        var conn = peer.connect(data.id);
-        setPartnerId(data.id);
-        // console.log('partnerid ', partnerId)
-      });
+      if (!connected) {
+        socket.on('id', data => {
+          // console.log('try to connect');
+          // console.log(data);
+          console.log('connecting to peer', data.id);
+          socket.emit('answer', { from: player_1, to: data.from, id: userId })
+          var conn = peer.connect(data.id);
+          setPartnerId(data.id);
+          // console.log('partnerid ', partnerId)
+        });
+      }
 
       socket.on('exited', data => {
-        peer.disconnect()
-        peer.destroy()
+        // peer.disconnect()
+        // peer.destroy()
+        setPartnerId('')
+        setConnected(false)
+        setIdEmitted(false)
+        setJoined(false)
         navigate(`/`)
       })
 
       socket.on('answer', data => {
+        console.log('received your id', data, 'thanks !!!');
         setPartnerId(data.id)
+        // setConnected(true);
       })
   
       peer.on('connection', (err) => {
-        // console.log('connected');
+        console.log('the pair is connected!!!');
         setConnected(true);
         // if (currentRound === 0){
         // setCurrentRound(currentRound + 1)
@@ -175,8 +183,8 @@ export const MainGame = () => {
 
       //console.log('current round from outside connection: ', currentRound)
   
-      peer.on('disconnect', () => {
-        //console.log('disconnect bye see u');
+      peer.on('disconnected', () => {
+        console.log('disconnected bye see u');
       });
       
       // problem make video jerky
@@ -222,7 +230,7 @@ export const MainGame = () => {
 
     }
 
-  }, [socket, navigate, peer, partnerId]);
+  }, [socket, navigate, peer, partnerId, connected]);
 
 	// Generate name =====================================================================================================
 	const firstnames = ['Tor', 'Foam', 'Mark', 'June', 'Nata', 'Mill'];
@@ -271,10 +279,14 @@ export const MainGame = () => {
 
   useEffect(() => {
     if (connected) {
-      if (room.players[player_1].score === 2 || room.players[player_2].score === 2){
+      if (room.players[player_1].score === 1 || room.players[player_2].score === 1){
         let roomId = location.pathname.split("/")[2];
         socket.emit('room:delete', { roomId })
-        if (playerWin === 2) {
+        setPartnerId('')
+        setConnected(false)
+        setIdEmitted(false)
+        setJoined(false)
+        if (playerWin === 1) {
           navigate(`/win`);
         } else {
           navigate(`/lost`);
