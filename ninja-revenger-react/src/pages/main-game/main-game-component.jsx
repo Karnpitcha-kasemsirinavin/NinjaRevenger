@@ -235,6 +235,19 @@ export const MainGame = () => {
         // setStartCalculate(true);
       })
 
+      socket.on("result", (data) => {
+        playerWin = data.user
+        partnerStar = data.partner
+
+        setPartnerReady(false)
+        setFinishResult(true);
+        setPlusRound(true);
+        setStart(false);
+        socket.emit('ready', {from: player_1, to: player_2})
+
+
+      })
+
     }
 
   }, [socket, navigate, peer, partnerId]);
@@ -557,19 +570,20 @@ const handleRoundEnd = async () => {
   //  calculateResult();
    setCountCalculate(countCalculate + 1)
 
-   setPartnerReady(false)
-   setFinishResult(true);
-   setPlusRound(true);
-   setStart(false);
+  //  setPartnerReady(false)
+  //  setFinishResult(true);
+  //  setPlusRound(true);
+  //  setStart(false);
+  //  socket.emit('ready', {from: player_1, to: player_2})
   //  setStartCalculate(false);
   
-   if (finishResult) {
-    socket.emit('ready', {from: player_1, to: player_2})
-    await wait(5000);
+  //  if (finishResult) {
+  //   socket.emit('ready', {from: player_1, to: player_2})
+  //   await wait(5000);
 
-   }
+  //  }
 
-   console.log('finish round')
+  //  console.log('finish round')
    }
 
 
