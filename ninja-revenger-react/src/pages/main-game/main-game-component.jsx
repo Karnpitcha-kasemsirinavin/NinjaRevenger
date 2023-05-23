@@ -247,7 +247,6 @@ export const MainGame = () => {
         setPartnerReady(false)
         setFinishResult(true);
         setPlusRound(true);
-        setStart(false);
         socket.emit('ready', {from: player_1, to: player_2})
 
       })
@@ -554,7 +553,7 @@ const handleRoundEnd = async () => {
   setFinishResult(false)
   setPreHandData(null)
   setDisplayTime(false);
-  setStartCalculate(true);
+  setStart(false);
 
 
   socket.emit("friend_result", { 
@@ -566,14 +565,13 @@ const handleRoundEnd = async () => {
 
 
   console.log('countcalculate', countCalculate)
-  if (!finishResult && startCalculate){
+  if (!finishResult && (countCalculate === currentRound)){
    // console.log('pass calculate result')
    socket.emit('calResult', {roomId, to: player_2, from: player_1, 
   partnerList: partnerResult.options, playerList: result.options, 
   playerScore: playerWin, partnerScore:partnerResult.score})
-  setStartCalculate(false)
   //  calculateResult();
-  //  setCountCalculate(countCalculate + 1)
+   setCountCalculate(countCalculate + 1)
 
   //  setPartnerReady(false)
   //  setFinishResult(true);
