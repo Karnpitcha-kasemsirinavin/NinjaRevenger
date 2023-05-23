@@ -11,7 +11,6 @@ const Button = ({classname, name, type}) => {
   const handleChange = () => {
     socket.emit("room:exit", { roomId, player_1, player_2 }, (err) => {
       peer.disconnect()
-      peer.destroy()
       navigate(`/`);
     });
   };
