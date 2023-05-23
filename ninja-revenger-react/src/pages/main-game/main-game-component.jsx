@@ -554,6 +554,7 @@ const handleRoundEnd = async () => {
   setFinishResult(false)
   setPreHandData(null)
   setDisplayTime(false);
+  setStartCalculate(true);
 
 
   socket.emit("friend_result", { 
@@ -565,13 +566,14 @@ const handleRoundEnd = async () => {
 
 
   console.log('countcalculate', countCalculate)
-  if (!finishResult && (countCalculate === currentRound)){
+  if (!finishResult && startCalculate){
    // console.log('pass calculate result')
    socket.emit('calResult', {roomId, to: player_2, from: player_1, 
   partnerList: partnerResult.options, playerList: result.options, 
   playerScore: playerWin, partnerScore:partnerResult.score})
+  setStartCalculate(false)
   //  calculateResult();
-   setCountCalculate(countCalculate + 1)
+  //  setCountCalculate(countCalculate + 1)
 
   //  setPartnerReady(false)
   //  setFinishResult(true);
