@@ -21,7 +21,7 @@ const CountdownTimer = ({ initialSec , TimerEnd }) => {
         const endTimer = setTimeout(() => {
             setRoundEnded(false);
             TimerEnd();
-        }, 3000); // 5 secs
+        },); // 5 secs
 
         // TimerEnd();
 

@@ -306,10 +306,10 @@ export const MainGame = () => {
   useEffect(() => {
     if (connected) {
 
-      if (playerStar === 3 || partnerStar === 3){
+      if (playerStar === 1 || partnerStar === 1){
         let roomId = location.pathname.split("/")[2];
         socket.emit('room:delete', { roomId })
-        if (playerStar === 3) {
+        if (playerStar === 1) {
           navigate(`/win`);
         } else {
           navigate(`/lost`);
@@ -385,7 +385,7 @@ export const MainGame = () => {
 
     // socket.emit("room:update", room)
 
-    if (displayTime && !selectOption && preHandData !== handData){
+    if (displayTime && !selectOption && preHandData !== handData && handData !== -1 && handData !== null){
 
       console.log("check optionList: ", optionList, "check friendList: ", room.players[player_2].option )
       
@@ -537,6 +537,7 @@ export const MainGame = () => {
     if (connected) {
 
       room.players[player_1].option = result.options;
+      console.log("info check", countCalculate, currentRound, finishResult)
 
     }
 
@@ -549,6 +550,8 @@ export const MainGame = () => {
 const [startCalculate, setStartCalculate] = useState(false)
 
 const handleRoundEnd = async () => {
+
+  console.log(countCalculate)
   // // console.log('Round End');
   setFinishResult(false)
   setPreHandData(null)
@@ -564,9 +567,10 @@ const handleRoundEnd = async () => {
   })
 
 
-  console.log('countcalculate', countCalculate)
+  console.log('countcalculate', countCalculate, currentRound)
   if (!finishResult && (countCalculate === currentRound)){
    // console.log('pass calculate result')
+   console.log('countcalculate inside', countCalculate, currentRound)
    socket.emit('calResult', {roomId, to: player_2, from: player_1, 
   partnerList: partnerResult.options, playerList: result.options, 
   playerScore: playerWin, partnerScore:partnerResult.score})
@@ -642,7 +646,6 @@ const calculateCombo = async () => {
   // check if any arr is full
   if (resultArr[3].length === 3) {
     // for (i = 0; i < Combo[3])
-
   }
 
   for (let i = 3; i <= 5; i++) {
