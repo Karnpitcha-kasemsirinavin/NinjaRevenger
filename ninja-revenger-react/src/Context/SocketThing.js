@@ -3,12 +3,6 @@ import { useEffect, useState, createContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 var peer = new window.Peer();
-let userId
-peer.on('open', id => {
-  userId = id
-})
-
-var isIdEmitted = false
 
 console.log('passssssss')
 
@@ -19,8 +13,11 @@ console.log('runn');
 const SocketContext = createContext();
 
 const SocketContextProvider = ({ children }) => {
+  const [idEmitted, setIdEmitted] = useState(false)
   const [socket, setSocket] = useState({});
   const [room, setRoom] = useState({});
+  const [userId, setUserId] = useState('')
+  const [joined, setJoined] = useState(true)
   // const [partnerId, setPartnerId] = useState('')
   const [player_1, setPlayer_1] = useState("");
   const [player_2, setPlayer_2] = useState("");
@@ -40,7 +37,14 @@ const SocketContextProvider = ({ children }) => {
 	//   }
 
   useEffect(() => {
-    const socket = io('https://relaxed-bush-92325.pktriot.net',
+    peer.on('open', id => {
+      console.log('set user id', id);
+      setUserId(id)
+    })
+  }, [joined])
+
+  useEffect(() => {
+    const socket = io('https://black-breeze-48357.pktriot.net',
     {
       reconnectionDelayMax: 10000,
       auth: {
@@ -68,29 +72,32 @@ const SocketContextProvider = ({ children }) => {
         setPlayer_2(play_1);
       }
 
-      if (play_1 === socket.id) {
-        setPlayer_1(play_1);
-        setPlayer_2(play_2);
-        // console.log("check connection play 2", play_2)
-        if (play_2 && !(room.private) && !isIdEmitted) {
-            // fix stranger but private cannot
-            // console.log('yang pass yuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu ')
-            socket.emit('id', { from: play_2, to: play_1, id: userId }); 
-            isIdEmitted = true;
+      // if (play_1 === socket.id) {
+      //   setPlayer_1(play_1);
+      //   setPlayer_2(play_2);
+      //   // console.log("check connection play 2", play_2)
+      //   console.log(play_2, !(room.private), !idEmitted, userId, '!!!!!!!!!!!!!!!!!!!!!!!!!!');
+      //   if (play_2 && !(room.private) && !idEmitted && userId) {
+      //       // fix stranger but private cannot
+      //       console.log('yang pass yuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu ')
+      //       socket.emit('id', { from: play_2, to: play_1, id: userId }); 
+      //       setIdEmitted(true)
           
-          // // console.log('doing connection');
-        }
-      } else {
-        setPlayer_1(play_2);
-        setPlayer_2(play_1);
-        // console.log("check connection play 2", play_2)
-        if (play_2 && !(room.private) && !isIdEmitted) {
+      //     // // console.log('doing connection');
+      //   }
+      // } else {
+      //   setPlayer_1(play_2);
+      //   setPlayer_2(play_1);
+      //   // console.log("check connection play 2", play_2)
+      //   console.log(play_2, !(room.private), !idEmitted, userId, '!!!!!!!!!!!!!!!!!!!!!!!!!!');
+      //   if (play_2 && !(room.private) && !idEmitted && userId) {
 
-            // console.log('yang pass yuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu jaaaaaaaaaa')
-            socket.emit('id', { from: play_2, to: play_1, id: userId });
-            isIdEmitted = true;
-        }
-      }
+      //       console.log('yang pass yuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu jaaaaaaaaaa')
+      //       socket.emit('id', { from: play_2, to: play_1, id: userId });
+      //       setIdEmitted(true)
+      //   }
+      // }
+
 
       // console.log(payload.players);
 
@@ -115,7 +122,22 @@ const SocketContextProvider = ({ children }) => {
 
     });
 
-  }, []);
+  }, [userId]);
+
+  useEffect(() => {
+    console.log(joined, !idEmitted, !(room.private), userId);
+    if (joined && !idEmitted && !(room.private) && userId && player_2) {
+      if (player_1 === socket.id) {
+        console.log('yang pass yuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu jaaaaaaaaaa')
+        socket.emit('id', { from: player_2, to: player_1, id: userId });
+        setIdEmitted(true)
+      } else {
+        console.log('yang pass yuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu jaaaaaaaaaa')
+        socket.emit('id', { from: player_2, to: player_1, id: userId });
+        setIdEmitted(true)
+      }
+    }
+  }, [joined, idEmitted, player_1, player_2, userId])
 
 
   return (
@@ -129,6 +151,9 @@ const SocketContextProvider = ({ children }) => {
         navigate,
         peer,
         userId,
+        idEmitted,
+        setIdEmitted,
+        setJoined
       }}
     >
       {children}
