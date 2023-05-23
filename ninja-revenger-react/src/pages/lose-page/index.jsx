@@ -19,7 +19,7 @@ function Box() {
         <img 
             className='stars-result'
             // src={require("../../images/star"+ room.players[player_1].score +".png")}
-            src={require("../../images/star"+ (room.players[player_1]).score +".png")}
+            src={require("../../images/star"+ 0 +".png")}
             alt='star0'
           />
         {/* <Button classname='result-btn' name='Play Again' type='stranger'/> */}
