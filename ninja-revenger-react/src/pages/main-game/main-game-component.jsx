@@ -21,12 +21,14 @@ import  BlackScreenAnimation from '../loading'
 import { connect } from 'socket.io-client';
 
 
+
 export const MainGame = () => {
   const { socket, room, player_1, player_2, peer, userId} = useContext(SocketContext);
   const { handData, socket_gest } = useContext(SocketContextGesture);
 
   const navigate = useNavigate();
   const location = useLocation();
+  var roomId = location.pathname.split("/")[2];
   
   // connection
   const [partnerId, setPartnerId] = useState('')
@@ -402,7 +404,7 @@ export const MainGame = () => {
     }
     
 
-  }, [selectOption, partnerReady, start, handData, finishResult]);
+  }, [selectOption, partnerReady, start, handData, finishResult, displayTime, currentRound]);
 
 // const [preHandData, setPreHandData] = useState(null)
 
@@ -549,7 +551,10 @@ const handleRoundEnd = async () => {
   console.log('countcalculate', countCalculate)
   if (!finishResult && (countCalculate === currentRound)){
    // console.log('pass calculate result')
-   calculateResult();
+   socket.emit('calResult', {roomId, to: player_2, from: player_1, 
+  partnerList: partnerResult.options, playerList: result.options, 
+  playerScore: playerWin, partnerScore:partnerResult.score})
+  //  calculateResult();
    setCountCalculate(countCalculate + 1)
 
    setPartnerReady(false)
@@ -664,158 +669,158 @@ const wait = (milliseconds) => {
   });
 };
 
-const calculateResult = () => {
-  const comboList = {
-    '3-0': '3A-1',
-    '3-1': '3P',
-    '3-2': '3C',
-    '3-3': '3A-2',
-    '4-0': '4P',
-    '4-1': '4C',
-    '4-2': '4A-1',
-    '4-3': '4A-2',
-    '5-0': '5A',
-    '5-1': '5P'
-  };
+// const calculateResult = () => {
+//   const comboList = {
+//     '3-0': '3A-1',
+//     '3-1': '3P',
+//     '3-2': '3C',
+//     '3-3': '3A-2',
+//     '4-0': '4P',
+//     '4-1': '4C',
+//     '4-2': '4A-1',
+//     '4-3': '4A-2',
+//     '5-0': '5A',
+//     '5-1': '5P'
+//   };
 
-  let playerList = [];
-  let partnerList = [];
-  let playerScore = 0;
-  let partnerScore = 0;
+//   let playerList = [];
+//   let partnerList = [];
+//   let playerScore = 0;
+//   let partnerScore = 0;
 
-  const maxLength = Math.max((partnerResult.options).length, (result.options).length);
+//   const maxLength = Math.max((partnerResult.options).length, (result.options).length);
 
-  //console.log('before calculate result')
-  //// console.log('Last result:\nPlayer:', result.options, '\nPartner:', partnerResult.options);
+//   //console.log('before calculate result')
+//   //// console.log('Last result:\nPlayer:', result.options, '\nPartner:', partnerResult.options);
 
- // change into combo type
+//  // change into combo type
 
-  for (let i = 0; i < maxLength; i++) {
-    if (i < (result.options).length) {
+//   for (let i = 0; i < maxLength; i++) {
+//     if (i < (result.options).length) {
 
-      if ((result.options[i]).length > 2){
-      playerList.push(comboList[(result.options[i])])
-      } else {
-        playerScore += 50;
-      }
-    }
-    if (i < (partnerResult.options).length) {
+//       if ((result.options[i]).length > 2){
+//       playerList.push(comboList[(result.options[i])])
+//       } else {
+//         playerScore += 50;
+//       }
+//     }
+//     if (i < (partnerResult.options).length) {
 
-      if ((partnerResult.options[i]).length > 2){
-        partnerList.push(comboList[(partnerResult.options[i])])
-        } else {
-          partnerScore += 50;
-        }
-    }
-  }
+//       if ((partnerResult.options[i]).length > 2){
+//         partnerList.push(comboList[(partnerResult.options[i])])
+//         } else {
+//           partnerScore += 50;
+//         }
+//     }
+//   }
 
-  // const removeCombo = (combo, list) => {
-  //   list.splice(list.findIndex((str) => str === combo), 1);
-  // };
+//   // const removeCombo = (combo, list) => {
+//   //   list.splice(list.findIndex((str) => str === combo), 1);
+//   // };
 
   
-  // console.log('Player result:', playerList);
-  // console.log('Partner result:', partnerList);
+//   // console.log('Player result:', playerList);
+//   // console.log('Partner result:', partnerList);
 
-  const processCombos = (list1, list2) => {
-    const deleteCombo = [];
+//   const processCombos = (list1, list2) => {
+//     const deleteCombo = [];
     
-    list1.forEach((combo) => {
+//     list1.forEach((combo) => {
 
-      if (combo[1] === 'P') {
-        // prevention
-        const counterString = combo[0] + 'C';
-        const index = list2.findIndex((str) => str.startsWith(combo[0]) 
-                                                && !str.startsWith(counterString));
-        if (index >= 0) {
-          list2.splice(index, 1);
-          deleteCombo.push(combo);
-        }
-      } else if (combo[1] === 'C') {
-        //counter attack
+//       if (combo[1] === 'P') {
+//         // prevention
+//         const counterString = combo[0] + 'C';
+//         const index = list2.findIndex((str) => str.startsWith(combo[0]) 
+//                                                 && !str.startsWith(counterString));
+//         if (index >= 0) {
+//           list2.splice(index, 1);
+//           deleteCombo.push(combo);
+//         }
+//       } else if (combo[1] === 'C') {
+//         //counter attack
 
-        const loopNum = 5 - parseInt(combo[0]) + 1;
-        for (let j = 1; j < loopNum; j++) {
+//         const loopNum = 5 - parseInt(combo[0]) + 1;
+//         for (let j = 1; j < loopNum; j++) {
 
-          const attackCombo = (parseInt(combo[0]) + j).toString() + 'A';
-          const index = list2.findIndex((str) => str.startsWith(attackCombo));
+//           const attackCombo = (parseInt(combo[0]) + j).toString() + 'A';
+//           const index = list2.findIndex((str) => str.startsWith(attackCombo));
 
-          if (index >= 0) {
-            list2.splice(index, 1);
-            deleteCombo.push(combo);
-            break;
-          }
-        }
-      }
-    });
+//           if (index >= 0) {
+//             list2.splice(index, 1);
+//             deleteCombo.push(combo);
+//             break;
+//           }
+//         }
+//       }
+//     });
 
-    for (let i = 0; i < deleteCombo.length; i++){
-        list1 = list1.filter(combo => combo !== deleteCombo[i])
-      }
+//     for (let i = 0; i < deleteCombo.length; i++){
+//         list1 = list1.filter(combo => combo !== deleteCombo[i])
+//       }
 
-      return [list1, list2]
+//       return [list1, list2]
 
-  };
+//   };
 
-  const comboScore =  (list1, added_score) => {
+//   const comboScore =  (list1, added_score) => {
 
-    let count = list1.filter(item => item.startsWith("3")).length;
-    added_score += count * 50;
-    count = list1.filter(item => item.startsWith("4")).length;
-    added_score += count * 75;
-    count = list1.filter(item => item.startsWith("5")).length;
-    added_score += count * 100;
+//     let count = list1.filter(item => item.startsWith("3")).length;
+//     added_score += count * 50;
+//     count = list1.filter(item => item.startsWith("4")).length;
+//     added_score += count * 75;
+//     count = list1.filter(item => item.startsWith("5")).length;
+//     added_score += count * 100;
 
-    return added_score
+//     return added_score
 
-  }
+//   }
     
-  [playerList, partnerList] = processCombos(playerList, partnerList);
-  [partnerList, playerList] = processCombos(partnerList, playerList);
+//   [playerList, partnerList] = processCombos(playerList, partnerList);
+//   [partnerList, playerList] = processCombos(partnerList, playerList);
 
-  // process the left combo score
-  if (playerList.length !== 0) {
-    playerScore = comboScore(playerList, playerScore);
-  }
+//   // process the left combo score
+//   if (playerList.length !== 0) {
+//     playerScore = comboScore(playerList, playerScore);
+//   }
 
-  if (partnerList.length !== 0) {
-    partnerScore = comboScore(partnerList, partnerScore);
-  }
+//   if (partnerList.length !== 0) {
+//     partnerScore = comboScore(partnerList, partnerScore);
+//   }
 
-  // calculate winner
-  if (partnerScore > playerScore) {
-    // setPartnerWin(partnerWin + 1)
+//   // calculate winner
+//   if (partnerScore > playerScore) {
+//     // setPartnerWin(partnerWin + 1)
 
-    // room.players[player_2].score += 1;
+//     // room.players[player_2].score += 1;
 
-  } else if (partnerScore === playerScore) {
-    playerWin += 1
-    // setPartnerWin(partnerWin + 1)
+//   } else if (partnerScore === playerScore) {
+//     playerWin += 1
+//     // setPartnerWin(partnerWin + 1)
 
-    room.players[player_1].score = playerWin;
+//     room.players[player_1].score = playerWin;
 
-  } else {
-    playerWin += 1
-    room.players[player_1].score = playerWin;
+//   } else {
+//     playerWin += 1
+//     room.players[player_1].score = playerWin;
 
-  }
+//   }
 
-  // socket.emit('room:update', room);
+//   // socket.emit('room:update', room);
 
-  console.log('after calculate result')
-  console.log('Player result:', playerList, "score: ", playerWin);
-  console.log('Partner result:', partnerList, "score: ", partnerResult.score);
+//   console.log('after calculate result')
+//   console.log('Player result:', playerList, "score: ", playerWin);
+//   console.log('Partner result:', partnerList, "score: ", partnerResult.score);
 
-  playerStar = playerWin;
-  partnerStar = partnerResult.score
+//   playerStar = playerWin;
+//   partnerStar = partnerResult.score
 
-  playerScore = 0;
-  partnerScore = 0;
+//   playerScore = 0;
+//   partnerScore = 0;
 
-  // console.log('check round in calfunction:', currentRound)
+//   // console.log('check round in calfunction:', currentRound)
 
 
-}
+// }
 
 //================ game logic ======================= (end)
 
