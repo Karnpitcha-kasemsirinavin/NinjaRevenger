@@ -236,9 +236,9 @@ export const MainGame = () => {
       })
 
       socket.on("result", (data) => {
-        playerWin = data.user
-        playerStar = data.user
-        partnerStar = data.partner
+        setPlayerWin(data.user)
+        setPlayerStar(data.user)
+        setPartnerStar(data.partner)
 
         setPartnerReady(false)
         setFinishResult(true);
@@ -293,12 +293,12 @@ export const MainGame = () => {
 
   // Game secton ========================================================================================================
 
-  // const [playerStar, setPlayerStar] = useState(0);
-  // const [partnerStar, setPartnerStar] = useState(0);
-  // const [playerWin, setPlayerWin] = useState(0);
-  let partnerStar = 0;
-  let playerStar = 0;
-  let playerWin = 0;
+  const [playerStar, setPlayerStar] = useState(0);
+  const [partnerStar, setPartnerStar] = useState(0);
+  const [playerWin, setPlayerWin] = useState(0);
+  // let partnerStar = 0;
+  // let playerStar = 0;
+  // let playerWin = 0;
   // const [partnerWin, setPartnerWin] = useState(0);
 
   useEffect(() => {
@@ -446,10 +446,9 @@ export const MainGame = () => {
 
     if (connected){
       // setPartnerStar((room.players[player_2].score));
-      playerStar = playerWin;
-      if (partnerResult.score !== undefined){
-      partnerStar = partnerResult.score;
-      }
+      // if (partnerResult.score !== undefined){
+      // partnerStar = partnerResult.score;
+      // }
     
    
   }
