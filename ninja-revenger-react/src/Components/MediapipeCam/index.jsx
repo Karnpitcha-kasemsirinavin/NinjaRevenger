@@ -49,7 +49,7 @@ const MediapipeCam = () => {
         const { Hands, Camera, drawConnectors, drawLandmarks, HAND_CONNECTIONS } = window;
   
         // Define the desired frame rate (e.g., 0.2 FPS)
-        const desiredFrameRate = (1);
+        const desiredFrameRate = (2);
         const frameInterval = 1000 / desiredFrameRate;
         let lastCaptureTime = 0;
 

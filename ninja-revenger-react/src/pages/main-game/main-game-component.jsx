@@ -243,6 +243,7 @@ export const MainGame = () => {
         setPlayerWin(data.user)
         setPlayerStar(data.user)
         setPartnerStar(data.partner)
+        room.players[player_1].score = playerWin;
 
         setPartnerReady(false)
         setFinishResult(true);
