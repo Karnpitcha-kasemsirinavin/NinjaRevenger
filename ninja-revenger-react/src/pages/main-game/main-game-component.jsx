@@ -252,7 +252,7 @@ export const MainGame = () => {
 
     }
 
-  }, [socket, navigate, peer, partnerId]);
+  }, [socket, navigate, peer, partnerId, countCalculate, currentRound]);
 
 	// Generate name =====================================================================================================
 	const firstnames = ['Tor', 'Foam', 'Mark', 'June', 'Nata', 'Mill'];
