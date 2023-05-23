@@ -238,16 +238,15 @@ export const MainGame = () => {
       socket.on("result", (data) => {
 
         console.log(data)
-        // setPlayerWin(data.user)
-        // setPlayerStar(data.user)
-        // setPartnerStar(data.partner)
+        setPlayerWin(data.user)
+        setPlayerStar(data.user)
+        setPartnerStar(data.partner)
 
-        // setPartnerReady(false)
-        // setFinishResult(true);
-        // setPlusRound(true);
-        // setStart(false);
-        // socket.emit('ready', {from: player_1, to: player_2})
-
+        setPartnerReady(false)
+        setFinishResult(true);
+        setPlusRound(true);
+        setStart(false);
+        socket.emit('ready', {from: player_1, to: player_2})
 
       })
 
