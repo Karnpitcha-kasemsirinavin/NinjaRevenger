@@ -402,7 +402,7 @@ export const MainGame = () => {
     }
     
 
-  }, [selectOption, partnerReady, start, handData, finishResult]);
+  }, [selectOption, partnerReady, start, handData, finishResult, displayTime, currentRound]);
 
 // const [preHandData, setPreHandData] = useState(null)
 
