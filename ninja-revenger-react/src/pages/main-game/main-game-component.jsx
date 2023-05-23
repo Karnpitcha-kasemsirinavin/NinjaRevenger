@@ -237,6 +237,7 @@ export const MainGame = () => {
 
       socket.on("result", (data) => {
         playerWin = data.user
+        playerStar = data.user
         partnerStar = data.partner
 
         setPartnerReady(false)
