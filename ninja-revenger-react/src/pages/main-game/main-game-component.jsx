@@ -130,6 +130,8 @@ export const MainGame = () => {
     }
 
   }, [connected, room.players, player_1, stream, partnerId, peer, renderVideo]);
+
+  const [countCalculate, setCountCalculate] = useState(1)
   
   useEffect(() => {
     if (socket.id === undefined) {
@@ -590,7 +592,7 @@ const handleRoundEnd = async () => {
 
 };
 
-const [countCalculate, setCountCalculate] = useState(1)
+
 
 
 
