@@ -24,7 +24,7 @@ const App = () => {
       <Route path="/room/:id" element={<MainGame />} />
       <Route path="/test-cam" element={<HandDetection />} />
       <Route path="/win" element={<WinPage />} />
-      <Route path="/lost" element={<LosePage />} />
+      <Route path="/lose" element={<LosePage />} />
     </Routes>
     {/* <Loading/> */}
     {/* <LosePage/> */}

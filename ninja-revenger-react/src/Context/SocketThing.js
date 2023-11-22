@@ -4,11 +4,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 var peer = new window.Peer();
 
-console.log('passssssss')
-
 // "undefined" means the URL will be computed from the `window.location` object
 // const URL = process.env.NODE_ENV === 'production' ? undefined : 'https://nostalgic-dream-93159.pktriot.net';
-console.log('runn');
 
 const SocketContext = createContext();
 
@@ -38,13 +35,13 @@ const SocketContextProvider = ({ children }) => {
 
   useEffect(() => {
     peer.on('open', id => {
-      console.log('set user id', id);
+      // console.log('set user id', id);
       setUserId(id)
     })
   }, [joined])
 
   useEffect(() => {
-    const socket = io('https://black-breeze-48357.pktriot.net',
+    const socket = io('https://quizzical-smoke-07674.pktriot.net',
     {
       reconnectionDelayMax: 10000,
       auth: {
@@ -128,17 +125,20 @@ const SocketContextProvider = ({ children }) => {
     console.log(joined, !idEmitted, !(room.private), userId);
     if (joined && !idEmitted && !(room.private) && userId && player_2) {
       if (player_1 === socket.id) {
-        console.log('yang pass yuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu jaaaaaaaaaa')
+        // console.log('yang pass yuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu jaaaaaaaaaa')
         socket.emit('id', { from: player_2, to: player_1, id: userId });
         setIdEmitted(true)
       } else {
-        console.log('yang pass yuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu jaaaaaaaaaa')
+        // console.log('yang pass yuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu jaaaaaaaaaa')
         socket.emit('id', { from: player_2, to: player_1, id: userId });
         setIdEmitted(true)
       }
     }
   }, [joined, idEmitted, player_1, player_2, userId])
 
+  // useEffect(() => {
+  //   console.log('socket', socket.id)
+  // })
 
   return (
     <SocketContext.Provider

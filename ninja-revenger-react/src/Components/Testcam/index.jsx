@@ -3,9 +3,8 @@ import '../MediapipeCam/style.css'
 import { SocketContextGesture } from "../../Context/SocketHand";
 
 const { io } = require('socket.io-client')
-// const url = 'https://peaceful-snow-18663.pktriot.net'
 
-const MediapipeCam = () => {
+const TestCam = () => {
   const { socket_gest } = useContext(SocketContextGesture);
 
   // const { socket } = useContext(SocketContext);
@@ -49,7 +48,7 @@ const MediapipeCam = () => {
         const { Hands, Camera, drawConnectors, drawLandmarks, HAND_CONNECTIONS } = window;
   
         // Define the desired frame rate (e.g., 0.2 FPS)
-        const desiredFrameRate = 1.5;
+        const desiredFrameRate = (1);
         const frameInterval = 1000 / desiredFrameRate;
         let lastCaptureTime = 0;
 
@@ -67,9 +66,9 @@ const MediapipeCam = () => {
             img.src = imageData;
             // console.log(imageData);
             // console.log(socket_gest.id);
-
-            // ! at start it not comment
             socket_gest.emit('data', { from: socket_gest.id, image: imageData })
+
+            
 
             // Append the image element to the body
             // document.body.appendChild(img);
@@ -160,12 +159,12 @@ loadScripts();
 }, []);
 
   return (
-    <div className="userVideo">
-      <video hidden className="input-video"/>
-      <canvas className="output-canvas" 
-      width="1300px" height="700px"/>
-    </div>
+    <>
+      <video hidden className="input-video"></video>
+      <canvas className="output-canvas" width="1300px" height="700px">
+      </canvas>
+    </>
   )
 };
 
-export default MediapipeCam;
+export default TestCam;

@@ -17,8 +17,11 @@ import art5 from '../../images/art5.png';
 import art6 from '../../images/art6.png';
 import art7 from '../../images/art7.png';
 import art8 from '../../images/art8.png';
+import roundImg from '../../images/round-img.png';
 import  BlackScreenAnimation from '../loading'
 import { connect } from 'socket.io-client';
+import { colorGesture , gestureName, colorCombo,
+  combo3Name, combo4Name, combo5Name,comboDisplay} from './comboStyling.jsx';
 
 
 
@@ -46,14 +49,7 @@ export const MainGame = () => {
   // animation 
   const [callLoading, setCallLoading] = useState(false)
 
-
- // Game var =======================================================
-
-    // time
-    const [currentRound, setCurrentRound] = useState(0);
-    const [start, setStart] = useState(false); // Add start
-    const [displayTime, setDisplayTime] = useState(false);
-
+  // ? create canvas for user? (already in mediaCam)
   const captureImage = () => {
     const video = userVideo.current
     const canvas = document.createElement('canvas');
@@ -66,77 +62,58 @@ export const MainGame = () => {
     // photo.setAttribute("src", data);
   }
   
-    // result
-    const [result, setResult] = useState({
-      shown: true,
-      options: [],
-    });
-  
-    const [partnerResult, setPartnerResult] = useState({
-      shown: true,
-      options: [],
-      length: 0
-    });
-  
-    // Option for each player
-    const [play1Option, setPLay1Option] = useState(null); // each Option
-    const [optionList, setOptionList] = useState([]) // list for option
-    const [selectOption, setSelectOption] = useState(false)
-    // const [play2Option, setPLay2Option] = useState([]);
-    const [resultArr, setResultArr] = useState({
-      3: [],
-      4: [],
-      5: [],
-    });
-  
-    const [finishResult, setFinishResult] = useState(false);
-    const [partnerReady, setPartnerReady] = useState(false);
+  // result
+  const [result, setResult] = useState({
+    shown: true,
+    options: [],
+  });
 
-     // Game var =======================================================
-
+  const [partnerResult, setPartnerResult] = useState({
+    shown: true,
+    options: [],
+    length: 0
+  });
+  
+  
+  // status of player two joining room
   const [checkJoin, setCheckJoin] = useState(false)
-  
+
+  // ! Generate name
+	const firstnames = ['Tor', 'Foam', 'Mark', 'June', 'Nata', 'Mill'];
+  const surnames = ['1nwza', 'SudLhor', 'SudSuay', 'Romanoff', 'React', 'HTML'];
 
   useEffect(() => {
-    let roomId = location.pathname.split("/")[2];
-    let size = Object.keys(socket).length;
-  
-    // if stranger then join room
-    if (size > 0 && room.type === 'stranger' && !checkJoin) {
-      socket.emit("room:join", { roomId }, (err, room) => {
-        if (err) navigate("/");
-      });
-      setCheckJoin(true)
-    }
+    generateRandomName();
+    selectRandomImage();
+    socket.emit("room:update", room);
+  }, [])
+
+	const generateRandomName = () => {
+    // console.log('passs generator')
+		const randomIndexFirst1 = Math.floor(Math.random() * firstnames.length);
+    const randomIndexLast1 = Math.floor(Math.random() * surnames.length);
+
+		const name1 = firstnames[randomIndexFirst1] + " " +  surnames[randomIndexLast1];
+
+    room.players[player_1].name = name1;	
+	};
+
+  const images = [art1, art2, art3, art4, art5, art6, art7, art8];
+
+  const selectRandomImage = async() => {
+    const randomIndexImage1 = Math.floor(Math.random() * images.length);
     
+    room.players[player_1].image = randomIndexImage1;	
+  }
 
-  }, [socket, room, location.pathname, navigate]);
 
-  useEffect(() => {
-    console.log(connected, caller, stream, countConnect === 0, partnerId);
-    if (connected && caller && stream && countConnect === 0 && partnerId) {
-      const call = peer.call(partnerId, stream);
-      // console.log('calling', partnerId);
-      setCountConnect(1);
   
-      call.on('stream', remote => {
-        if (partnerVideo.current !== remote && renderVideo) {
-        partnerVideo.current.srcObject = remote;
-        // console.log('user', stream, '\npartner', remote);
-        socket.emit('ready', {from: player_1, to: player_2})
-        setRenderVideo(false);
-        }
-      });
-    }
-
-  }, [connected, room.players, player_1, stream, partnerId, peer, renderVideo]);
-
-  const [countCalculate, setCountCalculate] = useState(1)
-  
+  // ! identifying room and set ready status for game
   useEffect(() => {
     if (socket.id === undefined) {
       navigate(`/`);
     } else {
+      // * assign video of user
       var getUserMedia = navigator.getUserMedia;
       getUserMedia({ video: true }, stream => {
         userVideo.current = stream;
@@ -145,75 +122,37 @@ export const MainGame = () => {
         //   captureImage()
         // }, 2000);
       });
+    let roomId = location.pathname.split("/")[2];
+    let size = Object.keys(socket).length;
+    // ! currently set to check when stranger mode
+    // if there is another person joining room
+    if (size > 0 && room.type === 'stranger' && !checkJoin) {
+      socket.emit("room:join", { roomId }, (err, room) => {
+        if (err) navigate("/");
+      });
+      setCheckJoin(true)
+    }
+
+    socket.on('exited', data => {
+      // peer.disconnect()
+      // peer.destroy()
+      setPartnerId('')
+      setConnected(false)
+      setIdEmitted(false)
+      setJoined(false)
+      navigate(`/`)
+    })
+
+    socket.on('answer', data => {
+      // console.log('received your id', data, 'thanks !!!');
+      setPartnerId(data.id)
+      // setConnected(true);
+    })
     
-      if (!connected) {
-        socket.on('id', data => {
-          // console.log('try to connect');
-          // console.log(data);
-          console.log('connecting to peer', data.id);
-          socket.emit('answer', { from: player_1, to: data.from, id: userId })
-          var conn = peer.connect(data.id);
-          setPartnerId(data.id);
-          // console.log('partnerid ', partnerId)
-        });
-      }
-
-      socket.on('exited', data => {
-        // peer.disconnect()
-        // peer.destroy()
-        setPartnerId('')
-        setConnected(false)
-        setIdEmitted(false)
-        setJoined(false)
-        navigate(`/`)
-      })
-
-      socket.on('answer', data => {
-        console.log('received your id', data, 'thanks !!!');
-        setPartnerId(data.id)
-        // setConnected(true);
-      })
-  
-      peer.on('connection', (err) => {
-        console.log('the pair is connected!!!');
-        setConnected(true);
-        // if (currentRound === 0){
-        // setCurrentRound(currentRound + 1)
-        // }
-
-        // console.log('current round from connection: ', currentRound)
-        socket.emit('ready', {from: player_1, to: player_2})
-        
-      });
-
-      //console.log('current round from outside connection: ', currentRound)
-  
-      peer.on('disconnected', () => {
-        console.log('disconnected bye see u');
-      });
-      
-      // problem make video jerky
-      peer.on('call', call => {
-        getUserMedia({ video: true }, stream => {
-          call.answer(stream);
-          // console.log('answering');
-        });
-  
-        call.on('stream', remote => {
-          // console.log('render', renderVideo);
-          if (partnerVideo.current.srcObject !== remote && renderVideo) {
-          partnerVideo.current.srcObject = remote;
-          socket.emit('ready', {from: player_1, to: player_2})
-          setRenderVideo(false);
-          }
-        });
-      });
-  
-      socket.on("friend_disconn", () => {
-        console.log('friend bye');
+    socket.on("friend_disconn", () => {
+        // console.log('friend bye');
         navigate(`/`);
       });
-      
       socket.on('caller', data => {
         // console.log('turn caller on');
         setCaller(true)
@@ -221,679 +160,351 @@ export const MainGame = () => {
           
           socket.emit('id', { from: player_1, to: player_2, id: userId })
         }
-        // console.log(partnerId);
-        // if (connected && room.players[player_1].caller && stream) {
-        //   const call = peer.call(partnerId, stream);
-        //   console.log('calling', partnerId);
-      
-        //   call.on('stream', remote => {
-        //     partnerVideo.current.srcObject = remote;
-        //     console.log('user', stream, '\npartner', remote);
-        //   });
-        // }
       })
-
       socket.on("friend_update", (data) => {
-
-        //console.log('get friend data', data)
         setPartnerResult({
           shown: true,
           options: data.result,
           length: data.length,
           score: data.score,
         })
-        // setStartCalculate(true);
-      })
-
-      socket.on("result", (data) => {
-
-        console.log(data)
-        setPlayerWin(data.user)
-        setPlayerStar(data.user)
-        setPartnerStar(data.partner)
-        room.players[player_1].score = playerWin;
-
-        setPartnerReady(false)
-        setFinishResult(true);
-        setPlusRound(true);
-        socket.emit('ready', {from: player_1, to: player_2})
-
       })
 
     }
+  }, [socket, room]);
 
-  }, [socket, navigate, peer, partnerId, countCalculate, currentRound]);
-
-	// Generate name =====================================================================================================
-	const firstnames = ['Tor', 'Foam', 'Mark', 'June', 'Nata', 'Mill'];
-  const surnames = ['1nwza', 'SudLhor', 'SudSuay', 'Romanoff', 'React', 'HTML'];
-	const [randomName1, setRandomName1] = useState('');
-  const [randomName2, setRandomName2] = useState('');
 
   useEffect(() => {
-    generateRandomName();
-    selectRandomImage();
-    socket.emit("room:update", room);
-  }, [player_1])
 
-	const generateRandomName = () => {
-		const randomIndexFirst1 = Math.floor(Math.random() * firstnames.length);
-    const randomIndexLast1 = Math.floor(Math.random() * surnames.length);
+    // ! establish peer connection 
+    if (!connected) {
+      socket.on('id', data => {
+        // console.log('try to connect');
+        // console.log(data);
+        console.log('connecting to peer', data.id);
+        socket.emit('answer', { from: player_1, to: data.from, id: userId })
+        var conn = peer.connect(data.id);
+        setPartnerId(data.id);
+        // console.log('partnerid ', partnerId)
+      });
+    }
 
-		const name1 = firstnames[randomIndexFirst1] + " " +  surnames[randomIndexLast1];
+  }, [connected]);
 
-    room.players[player_1].name = name1;	
-    
-		;
-	};
-
-  // Random Profile
-  const images = [art1, art2, art3, art4, art5, art6, art7, art8];
-  // const [randomImage1, setRandomImage1] = useState('');
-
-
-  const selectRandomImage = () => {
-    const randomIndexImage1 = Math.floor(Math.random() * images.length);
-    
-    room.players[player_1].image = randomIndexImage1;	
-    // const image1 = images[randomIndexImage1]
-    // const image2 = images[randomIndexImage1]
-    
-  }
-
-
-  // Game secton ========================================================================================================
-
-  const [playerStar, setPlayerStar] = useState(0);
-  const [partnerStar, setPartnerStar] = useState(0);
-  const [playerWin, setPlayerWin] = useState(0);
-  // let partnerStar = 0;
-  // let playerStar = 0;
-  // let playerWin = 0;
-  // const [partnerWin, setPartnerWin] = useState(0);
+  const [status, setStatus] = useState('finished')
 
   useEffect(() => {
-    if (connected) {
+    // ! when establish peer connection
+    peer.on('connection', (err) => {
+      setConnected(true);
+    });
 
-      if (playerStar === 1 || partnerStar === 1){
-        let roomId = location.pathname.split("/")[2];
-        socket.emit('room:delete', { roomId })
-        setPartnerId('')
-        setConnected(false)
-        setIdEmitted(false)
-        setJoined(false)
-        if (playerWin === 1) {
-          navigate(`/win`);
-        } else {
-          navigate(`/lost`);
+    peer.on('disconnected', () => {
+      // console.log('disconnected bye see u');
+    });
+    
+    // problem make video jerky
+    peer.on('call', call => {
+      var getUserMedia = navigator.getUserMedia;
+      getUserMedia({ video: true }, stream => {
+        call.answer(stream)
+    });
+
+    if (renderVideo) {
+      call.on('stream', remote => {
+        // console.log('render', renderVideo);
+        if (partnerVideo.current.srcObject !== remote && renderVideo) {
+        partnerVideo.current.srcObject = remote;
+        console.log('i get ur video')
+        // cannot get ans for this one
+        // ! start round 1
+        setTriggerStart(1)
+        setTimeout(() => {
+          socket.emit('ready', { from: player_1, to: player_2 });
+        }, 5000);
+        setRenderVideo(false);
         }
-      }
-  }
-}, [navigate, playerStar, partnerStar, connected]);
-  
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const numberArray1 = room.players[player_1].caller?
-          // [2,17,1,16,15,18,13]:[11,16,8,14,7,12,0]
-      // [0,0]: []
-      // [15, 18, 13, 2, 17, 1, 16, 9, 13, 3]: [4, 14, 15, 12, 13, 18, 7, 17, 5, 18, 11, 10]
-      [15, 18, 13, 5, 18, 11, 10, 9, 13, 3, 0]: [16, 0, 17, 6, 7, 9, 13, 3, 15, 18, 13]
-
-  const numberArray2 = room.players[player_1].caller?
-  [2,17,1,16,15,18,13]:[11,16,8,14,7,12,0]
-
-  const [preHandData, setPreHandData] = useState(null)
-
-
-
-  // show start image
-  useEffect(() => {
-    const round_img = document.getElementById("round");
-    const round_num = document.getElementById("round-num");
-    const start_img = document.getElementById("start_img");
-    
-    if (connected && currentRound === 1) {
-      setTimeout(() => {
-        start_img.style.visibility = 'visible';
-      }, 2000); // make it visible after 2 seconds
-        
-      setTimeout(() => {
-        start_img.style.visibility = 'hidden';
-        round_img.style.visibility = 'visible';
-        round_num.style.visibility = 'visible';
-      }, 2000 + 3000); // make it visible after 5 secs
-      
-    }
-  }, [connected, currentRound])
-  
-  const [getOption, setGetOption] = useState(true)
-  const [countRound, setCountRound] = useState(false)
-  // for start
-  useEffect(() => {
-    // for each round
-    const newRound = () => {
-    // generating test ********************
-      if (currentRound === 1) {
-      setTimeout(() => {
-        setDisplayTime(true);
-      }, 2000 + 3000); // make it visible after 5 secs
-    } else {
-      console.log('initialize display time')
-      setTimeout(() => {
-        setDisplayTime(true);
-      }, 2000); // make it visible after 5 secs
-    }
-
-    // console.log('get current index for arr: ', currentIndex)
-    // if (displayTime && !selectOption && (currentIndex < (numberArray1.length - 1))) {
-    // setTimeout(() => {
-    //   // console.log('generate number')
-
-    //   setPLay1Option(numberArray1[currentIndex]);
-    //   setCurrentIndex(currentIndex + 1);
-    //   setSelectOption(true);
-    // }, currentIndex * 500); // 1 sec after start round
-
-    //console.log('pregesture: ', play1Option)
-   //console.log('current gesture: ', preHandData)
-
-    // socket.emit("room:update", room)
-
-    if (displayTime && !selectOption && preHandData !== handData && handData !== -1 && handData !== null){
-
-      console.log("check optionList: ", optionList, "check friendList: ", room.players[player_2].option )
-      
-      setPLay1Option(handData)
-      setSelectOption(true)
-      setPreHandData(handData)
-      // socket.emit("friend_result", {from: player_1, to: player_2, result: result.options, length: (result.options).length})
-      // socket.emit("room:update", room)
-
-      // // console.log('gesture from model: ', play1Option)
-  } 
-
-  }
-
-  // start game
-    //// console.log('start status:', start)
-
-    if (start && partnerReady && finishResult) {
-
-      // // console.log('partner ready?', partnerReady, ' round: ', currentRound)
-
-      newRound()
-      
-    } else if (currentRound === 1){
-
-      if (start && partnerReady) {
-      // // console.log('partner ready?', partnerReady, ' round: ', currentRound)
-
-      newRound()
-
-      }
-    }
-    
-
-  }, [selectOption, partnerReady, start, handData, finishResult, displayTime, currentRound]);
-
-// const [preHandData, setPreHandData] = useState(null)
-
-  useEffect(() => {
-
-    // console.log('result ', result.options)
-
-    if (selectOption && displayTime) {
-      if (play1Option !== null && play1Option !== undefined && play1Option !== -1 ){
-        // console.log('gesture from model: ', play1Option)
-      calculateCombo();
-      socket.emit("friend_result", {from: player_1, 
-        to: player_2, 
-        result: result.options, 
-        length: (result.options).length,
-        score: playerWin
-      })
-      socket.emit("room:update", room);
-      // setPreHandData(play1Option).
-      }
-      setSelectOption(false);
-      // update when player have new option
-      
-    }
-
-    if (connected){
-      // setPartnerStar((room.players[player_2].score));
-      // if (partnerResult.score !== undefined){
-      // partnerStar = partnerResult.score;
-      // }
-    
-   
-  }
-
-
-  }, [play1Option, displayTime, selectOption, start, connected, playerStar, partnerStar, player_2, result])
-
-   // check ready status for next round 
-
-   const [plusRound, setPlusRound] = useState(true)
-
-    useEffect(() => {
-    
-    socket.on('partnerReady', () => {
-      setPartnerReady(true);
-      //console.log('partnerReady')
-
-      // if (currentRound === 1) {
-      //   setFinishResult(true)
-      // }
-      
+      })}
     });
 
-    socket.on('startTime', () => {
-      // setCallLoading(false);
-      setStart(true);
+    //! when peer connect find caller get video
+    if (connected && caller) {
+      const call = peer.call(partnerId, stream);
+      // console.log('calling', partnerId);
+      call.on('stream', remote => {
+        if (partnerVideo.current !== remote && renderVideo) {
+        partnerVideo.current.srcObject = remote;
+        console.log('i get ur video')
+        // player 1 receive form 2
+        setTriggerStart(1)
+        setTimeout(() => {
+          socket.emit('ready', { from: player_1, to: player_2 });
+        }, 5000);
+        setRenderVideo(false);
+        }});
+    }
 
-      if (plusRound){
-        setCurrentRound(currentRound + 1)
-        setPlusRound(false)
+    socket.on('playerReady', data => {
+    // console.log('receive ready status ',data)
+    if (data.from !== undefined && status === 'finished') {
+      setStatus('round-ready')
+      // startCountdownTimer()
+    }})
 
-        setPartnerResult({
-          shown: true,
-          options: [],
-          length: 0,
-        })
+  }, [peer, connected])
   
-        setResult({
-          shown: false,
-          options: [],
-        });
-  
-        setOptionList([]);
-  
-        room.players[player_1].option = []; 
-        // socket.emit("room:update");
-      }
-      //console.log('start time , round: ', currentRound)
+  const [round, setRound] = useState(0)
+  const [playerOption, setPlayerOption] = useState([])
+  const [partnerOption, setPartnerOption] = useState([])
+  const [preHand, setPreHand] = useState(-1) 
+  const [finalList, setFinalList] = useState([])
+  const [checkIndex, setCheckIndex] = useState(0)
+  const [playerCombo, setPlayerCombo] = useState([])
+  const [playerStar, setPlayerStar] = useState(0)
+  const [partnerStar, setPartnerStar] = useState(0)
+  const [triggerStart, setTriggerStart] = useState(0)
 
-      
-      
-    });
+  const getColor = (text) => { 
+    return colorGesture[text]
+  };
 
-    socket.on("friend_update", (data) => {
-      console.log(data);
-      setPartnerResult({
-        shown: true,
-        options: data.result,
-        length: data.length,
-        score: data.score,
-      })
-      // console.log("check if updated================", partnerResult.options)
-    });
-
-
-   
-  }, [start,finishResult, partnerReady, room, currentRound, player_1, player_2, currentRound]);
-
+  const comboColor = (text) => {
+    return colorCombo[text]
+  }
 
   useEffect(() => {
-    if (start && !displayTime && !partnerReady && !finishResult) {
-     // // console.log('Starting a new round');
-      
-      // setPartnerStar(partnerWin.toString())
+  if (status === 'finished') {
+    // console.log('status from finish  ',status)
+    // ! let partner know 
+    socket.emit('finishedRound', 
+    {from: player_1, to: player_2, 
+      optionList: finalList, round: round, roomId: roomId})
 
-      // setStart(false)
-      setCurrentIndex(0) // generate test
-      setSelectOption(false);
-      setOptionList([]);
-      // room.players[player_1].option = [];
-      // socket.emit("room:update", room);
-    }
+    // reset all variable
+    setFinalList([])
+    setPlayerOption([])
+    setPartnerOption([])
+    setPlayerCombo([])
+    setCheckIndex(0)
+    setPreHand(-1)
 
-    if (connected) {
+    // ! start next round 
+    socket.on('playerFinish', data => {
+      console.log(data)
+      if (data.result === 'win') {
+        setPlayerStar(playerStar+1)
+      } else if (data.result === 'draw') {
+        setPlayerStar(playerStar+1)
+        setPartnerStar(partnerStar+1)
+      } else {
+        setPartnerStar(partnerStar+1)}
 
-      room.players[player_1].option = result.options;
-      console.log("info check", countCalculate, currentRound, finishResult)
+    //setTriggerStart(true)
+    setTimeout(() => {
+      socket.emit('ready', { from: player_1, to: player_2 });
+    }, 5000);
+    })
+  }
+  // ! each round of game
+  if (status === 'round-ready'  && round < 5){
+      setRound(round+1)
+      setTriggerStart(2)
+      startCountdownTimer()}
+  //console.log(status)
+  if (status !== 'round-ready' && 
+        status !== 'finished') {
+          console.log(playerOption)
+          generateOption() }
+  }, [status])
 
-    }
-
-  }, [start, displayTime, playerStar, connected, finishResult, partnerReady, player_1, player_2, play1Option]);
-
-  // finishResult', 'partnerReady', 'player_1', 'player_2', 'room', and 'socket'
-
-  // time over for each round
-
-const [startCalculate, setStartCalculate] = useState(false)
-
-const handleRoundEnd = async () => {
-
-  console.log(countCalculate)
-  // // console.log('Round End');
-  setFinishResult(false)
-  setPreHandData(null)
-  setDisplayTime(false);
-  setStart(false);
-
-
-  socket.emit("friend_result", { 
-    to: player_2, 
-    result: result.options, 
-    length: (result.options).length,
-    score: playerWin
-  })
-
-
-  console.log('countcalculate', countCalculate, currentRound)
-  if (!finishResult && (countCalculate === currentRound)){
-   // console.log('pass calculate result')
-   console.log('countcalculate inside', countCalculate, currentRound)
-   socket.emit('calResult', {roomId, to: player_2, from: player_1, 
-  partnerList: partnerResult.options, playerList: result.options, 
-  playerScore: playerWin, partnerScore:partnerResult.score})
-  //  calculateResult();
-   setCountCalculate(countCalculate + 1)
-
-  //  setPartnerReady(false)
-  //  setFinishResult(true);
-  //  setPlusRound(true);
-  //  setStart(false);
-  //  socket.emit('ready', {from: player_1, to: player_2})
-  //  setStartCalculate(false);
+  useEffect(() => {
+    socket.on('partnerOption', data => {
+      //console.log(data)
+      if (data.optionList.length !== 0) {
+        setPartnerOption(data.optionList)
+      }
+    })
   
-  //  if (finishResult) {
-  //   socket.emit('ready', {from: player_1, to: player_2})
-  //   await wait(5000);
+  }, [])
 
-  //  }
+  const addOption = (option) => {
+    setPlayerOption(prevOptions => [...prevOptions, option]);
+    setFinalList(prevOptions => [...prevOptions, option]);
+  }
 
-  //  console.log('finish round')
-   }
+  useEffect(() => {
+    // console.log('send')
+    if (playerOption.length !== 0) {
+      // checkCombo(playerOption[playerOption.length-1])
+    }
+    checkCombo()
+    socket.emit('sendOption', { from: player_1, to: player_2, optionList: playerOption });
+  }, [playerOption])
+  
+  // ! navigate after round 5
+  useEffect(() => {
+    if (round === 5) {
+      if (playerStar === partnerStar) {
+        navigate(`/win`)
+      } else if (partnerStar > playerStar) {
+        navigate(`/lose`)
+      } else if (playerStar > partnerStar) {
+        navigate(`/win`)}}
 
+  }, [playerStar, partnerStar])
 
-};
+  const [triggerTest, setTriggerTest] = useState(false)
 
+  async function generateOption() {
+    console.log(handData)
+    if (handData !== -1 && handData !== preHand) {
+      //console.log(handData)
+      // ! real
+      addOption(gestureName[handData])
+      // !test
+      // 4-A
+      // addOption('Bullet 弾丸')
+      // addOption('Serpant 蛇')
+      // addOption('Bomb 爆弾')
+      // addOption('Rat ネズミ')
+      // 5-A
+      // addOption('Rat ネズミ')
+      // addOption('Bird 鳥')
+      // addOption('Serpant 蛇')
+      // addOption('Dog 犬')
+      // addOption('Dragon 竜')
+      // finalList = [...finalList, gestureName[handData]];
+      setPreHand(handData)
+    }
 
+    // ! test
+    // const optionsToAdd = [
+    //   'Rat ネズミ',
+    //   'Bird 鳥',
+    //   'Serpant 蛇',
+    //   'Dog 犬',
+    //   'Dragon 竜'
+    // ];
+  
+    // if (handData !== -1 && handData !== preHand && triggerTest === false) {
+    //   for (let i = 0; i < optionsToAdd.length; i++) {
+    //     await new Promise(resolve => {
+    //       setTimeout(() => {
+    //         addOption(optionsToAdd[i]);
+    //         resolve();
+    //       }, 500 * i); // Add each option every i seconds
+    //     });
+    //   }
+    //   setPreHand(handData);
+    //   setTriggerTest(true)
+    // }
+  }
 
+  function checkCombo() {
+    let found = false
+    let checkingLength = finalList.length - checkIndex
+    //console.log(checkingLength)
 
-
-//================ game logic ======================= (start)
-// calculate gesture and combo for each player
-const calculateCombo = async () => {
-  let added_arr = {s:false ,4:false ,5:false}
-  const players = room?.players;
-
-  optionList.push(play1Option.toString());
-
-  //console.log('i try calculate combo')
-
-  for (let i = 3; i <= 5; i++) {
-
-    if (resultArr[i].length !== 0){
-      resultArr[i] = [...resultArr[i], play1Option]
-      added_arr[i] = true;
+    // check 5
+    if (checkingLength >= 5) {
+        let combo = finalList[checkIndex] + 
+        finalList[checkIndex+1] + finalList[checkIndex+2]+ 
+        finalList[checkIndex+3]+ finalList[checkIndex+4]
+        console.log(combo)
+        if (combo5Name[combo] !== undefined) {
+          let newArray = finalList.filter((_, index) => index < checkIndex || index > checkIndex + 4)
+          console.log(newArray)
+          newArray = [...newArray, combo5Name[combo]]
+          setCheckIndex(checkIndex+1)
+          setFinalList(newArray)
+          setPlayerCombo(currentcombo => [...currentcombo, combo5Name[combo]])
+          found = true
+      } else {
+        setCheckIndex(checkIndex+1)
+      }}
+    // check 4
+    if (found === false && checkingLength >= 4) {
+    for (let i = 0; i< 2; i++) {
+      let combo = finalList[checkIndex+i] + 
+        finalList[checkIndex+1+i] + finalList[checkIndex+2+i]+ 
+        finalList[checkIndex+3+i]
+      if (combo4Name[combo] !== undefined
+        && finalList[checkIndex+3+i] !== undefined) {
+        //setCheckIndex(checkIndex+ 2+i)
+        setCheckIndex(checkIndex+1+i)
+        let newArray = finalList.filter((_, index) => index < checkIndex+i || index > checkIndex+3+i)
+        newArray = [...newArray, combo4Name[combo]]
+        setFinalList(newArray)
+        setPlayerCombo(currentcombo => [...currentcombo, combo4Name[combo]])
+        found = true
+        break;
+      }
     }}
-    
-    // add arr5
-    if (!added_arr[5] && (play1Option === 16 || play1Option === 4)) {
-        // // console.log('get 5')
-          resultArr[5] = [...resultArr[5], play1Option]
-      // add arr4
-    } else if (!added_arr[4]  && (play1Option === 14 || 
-        play1Option === 5 || play1Option === 2 || play1Option === 19)) {
-          resultArr[4] = [...resultArr[4], play1Option]
-
-          // add arr3
-      } else if (!added_arr[3]  && (play1Option === 18 || 
-            play1Option === 15 || play1Option === 9 || play1Option === 11)) {
-              resultArr[3] = [...resultArr[3], play1Option]
+    // check 3
+    if (found === false && checkingLength >= 3) {
+    for (let i = 0; i< 3; i++) {
+      let combo = finalList[checkIndex+i] + 
+        finalList[checkIndex+1+i] + finalList[checkIndex+2+i]
+        //console.log(combo)
+      if (combo3Name[combo] !== undefined 
+        && finalList[checkIndex+2+i] !== undefined) {
+        //setCheckIndex(checkIndex+1+i)
+        setCheckIndex(checkIndex+1+i)
+        let newArray = finalList.filter((_, index) => index < checkIndex+i || index > checkIndex+2+i)
+        newArray = [...newArray, combo3Name[combo]]
+        setFinalList(newArray)
+        found = true
+        setPlayerCombo(currentcombo => [...currentcombo, combo3Name[combo]])
+        break;
       }
-  
-  // // console.log('arr3', resultArr[3])
-  // // console.log('arr4', resultArr[4])
-  // // console.log('arr5', resultArr[5])
-  // // console.log('Option', play1Option)
-
-  const Combo = {
-    3: ['18-7-17','15-18-13','9-13-3','11-16-8'],
-    4: ['14-7-12-0','5-18-11-10','2-17-1-16','19-13-8-3'],
-    5: ['16-0-17-6-7','4-14-15-12-13'],
+    }}
+    // if (found === false) {
+    //   setCheckIndex(checkIndex+1)
+    // }
   }
 
-  // check if any arr is full
-  if (resultArr[3].length === 3) {
-    // for (i = 0; i < Combo[3])
-  }
-
-  for (let i = 3; i <= 5; i++) {
-    if (resultArr[i].length === i) {
-        let check_string = resultArr[i].join('-');
-
-        // // console.log('check string: ', check_string)
-      for (let j = 0; j < Combo[i].length; j++) {
-        if (check_string === Combo[i][j]){
-          // // console.log('check get combo', check_string);
-
-          // change to combo
-          let position = (i-1 + (2*i-1)*(-1))
-          // // console.log('position ', position)
-          optionList.splice(position);
-          optionList.push([i,j].join('-'));
-
-          resultArr[3].length = 0
-          resultArr[4].length = 0
-          resultArr[5].length = 0
-          break
-
-        }
+  function startCountdownTimer() {
+    let countdown = 10;
+    const countdownInterval = setInterval(() => {
+      if (countdown > 0) {
+      countdown--;
+      //console.log('countdown: ',countdown)
+      setStatus(countdown.toString())
+    } else {
+        setStatus('finished')
+        clearInterval(countdownInterval);
       }
-    }
+    }, 1000)
+    return () => clearInterval(countdownInterval);
   }
-  // console.log('list: ', optionList);
-  setResult({
-    shown: true,
-    options: optionList,
-  })
-  // console.log('result options:', result.options);
-  room.players[player_1].option = result.options;
-};
-
-// calculate the result between 2 players
-
-const wait = (milliseconds) => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, milliseconds);
-  });
-};
-
-// const calculateResult = () => {
-//   const comboList = {
-//     '3-0': '3A-1',
-//     '3-1': '3P',
-//     '3-2': '3C',
-//     '3-3': '3A-2',
-//     '4-0': '4P',
-//     '4-1': '4C',
-//     '4-2': '4A-1',
-//     '4-3': '4A-2',
-//     '5-0': '5A',
-//     '5-1': '5P'
-//   };
-
-//   let playerList = [];
-//   let partnerList = [];
-//   let playerScore = 0;
-//   let partnerScore = 0;
-
-//   const maxLength = Math.max((partnerResult.options).length, (result.options).length);
-
-//   //console.log('before calculate result')
-//   //// console.log('Last result:\nPlayer:', result.options, '\nPartner:', partnerResult.options);
-
-//  // change into combo type
-
-//   for (let i = 0; i < maxLength; i++) {
-//     if (i < (result.options).length) {
-
-//       if ((result.options[i]).length > 2){
-//       playerList.push(comboList[(result.options[i])])
-//       } else {
-//         playerScore += 50;
-//       }
-//     }
-//     if (i < (partnerResult.options).length) {
-
-//       if ((partnerResult.options[i]).length > 2){
-//         partnerList.push(comboList[(partnerResult.options[i])])
-//         } else {
-//           partnerScore += 50;
-//         }
-//     }
-//   }
-
-//   // const removeCombo = (combo, list) => {
-//   //   list.splice(list.findIndex((str) => str === combo), 1);
-//   // };
-
-  
-//   // console.log('Player result:', playerList);
-//   // console.log('Partner result:', partnerList);
-
-//   const processCombos = (list1, list2) => {
-//     const deleteCombo = [];
-    
-//     list1.forEach((combo) => {
-
-//       if (combo[1] === 'P') {
-//         // prevention
-//         const counterString = combo[0] + 'C';
-//         const index = list2.findIndex((str) => str.startsWith(combo[0]) 
-//                                                 && !str.startsWith(counterString));
-//         if (index >= 0) {
-//           list2.splice(index, 1);
-//           deleteCombo.push(combo);
-//         }
-//       } else if (combo[1] === 'C') {
-//         //counter attack
-
-//         const loopNum = 5 - parseInt(combo[0]) + 1;
-//         for (let j = 1; j < loopNum; j++) {
-
-//           const attackCombo = (parseInt(combo[0]) + j).toString() + 'A';
-//           const index = list2.findIndex((str) => str.startsWith(attackCombo));
-
-//           if (index >= 0) {
-//             list2.splice(index, 1);
-//             deleteCombo.push(combo);
-//             break;
-//           }
-//         }
-//       }
-//     });
-
-//     for (let i = 0; i < deleteCombo.length; i++){
-//         list1 = list1.filter(combo => combo !== deleteCombo[i])
-//       }
-
-//       return [list1, list2]
-
-//   };
-
-//   const comboScore =  (list1, added_score) => {
-
-//     let count = list1.filter(item => item.startsWith("3")).length;
-//     added_score += count * 50;
-//     count = list1.filter(item => item.startsWith("4")).length;
-//     added_score += count * 75;
-//     count = list1.filter(item => item.startsWith("5")).length;
-//     added_score += count * 100;
-
-//     return added_score
-
-//   }
-    
-//   [playerList, partnerList] = processCombos(playerList, partnerList);
-//   [partnerList, playerList] = processCombos(partnerList, playerList);
-
-//   // process the left combo score
-//   if (playerList.length !== 0) {
-//     playerScore = comboScore(playerList, playerScore);
-//   }
-
-//   if (partnerList.length !== 0) {
-//     partnerScore = comboScore(partnerList, partnerScore);
-//   }
-
-//   // calculate winner
-//   if (partnerScore > playerScore) {
-//     // setPartnerWin(partnerWin + 1)
-
-//     // room.players[player_2].score += 1;
-
-//   } else if (partnerScore === playerScore) {
-//     playerWin += 1
-//     // setPartnerWin(partnerWin + 1)
-
-//     room.players[player_1].score = playerWin;
-
-//   } else {
-//     playerWin += 1
-//     room.players[player_1].score = playerWin;
-
-//   }
-
-//   // socket.emit('room:update', room);
-
-//   console.log('after calculate result')
-//   console.log('Player result:', playerList, "score: ", playerWin);
-//   console.log('Partner result:', partnerList, "score: ", partnerResult.score);
-
-//   playerStar = playerWin;
-//   partnerStar = partnerResult.score
-
-//   playerScore = 0;
-//   partnerScore = 0;
-
-//   // console.log('check round in calfunction:', currentRound)
 
 
-// }
-
-//================ game logic ======================= (end)
-
+  // ! now using canvas for user video
   // make streams into video element
-  let UserVideo;
-    UserVideo = (
-    <video ref={userVideo} autoPlay/>
-  );
+  // let UserVideo;
+  // console.log('user video', UserVideo)
+  // UserVideo = (
+  //   <video ref={userVideo} autoPlay/>
+  // );
 
   let PartnerVideo;
   PartnerVideo = (
     <video ref={partnerVideo} autoPlay/>
   );
-  
-  //landmark video
-  const canvasRef = useRef();
 
+  //landmark video
+  // const canvasRef = useRef();
 // HTML section =========================================================================================================
 
   return (
   <div className='maingame-container'>
     <div className='wrapper'>
-      <img
+      {/* <img
         className='start-img'
         src={require("../../images/start.png")}
         id ='start_img'
         
-      />
-      <img
-        className='round'
-        src={require("../../images/round-img.png")}
-        alt='round-img'
-        id='round'
-      />
-      {currentRound !== 0 && <img
-          className='round-num'
-          src={require("../../images/number/" + currentRound + ".png")}
-          alt='round-num'
-          id='round-num'
-      />}
+      /> */}
     </div>
     <div className='cam-left'>
       <div className='left-player-con'>
@@ -906,22 +517,53 @@ const wait = (milliseconds) => {
           <p className='player-detail-left'>{room.players[player_1].name}</p>
           <img 
             className='stars-l'
-            src={require("../../images/star"+ playerStar +".png")}
+            src={require("../../images/star"+ playerStar.toString() +".png")}
             alt='star0'
           />
+        {/* {UserVideo} */}
         </div>
-        {/* combo */}
-        <PlayerOne result={result} />
+        <div className="comboDisplay">
+        <ul>
+          {playerOption.map((option, index) => (
+            <p key={round.toString() + index.toString() + option} 
+            style={{ color: getColor(option) }}>{option}</p>
+          ))}
+        </ul>
+        </div>
+        <div>
+        <ul className='combo'>
+          {playerCombo.map((option, index) => {
+            const displayCombo = comboDisplay[option]
+            return (
+            <p key={round.toString() + index.toString() + option}
+            style={{ color: comboColor(option) }}
+            >{displayCombo}</p>
+          )})}
+        </ul>
+        </div>
       </div>
-      {/* {UserVideo} */}
-      <div className="mediacam">
       <MediapipeCam/>
-      </div>
       <ExitButton name="X"/>
     </div>
     {callLoading && < BlackScreenAnimation/> }
     <div className="middle-container">
-      {displayTime && <CountdownTimer className='Timer' initialSec={5} TimerEnd={handleRoundEnd} />}
+    { triggerStart === 1 && <img
+        className='start-img'
+        src={require("../../images/start.png")}
+        id ='start_img'/>}
+      <div  className="round-container">
+      {triggerStart === 2 && <img src={roundImg} className='round-bg'/>}
+      {/* <img src={"../../images/number/" +  round.toString() + ".png"} 
+      alt="rou" /> */}
+      {round !== 0 && triggerStart === 2 &&
+      <img src={require("../../images/number/"+ round.toString() +".png")} 
+      alt="rou" className='number-img' />}
+      {round === 0 && triggerStart === 2 && <img src={require("../../images/number/1.png")} 
+      alt="rou" className='number-img'/>}
+      </div>
+      { triggerStart === 2 && <div className="time-container">
+        <h className="floating-text">{status}</h>
+      </div>}
     </div>
     <div className='cam-right'>
       {!connected && <h1 className='waiting-container'></h1>}
@@ -931,7 +573,7 @@ const wait = (milliseconds) => {
           <p className='player-detail-right'>{room.players[player_2].name}</p>
           <img
             className='stars-r'
-            src={require("../../images/star"+ partnerStar +".png")}
+            src={require("../../images/star"+ partnerStar.toString() +".png")}
             alt='star0'
             />
         </div>
@@ -941,8 +583,20 @@ const wait = (milliseconds) => {
           alt="profile-right"
         />
         <PlayerTwo result={partnerResult} />
-      </div>}
+        <div className="comboDisplay">
+        <ul>
+          {partnerOption.map((option, index) => (
+            <p key={round.toString() + index.toString() + option} 
+            style={{ color: getColor(option) }}>{option}</p>
+          ))}
+        </ul>
+        </div>
+      </div>
+      }
+      
+      <div className='partnerVideo'>
       {PartnerVideo}
+      </div>
     </div>
   </div>
   )
