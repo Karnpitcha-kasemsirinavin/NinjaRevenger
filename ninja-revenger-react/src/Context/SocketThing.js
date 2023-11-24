@@ -122,7 +122,6 @@ const SocketContextProvider = ({ children }) => {
   }, [userId]);
 
   useEffect(() => {
-    console.log(joined, !idEmitted, !(room.private), userId);
     if (joined && !idEmitted && !(room.private) && userId && player_2) {
       if (player_1 === socket.id) {
         // console.log('yang pass yuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu jaaaaaaaaaa')

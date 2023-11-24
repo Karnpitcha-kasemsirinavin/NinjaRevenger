@@ -146,7 +146,7 @@ export const MainGame = () => {
     socket.on('answer', data => {
       // console.log('received your id', data, 'thanks !!!');
       setPartnerId(data.id)
-      // setConnected(true);
+      //setConnected(true);
     })
     
     socket.on("friend_disconn", () => {
@@ -196,6 +196,9 @@ export const MainGame = () => {
   useEffect(() => {
     // ! when establish peer connection
     peer.on('connection', (err) => {
+
+      console.log('err: ', err)
+
       setConnected(true);
     });
 
@@ -211,6 +214,7 @@ export const MainGame = () => {
     });
 
     if (renderVideo) {
+      if (call !== undefined) {
       call.on('stream', remote => {
         // console.log('render', renderVideo);
         if (partnerVideo.current.srcObject !== remote && renderVideo) {
@@ -225,15 +229,22 @@ export const MainGame = () => {
         setRenderVideo(false);
         }
       })}
-    });
+    }});
 
     //! when peer connect find caller get video
+    console.log(connected)
     if (connected && caller) {
-      const call = peer.call(partnerId, stream);
+      let call = peer.call(partnerId, stream);
       // console.log('calling', partnerId);
+      // while (call === undefined) {
+      //   call = peer.call(partnerId, stream);
+      // }
+
+      if (call !== undefined) {
       call.on('stream', remote => {
         if (partnerVideo.current !== remote && renderVideo) {
         partnerVideo.current.srcObject = remote;
+        // console.log(partnerVideo)
         console.log('i get ur video')
         // player 1 receive form 2
         setTriggerStart(1)
@@ -241,7 +252,7 @@ export const MainGame = () => {
           socket.emit('ready', { from: player_1, to: player_2 });
         }, 5000);
         setRenderVideo(false);
-        }});
+        }});}
     }
 
     socket.on('playerReady', data => {
@@ -403,7 +414,7 @@ export const MainGame = () => {
   function checkCombo() {
     let found = false
     let checkingLength = finalList.length - checkIndex
-    //console.log(checkingLength)
+    // console.log(checkingLength)
 
     // check 5
     if (checkingLength >= 5) {
@@ -418,7 +429,7 @@ export const MainGame = () => {
           setCheckIndex(checkIndex+1)
           setFinalList(newArray)
           setPlayerCombo(currentcombo => [...currentcombo, combo5Name[combo]])
-          found = true
+          found = true 
       } else {
         setCheckIndex(checkIndex+1)
       }}
@@ -430,7 +441,7 @@ export const MainGame = () => {
         finalList[checkIndex+3+i]
       if (combo4Name[combo] !== undefined
         && finalList[checkIndex+3+i] !== undefined) {
-        //setCheckIndex(checkIndex+ 2+i)
+        // setCheckIndex(checkIndex+ 2+i)
         setCheckIndex(checkIndex+1+i)
         let newArray = finalList.filter((_, index) => index < checkIndex+i || index > checkIndex+3+i)
         newArray = [...newArray, combo4Name[combo]]
