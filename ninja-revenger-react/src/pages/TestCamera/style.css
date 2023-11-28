@@ -5,8 +5,8 @@
   /* align-items: center; */
   width: 100vw;
   height: 100vh;
-  grid-template-columns: 1fr 2fr 1fr;
-  grid-template-rows: 1fr 2fr 1fr;
+  /* grid-template-columns: 1fr 2fr 1fr;
+  grid-template-rows: 1fr 2fr 1fr; */
 }
 
 .background{
@@ -14,3 +14,27 @@
   width: 100vw;
   height: 100vh;
 }
+
+.gesture-text {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  color: aliceblue;
+}
+
+.gesture-text p {
+  padding: 0.25rem;
+  font-size: 3rem;
+  font-weight: 700;
+  float:left;
+  text-shadow:
+    2px 2px 0 #000,
+    -1px 1px 0 #000,
+    -1px -1px 0 #000,
+    1px -1px 0 #000;
+  /* -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: rgb(0, 0, 0); */
+}
+

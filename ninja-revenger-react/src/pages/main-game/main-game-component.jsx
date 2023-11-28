@@ -62,19 +62,6 @@ export const MainGame = () => {
     // photo.setAttribute("src", data);
   }
   
-  // result
-  const [result, setResult] = useState({
-    shown: true,
-    options: [],
-  });
-
-  const [partnerResult, setPartnerResult] = useState({
-    shown: true,
-    options: [],
-    length: 0
-  });
-  
-  
   // status of player two joining room
   const [checkJoin, setCheckJoin] = useState(false)
 
@@ -92,7 +79,6 @@ export const MainGame = () => {
     // console.log('passs generator')
 		const randomIndexFirst1 = Math.floor(Math.random() * firstnames.length);
     const randomIndexLast1 = Math.floor(Math.random() * surnames.length);
-
 		const name1 = firstnames[randomIndexFirst1] + " " +  surnames[randomIndexLast1];
 
     room.players[player_1].name = name1;	
@@ -106,8 +92,6 @@ export const MainGame = () => {
     room.players[player_1].image = randomIndexImage1;	
   }
 
-
-  
   // ! identifying room and set ready status for game
   useEffect(() => {
     if (socket.id === undefined) {
@@ -161,16 +145,24 @@ export const MainGame = () => {
           socket.emit('id', { from: player_1, to: player_2, id: userId })
         }
       })
-      socket.on("friend_update", (data) => {
-        setPartnerResult({
-          shown: true,
-          options: data.result,
-          length: data.length,
-          score: data.score,
-        })
-      })
 
     }
+
+    // addOption('Bullet 弾丸')
+    // addOption('Serpant 蛇')
+    // addOption('Bomb 爆弾')
+    // addOption('Rat ネズミ')
+
+    // addOption('Bullet 弾丸')
+    // addOption('Serpant 蛇')
+    // addOption('Bomb 爆弾')
+    // addOption('Rat ネズミ')
+
+    // addOption('Bullet 弾丸')
+    // addOption('Serpant 蛇')
+    // addOption('Bomb 爆弾')
+    // addOption('Rat ネズミ')
+
   }, [socket, room]);
 
 
@@ -258,7 +250,7 @@ export const MainGame = () => {
     socket.on('playerReady', data => {
     // console.log('receive ready status ',data)
     if (data.from !== undefined && status === 'finished') {
-      setStatus('round-ready')
+      setStatus('start')
       // startCountdownTimer()
     }})
 
@@ -274,6 +266,7 @@ export const MainGame = () => {
   const [playerStar, setPlayerStar] = useState(0)
   const [partnerStar, setPartnerStar] = useState(0)
   const [triggerStart, setTriggerStart] = useState(0)
+  const [partnerCombo, setpartnerCombo] = useState([])
 
   const getColor = (text) => { 
     return colorGesture[text]
@@ -313,16 +306,16 @@ export const MainGame = () => {
     //setTriggerStart(true)
     setTimeout(() => {
       socket.emit('ready', { from: player_1, to: player_2 });
-    }, 5000);
+    }, 1000);
     })
   }
   // ! each round of game
-  if (status === 'round-ready'  && round < 5){
+  if (status === 'start'  && round < 5){
       setRound(round+1)
       setTriggerStart(2)
       startCountdownTimer()}
   //console.log(status)
-  if (status !== 'round-ready' && 
+  if (status !== 'start' && 
         status !== 'finished') {
           console.log(playerOption)
           generateOption() }
@@ -333,6 +326,10 @@ export const MainGame = () => {
       //console.log(data)
       if (data.optionList.length !== 0) {
         setPartnerOption(data.optionList)
+      }
+
+      if (data.comboList.length !== 0){
+        setpartnerCombo(data.comboList)
       }
     })
   
@@ -349,7 +346,8 @@ export const MainGame = () => {
       // checkCombo(playerOption[playerOption.length-1])
     }
     checkCombo()
-    socket.emit('sendOption', { from: player_1, to: player_2, optionList: playerOption });
+    socket.emit('sendOption', { from: player_1, to: player_2, 
+      optionList: playerOption, comboList: playerCombo});
   }, [playerOption])
   
   // ! navigate after round 5
@@ -367,6 +365,7 @@ export const MainGame = () => {
   const [triggerTest, setTriggerTest] = useState(false)
 
   async function generateOption() {
+
     console.log(handData)
     if (handData !== -1 && handData !== preHand) {
       //console.log(handData)
@@ -510,47 +509,43 @@ export const MainGame = () => {
   return (
   <div className='maingame-container'>
     <div className='wrapper'>
-      {/* <img
-        className='start-img'
-        src={require("../../images/start.png")}
-        id ='start_img'
-        
-      /> */}
     </div>
     <div className='cam-left'>
       <div className='left-player-con'>
         <img
           className='profile-left'
           src={images[room.players[player_1].image]}
-          alt="profile-left"
-        />
+          alt="profile-left"/>
         <div>
           <p className='player-detail-left'>{room.players[player_1].name}</p>
           <img 
-            className='stars-l'
-            src={require("../../images/star"+ playerStar.toString() +".png")}
-            alt='star0'
-          />
-        {/* {UserVideo} */}
+          className='stars-l'
+          src={require("../../images/star"+ playerStar.toString() +".png")}
+          alt='star0'/>
+          {/* {UserVideo} */}
         </div>
-        <div className="comboDisplay">
-        <ul>
-          {playerOption.map((option, index) => (
-            <p key={round.toString() + index.toString() + option} 
-            style={{ color: getColor(option) }}>{option}</p>
-          ))}
-        </ul>
+        {/* <img src={require("../../images/lose-round.png")}
+        className="result-image"/> */}
+        <div className="comboWrapper">
+          <div className="comboDisplay">
+            <ul>
+              {playerOption.map((option, index) => (
+                <p key={round.toString() + index.toString() + option} 
+                style={{ color: getColor(option) }}>{option}</p>
+              ))}</ul>
+          </div>
         </div>
-        <div>
-        <ul className='combo'>
-          {playerCombo.map((option, index) => {
-            const displayCombo = comboDisplay[option]
-            return (
-            <p key={round.toString() + index.toString() + option}
-            style={{ color: comboColor(option) }}
-            >{displayCombo}</p>
-          )})}
-        </ul>
+        <div className="tierWrapper">
+          <div>
+            <ul className='combo'>
+            {playerCombo.map((option, index) => {
+              const displayCombo = comboDisplay[option]
+              return (
+              <p key={round.toString() + index.toString() + option}
+              style={{ color: comboColor(option) }}
+              >{displayCombo}</p>
+            )})}</ul>
+          </div>
         </div>
       </div>
       <MediapipeCam/>
@@ -560,8 +555,12 @@ export const MainGame = () => {
     <div className="middle-container">
     { triggerStart === 1 && <img
         className='start-img'
-        src={require("../../images/start.png")}
-        id ='start_img'/>}
+        src={require("../../images/ready.png")}
+        id ='start_img'/> }
+        {/* <img
+        className='start-img'
+        src={require("../../images/ready.png")}
+        id ='start_img'/>  */}
       <div  className="round-container">
       {triggerStart === 2 && <img src={roundImg} className='round-bg'/>}
       {/* <img src={"../../images/number/" +  round.toString() + ".png"} 
@@ -580,7 +579,7 @@ export const MainGame = () => {
       {!connected && <h1 className='waiting-container'></h1>}
     { connected &&
       <div className='right-player-con'>
-        <div>
+        <div className='partnerInfo'>
           <p className='player-detail-right'>{room.players[player_2].name}</p>
           <img
             className='stars-r'
@@ -593,14 +592,29 @@ export const MainGame = () => {
           src={images[room.players[player_2].image]}
           alt="profile-right"
         />
-        <PlayerTwo result={partnerResult} />
-        <div className="comboDisplay">
-        <ul>
-          {partnerOption.map((option, index) => (
-            <p key={round.toString() + index.toString() + option} 
-            style={{ color: getColor(option) }}>{option}</p>
-          ))}
-        </ul>
+        <div>
+          <div className="comboWrapper2">
+            <div className="comboDisplay2">
+            <ul>
+              {partnerOption.map((option, index) => (
+                <p key={round.toString() + index.toString() + option} 
+                style={{ color: getColor(option) }}>{option}</p>
+              ))}
+            </ul>
+            </div>
+          </div>
+          <div className="tierWrapper2">
+          <div>
+            <ul className='combo2'>
+            {partnerCombo.map((option, index) => {
+              const displayCombo = comboDisplay[option]
+              return (
+              <p key={round.toString() + index.toString() + option}
+              style={{ color: comboColor(option) }}
+              >{displayCombo}</p>
+            )})}</ul>
+          </div>
+          </div>
         </div>
       </div>
       }
