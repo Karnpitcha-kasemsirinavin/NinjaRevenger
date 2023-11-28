@@ -129,6 +129,7 @@ export const MainGame = () => {
 
     socket.on('answer', data => {
       // console.log('received your id', data, 'thanks !!!');
+      console.log('answer', data.id)
       setPartnerId(data.id)
       //setConnected(true);
     })
@@ -147,6 +148,8 @@ export const MainGame = () => {
       })
 
     }
+
+    //! test
 
     // addOption('Bullet 弾丸')
     // addOption('Serpant 蛇')
@@ -188,9 +191,7 @@ export const MainGame = () => {
   useEffect(() => {
     // ! when establish peer connection
     peer.on('connection', (err) => {
-
       console.log('err: ', err)
-
       setConnected(true);
     });
 
@@ -205,10 +206,13 @@ export const MainGame = () => {
         call.answer(stream)
     });
 
+    console.log('renderVideo1 ',renderVideo)
     if (renderVideo) {
+      console.log('call', call)
       if (call !== undefined) {
       call.on('stream', remote => {
         // console.log('render', renderVideo);
+        console.log('renderVideo2 ',renderVideo)
         if (partnerVideo.current.srcObject !== remote && renderVideo) {
         partnerVideo.current.srcObject = remote;
         console.log('i get ur video')
@@ -225,13 +229,22 @@ export const MainGame = () => {
 
     //! when peer connect find caller get video
     console.log(connected)
-    if (connected && caller) {
+    console.log('caller  ',caller)
+    if (connected && caller && stream !== undefined) {
+      console.log('check partnerid', partnerId)
+      console.log(stream)
       let call = peer.call(partnerId, stream);
-      // console.log('calling', partnerId);
-      // while (call === undefined) {
-      //   call = peer.call(partnerId, stream);
-      // }
+      //! this was undefined???
+      const maxAttempts = 100;
+      let attempts = 0;
 
+      while (call === undefined && attempts < maxAttempts) {
+        call = peer.call(partnerId, stream);
+        console.log('attemps',attempts)
+        attempts++;
+      }
+
+      console.log('call here', call)
       if (call !== undefined) {
       call.on('stream', remote => {
         if (partnerVideo.current !== remote && renderVideo) {
@@ -254,7 +267,7 @@ export const MainGame = () => {
       // startCountdownTimer()
     }})
 
-  }, [peer, connected])
+  }, [peer, connected, stream])
   
   const [round, setRound] = useState(0)
   const [playerOption, setPlayerOption] = useState([])
