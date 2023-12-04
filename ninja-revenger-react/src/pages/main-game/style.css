@@ -206,6 +206,8 @@
 }
 
 .time-container {
+  width: 100%;
+  padding-right: 2.5rem;
   display: flex;
   justify-content: center;
   align-items: center;

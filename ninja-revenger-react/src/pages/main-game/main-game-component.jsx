@@ -202,14 +202,16 @@ export const MainGame = () => {
     // problem make video jerky
     peer.on('call', call => {
       var getUserMedia = navigator.getUserMedia;
-      getUserMedia({ video: true }, stream => {
-        call.answer(stream)
-    });
+      console.log('check get user media',getUserMedia)
+      if (stream !== undefined) {
+        getUserMedia({ video: true }, stream => {
+          call.answer(stream)
+      });}
 
     console.log('renderVideo1 ',renderVideo)
     if (renderVideo) {
       console.log('call', call)
-      if (call !== undefined) {
+      if (call !== undefined && stream !== undefined) {
       call.on('stream', remote => {
         // console.log('render', renderVideo);
         console.log('renderVideo2 ',renderVideo)
@@ -514,6 +516,8 @@ export const MainGame = () => {
   PartnerVideo = (
     <video ref={partnerVideo} autoPlay/>
   );
+
+  console.log('vchcek partner video', PartnerVideo)
 
   //landmark video
   // const canvasRef = useRef();
